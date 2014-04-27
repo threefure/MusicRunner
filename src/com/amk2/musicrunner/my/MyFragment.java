@@ -13,6 +13,7 @@ public class MyFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+        String string = "test";
 		return inflater.inflate(R.layout.my_fragment, container, false);
 	}
 
