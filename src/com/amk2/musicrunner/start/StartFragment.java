@@ -2,11 +2,13 @@ package com.amk2.musicrunner.start;
 
 import android.app.Fragment;
 import android.location.Address;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.concurrent.CancellationException;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.start.WeatherModel.WeatherEntry;
 import com.amk2.musicrunner.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -47,6 +50,7 @@ public class StartFragment extends Fragment implements
     private TextView humidity;
     private TextView startTemperature;
     private TextView suggestionDialog;
+    private LinearLayout startTemperatureContainer;
 
     private LocationClient mLocationClient;
     private LocationRequest mLocationRequest;
@@ -64,6 +68,7 @@ public class StartFragment extends Fragment implements
                 this, this);
         getAddress = new GetAddressFromLocation(this.getActivity().getApplicationContext());
         CityCodeMapping.initialMap();
+        DayMapping.initialMap();
     }
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +83,14 @@ public class StartFragment extends Fragment implements
         humidity = (TextView) thisView.findViewById(R.id.humidity_container);
         startTemperature = (TextView) thisView.findViewById(R.id.start_temperature);
         suggestionDialog = (TextView) thisView.findViewById(R.id.suggestion_dialog);
+        startTemperatureContainer = (LinearLayout) thisView.findViewById(R.id.start_temperature_container);
+        startTemperatureContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // do something
+                Log.v("onclick", "should go to weather fragment");
+            }
+        });
 
         mLocationClient.connect();
     }
@@ -93,8 +106,11 @@ public class StartFragment extends Fragment implements
     @Override
     public void onConnected (Bundle dataBundle) {
         Log.d("daz", "GooglePlayService conntected");
-        getAddress.execute(mLocationClient.getLastLocation());
-
+        Location location = mLocationClient.getLastLocation();
+        CityCodeMapping.setLocation(location);
+        getAddress.execute(location);
+        Log.v("lat", Double.toString(location.getLatitude()));
+        Log.v("lng", Double.toString(location.getLongitude()));
         try {
             currentAddress = getAddress.get();
             String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
