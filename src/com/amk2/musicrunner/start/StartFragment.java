@@ -14,27 +14,12 @@ import android.widget.TextView;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import android.app.Fragment;
-import android.content.IntentSender;
-import android.location.Address;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.amk2.musicrunner.start.WeatherModel.WeatherEntry;
 import com.amk2.musicrunner.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
-
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by daz on 2014/4/22.
@@ -44,6 +29,10 @@ public class StartFragment extends Fragment implements
         GooglePlayServicesClient.OnConnectionFailedListener{
 
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
+    public interface StartTabFragmentListener {
+    	void onSwitchBetweenStartAndWeatherFragment();
+    }
 
     private TextView chanceOfRain;
     private TextView uvIndex;
@@ -58,6 +47,11 @@ public class StartFragment extends Fragment implements
     private GetAddressFromLocation getAddress;
     private Address currentAddress;
 
+    private StartTabFragmentListener mStartTabFragmentListener;
+
+    public void setStartTabFragmentListener(StartTabFragmentListener listener) {
+    	mStartTabFragmentListener = listener;
+    }
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -87,12 +81,12 @@ public class StartFragment extends Fragment implements
         startTemperatureContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // do something
-                Log.v("onclick", "should go to weather fragment");
+                // Switch to WeatherFragment
+            	mStartTabFragmentListener.onSwitchBetweenStartAndWeatherFragment();
             }
         });
 
-        mLocationClient.connect();
+        //mLocationClient.connect();
     }
     @Override
     public void onStart() {

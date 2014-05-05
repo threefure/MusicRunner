@@ -5,6 +5,8 @@ import com.amk2.musicrunner.discover.DiscoverFragment;
 import com.amk2.musicrunner.music.MusicFragment;
 import com.amk2.musicrunner.my.MyFragment;
 import com.amk2.musicrunner.start.StartFragment;
+import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
+import com.amk2.musicrunner.start.WeatherFragment;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -27,6 +29,8 @@ import android.view.ViewGroup;
  */
 public class UIController implements TabListener, ViewPager.OnPageChangeListener {
 
+	private static final int TAB_SIZE = 4;
+
 	private final MusicRunnerActivity mMainActivity;
 
 	private FragmentManager mFragmentManager;
@@ -36,20 +40,21 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 
 	// Fragments for each tab
 	private StartFragment mStartFragment;
+	private WeatherFragment mWeatherFragment;
 	private MyFragment mMyFragment;
 	private MusicFragment mMusicFragment;
 	private DiscoverFragment mDiscoverFragment;
 
-	public static class ViewState {
+	public static class TabState {
 		public static final int START = 0;
 		public static final int MY = 1;
 		public static final int MUSIC = 2;
 		public static final int DISCOVER = 3;
-		public static final int VIEW_SIZE = 4;
 	}
 
 	public static class FragmentTag {
 		public static final String START_FRAGMENT_TAG = "start_fragment";
+		public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
 		public static final String MY_FRAGMENT_TAG = "my_fragment";
 		public static final String MUSIC_FRAGMENT_TAG = "music_fragment";
 		public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
@@ -67,8 +72,8 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 
 	private void initialize() {
 		initActionBar();
-		initViewPager();
 		initFragments();
+		initViewPager();
 	}
 
 	/**
@@ -130,7 +135,7 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 		mViewPager = (SwipeControllableViewPager)mMainActivity.findViewById(R.id.tab_pager);
 		mPagerAdapter = new TabViewPagerAdapter(mFragmentManager);
 		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setSwipeable(false);
+		mViewPager.setSwipeable(true);
 		mViewPager.setOnPageChangeListener(this);
 	}
 
@@ -171,18 +176,34 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 
 	}
 
+	public void onActivityBackPressed() {
+		if (mViewPager.getCurrentItem() == 0
+				&& mPagerAdapter.getFragment(0) instanceof WeatherFragment) {
+			((WeatherFragment) mPagerAdapter.getFragment(0))
+					.backPressed();
+		} else {
+			mMainActivity.finish();
+		}
+	}
+
 	/**
-	 * PagerAdapter for ViewPager
+	 * Control which fragment needed to be displayed according to the tab
 	 *
 	 * @author DannyLin
 	 */
-	public class TabViewPagerAdapter extends PagerAdapter {
+	public class TabViewPagerAdapter extends PagerAdapter implements StartTabFragmentListener {
 
 		private FragmentManager mFm;
 		private FragmentTransaction mCurTransaction = null;
+		private Fragment mFragmentAtStartTab;
 
 		public TabViewPagerAdapter(FragmentManager fm) {
 			mFm = fm;
+			setSwitchFragmentListener();
+		}
+
+		private void setSwitchFragmentListener() {
+			mStartFragment.setStartTabFragmentListener(this);
 		}
 
 		/**
@@ -201,6 +222,23 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 			mCurTransaction.show(f);
 
 			return f;
+		}
+
+		private Fragment getFragment(int position) {
+			switch(position) {
+			case TabState.START:
+				if(mFragmentAtStartTab == null) {
+					mFragmentAtStartTab = mStartFragment;
+				}
+				return mFragmentAtStartTab;
+			case TabState.MY:
+				return mMyFragment;
+			case TabState.MUSIC:
+				return mMusicFragment;
+			case TabState.DISCOVER:
+				return mDiscoverFragment;
+			}
+			return null;
 		}
 
 		/**
@@ -225,7 +263,7 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 
 		@Override
 		public int getCount() {
-			return ViewState.VIEW_SIZE;
+			return TAB_SIZE;
 		}
 
 		@Override
@@ -233,20 +271,43 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 			return ((Fragment) object).getView() == view;
 		}
 
-	}
-
-	private Fragment getFragment(int position) {
-		switch(position) {
-		case ViewState.START:
-			return mStartFragment;
-		case ViewState.MY:
-			return mMyFragment;
-		case ViewState.MUSIC:
-			return mMusicFragment;
-		case ViewState.DISCOVER:
-			return mDiscoverFragment;
+		@Override
+		public int getItemPosition(Object object) {
+			if (object instanceof StartFragment
+					&& mFragmentAtStartTab instanceof WeatherFragment) {
+				return POSITION_NONE;
+			}
+			if (object instanceof WeatherFragment
+					&& mFragmentAtStartTab instanceof StartFragment) {
+				return POSITION_NONE;
+			}
+			return POSITION_UNCHANGED;
 		}
-		return null;
+
+		@Override
+		public void onSwitchBetweenStartAndWeatherFragment() {
+			if (mCurTransaction == null) {
+				mCurTransaction = mFragmentManager.beginTransaction();
+			}
+			if (mFragmentAtStartTab instanceof StartFragment) {
+				addWeatherFragment();
+				mFragmentAtStartTab = mWeatherFragment;
+				((WeatherFragment) mFragmentAtStartTab).setStartTabFragmentListener(this);
+			} else { // Instance of WeatherFragment
+				mCurTransaction.remove(mFragmentAtStartTab);
+				mFragmentAtStartTab = mStartFragment;
+			}
+			notifyDataSetChanged();
+		}
+
+		private void addWeatherFragment() {
+			mWeatherFragment = (WeatherFragment)mFragmentManager.findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
+			if(mWeatherFragment == null) {
+				mWeatherFragment = new WeatherFragment();
+				mCurTransaction.add(R.id.tab_pager, mWeatherFragment, FragmentTag.WEATHER_FRAGMENT_TAG);
+			}
+		}
+
 	}
 
 	@Override
@@ -269,7 +330,7 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		if(mViewPager != null) {
-			mViewPager.setCurrentItem(tab.getPosition(),false);
+			mViewPager.setCurrentItem(tab.getPosition(),true);
 			Log.d("danny", "Set current position = " + tab.getPosition());
 		}
 	}

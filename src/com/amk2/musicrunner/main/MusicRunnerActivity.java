@@ -63,4 +63,9 @@ public class MusicRunnerActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public void onBackPressed() {
+		mUIController.onActivityBackPressed();
+	}
+
 }

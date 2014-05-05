@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
 import com.amk2.musicrunner.start.WeatherModel.WeatherWeekEntry;
 import com.amk2.musicrunner.start.WeatherModel.WeatherHourlyEntry;
 import com.google.android.gms.location.LocationRequest;
@@ -34,6 +35,15 @@ public class WeatherFragment extends Fragment{
     private LayoutInflater inflater;
     private Location location;
     private Address currentAddress;
+    private StartTabFragmentListener mStartTabFragmentListener;
+
+    public void setStartTabFragmentListener(StartTabFragmentListener listener) {
+    	mStartTabFragmentListener = listener;
+    }
+
+    public void backPressed() {
+    	mStartTabFragmentListener.onSwitchBetweenStartAndWeatherFragment();
+    }
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -68,8 +78,8 @@ public class WeatherFragment extends Fragment{
             try {
                 currentAddress = getAddress.get();
                 String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
-                get24HoursForecast(cityCode);
-                getWeekForecast(cityCode);
+                //get24HoursForecast(cityCode);
+                //getWeekForecast(cityCode);
 
             } catch (InterruptedException e) {
                 Log.e("Error", "InterruptedException");
@@ -142,4 +152,5 @@ public class WeatherFragment extends Fragment{
     public void onPause () {
         super.onPause();
     }
+
 }
