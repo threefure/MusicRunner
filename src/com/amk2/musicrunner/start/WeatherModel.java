@@ -36,4 +36,17 @@ public class WeatherModel {
             this.min_t = min_t;
         }
     }
+    public static class WeatherHourlyEntry {
+        public final String time;
+        public final String max_t;
+        public final String min_t;
+        public final String chanceOfRain;
+
+        public WeatherHourlyEntry(String time, String max_t, String min_t, String chanceOfRain) {
+            this.time = time;
+            this.max_t = max_t;
+            this.min_t = min_t;
+            this.chanceOfRain = chanceOfRain;
+        }
+    }
 }

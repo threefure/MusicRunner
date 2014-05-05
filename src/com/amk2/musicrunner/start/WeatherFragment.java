@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.start.WeatherModel.WeatherWeekEntry;
+import com.amk2.musicrunner.start.WeatherModel.WeatherHourlyEntry;
 import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
@@ -67,33 +68,39 @@ public class WeatherFragment extends Fragment{
             try {
                 currentAddress = getAddress.get();
                 String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
-                GetWeatherWeekData weatherWeekData = new GetWeatherWeekData();
-                weatherWeekData.execute(cityCode);
-                try {
-                    ArrayList<WeatherWeekEntry> weatherWeekEntryList = weatherWeekData.get();
-                    for (int i = 0; i < weatherWeekEntryList.size(); i++) {
-                        addWeekForecast(weatherWeekEntryList.get(i));
-                    }
-                } catch (CancellationException e) {
-                    Log.d("Error", "This is canceled");
-                } catch (InterruptedException e) {
-                    Log.d("Error", "This is interrupted");
-                } catch (ExecutionException e) {
-                    Log.d("Error", "Execution error");
-                }
+                get24HoursForecast(cityCode);
+                getWeekForecast(cityCode);
+
             } catch (InterruptedException e) {
                 Log.e("Error", "InterruptedException");
             } catch (ExecutionException e) {
                 Log.e("Error", "ExecutionException");
             }
         }
-        for (int i = 0 ; i < 50; i ++) {
+        /*for (int i = 0 ; i < 50; i ++) {
             View hourly = inflater.inflate(R.layout.hourly_template, null);
             TextView time = (TextView) hourly.findViewById(R.id.time);
             time.setText("9:00");
             TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
             temperature.setText("25.c");
             hourlyWeatherForecast.addView(hourly);
+        }*/
+    }
+
+    private void getWeekForecast (String cityCode) {
+        GetWeatherWeekData weatherWeekData = new GetWeatherWeekData();
+        weatherWeekData.execute(cityCode);
+        try {
+            ArrayList<WeatherWeekEntry> weatherWeekEntryList = weatherWeekData.get();
+            for (int i = 0; i < weatherWeekEntryList.size(); i++) {
+                addWeekForecast(weatherWeekEntryList.get(i));
+            }
+        } catch (CancellationException e) {
+            Log.d("Error", "This is canceled");
+        } catch (InterruptedException e) {
+            Log.d("Error", "This is interrupted");
+        } catch (ExecutionException e) {
+            Log.d("Error", "Execution error");
         }
     }
 
@@ -104,6 +111,31 @@ public class WeatherFragment extends Fragment{
         TextView temperature = (TextView) weekly.findViewById(R.id.temperature);
         temperature.setText(weatherWeekEntry.max_t + "/" + weatherWeekEntry.min_t + ".C");
         weeklyWeatherForecast.addView(weekly, weeklyParams);
+    }
+
+    private void get24HoursForecast (String cityCode) {
+        GetWeather24HoursData weatherHourData = new GetWeather24HoursData();
+        weatherHourData.execute(cityCode);
+        try {
+            ArrayList<WeatherHourlyEntry> weatherHourlyEntryList = weatherHourData.get();
+            for (int i = 0; i < weatherHourlyEntryList.size(); i++) {
+                addHourForecast(weatherHourlyEntryList.get(i));
+            }
+        } catch (CancellationException e) {
+            Log.d("Error", "This is canceled");
+        } catch (InterruptedException e) {
+            Log.d("Error", "This is interrupted");
+        } catch (ExecutionException e) {
+            Log.d("Error", "Execution error");
+        }
+    }
+    private void addHourForecast (WeatherHourlyEntry weatherHourlyEntry) {
+        View hourly = inflater.inflate(R.layout.hourly_template, null);
+        TextView time = (TextView) hourly.findViewById(R.id.time);
+        time.setText(weatherHourlyEntry.time + ":00");
+        TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
+        temperature.setText(weatherHourlyEntry.max_t + "/" + weatherHourlyEntry.min_t + ".C");
+        hourlyWeatherForecast.addView(hourly);
     }
 
     @Override
