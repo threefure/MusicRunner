@@ -86,7 +86,7 @@ public class StartFragment extends Fragment implements
             }
         });
 
-        //mLocationClient.connect();
+        mLocationClient.connect();
     }
     @Override
     public void onStart() {

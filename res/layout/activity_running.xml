@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/running_info_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/banner"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+            <TextView
+                android:text="@string/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/white" />
+            <TextView
+                android:text="@string/zero"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/running_distance_unit"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:gravity="right"
+                android:textColor="@color/white"
+                android:id="@+id/running_distance" />
+            <TextView
+                android:text="@string/km"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:id="@+id/running_distance_unit" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+            <TextView
+                android:text="@string/calorie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/white" />
+            <TextView
+                android:text="@string/zero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:id="@+id/running_calorie" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+            <TextView
+                android:text="@string/speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/white" />
+            <TextView
+                android:text="@string/zero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/running_speed_ratio_unit"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:textColor="@color/white"
+                android:id="@+id/running_speed_ratio" />
+            <TextView
+                android:text="@string/speed_ratio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:id="@+id/running_speed_ratio_unit" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/running_timer"
+        android:layout_below="@+id/running_info_bar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="130dp" >
+        <TextView
+            android:id="@+id/camera"
+            android:text="Camera put here"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"/>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10">
+            <TextView
+                android:id="@+id/timer_hour"
+                android:text="@string/initial_timer_hour"
+                android:textSize="@dimen/timer"
+                android:layout_toLeftOf="@+id/colon_hour"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text=":"
+                android:id="@+id/colon_hour"
+                android:layout_toLeftOf="@+id/timer_minute"
+                android:textSize="@dimen/timer"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/timer_minute"
+                android:text="@string/initial_timer_minute"
+                android:textSize="@dimen/timer"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text=":"
+                android:id="@+id/colon_min"
+                android:layout_toRightOf="@+id/timer_minute"
+                android:textSize="@dimen/timer"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/timer_second"
+                android:layout_toRightOf="@+id/colon_min"
+                android:layout_centerVertical="true"
+                android:text="@string/initial_timer_second"
+                android:textSize="@dimen/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <TextView
+            android:text=""
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/stop_running"
+            android:text="@string/stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/pause_running"
+            android:text="@string/pause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+<!--TextView
+    android:id="@+id/timer_hour"
+    android:text="@string/initial_timer_hour"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<TextView
+    android:text=":"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<TextView
+    android:id="@+id/timer_minute"
+    android:text="@string/initial_timer_minute"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<TextView
+    android:text=":"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<TextView
+    android:id="@+id/timer_second"
+    android:text="@string/initial_timer_second"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<Button
+    android:id="@+id/start_running"
+    android:text="Start"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" /-->
+</RelativeLayout>

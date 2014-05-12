@@ -11,9 +11,9 @@ import java.net.URL;
  * Created by daz on 2014/4/27.
  */
 public class NetworkAccess {
-    public static final String baseWeatherUrlString = "http://192.168.1.24:3000/weatherJSON";//TODO need to append city query behind
-    public static final String baseWeatherWeekUrlString = "http://192.168.1.24:3000/weatherWeekJSON";//TODO need to append city query behind
-    public static final String baseWeather24HoursUrlString = "http://192.168.1.24:3000/weather24HoursJSON";//TODO need to append city query behind
+    public static final String baseWeatherUrlString = "http://ec2-54-187-202-50.us-west-2.compute.amazonaws.com:8080/weatherJSON";//TODO need to append city query behind
+    public static final String baseWeatherWeekUrlString = "http://ec2-54-187-202-50.us-west-2.compute.amazonaws.com:8080/weatherWeekJSON";//TODO need to append city query behind
+    public static final String baseWeather24HoursUrlString = "http://ec2-54-187-202-50.us-west-2.compute.amazonaws.com:8080/weather24HoursJSON";//TODO need to append city query behind
     //make http request to download data from server
     public InputStream downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);

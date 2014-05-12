@@ -78,8 +78,8 @@ public class WeatherFragment extends Fragment{
             try {
                 currentAddress = getAddress.get();
                 String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
-                //get24HoursForecast(cityCode);
-                //getWeekForecast(cityCode);
+                get24HoursForecast(cityCode);
+                getWeekForecast(cityCode);
 
             } catch (InterruptedException e) {
                 Log.e("Error", "InterruptedException");
