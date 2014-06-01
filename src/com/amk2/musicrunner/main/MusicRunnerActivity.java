@@ -60,7 +60,7 @@ public class MusicRunnerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.music_runner, menu);
-		return true;
+		return false;
 	}
 
 	@Override
