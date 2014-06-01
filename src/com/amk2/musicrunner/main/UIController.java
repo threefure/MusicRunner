@@ -29,6 +29,7 @@ import android.view.ViewGroup;
  */
 public class UIController implements TabListener, ViewPager.OnPageChangeListener {
 
+	private static final String TAG = "UIController";
 	private static final int TAB_SIZE = 4;
 
 	private final MusicRunnerActivity mMainActivity;
@@ -217,7 +218,7 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 				mCurTransaction = mFm.beginTransaction();
 			}
 
-			Log.d("danny", "Show Fragment = " + (position+1));
+			Log.d(TAG, "Show Fragment = " + (position+1));
 			Fragment f = getFragment(position);
 			mCurTransaction.show(f);
 
@@ -331,7 +332,7 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		if(mViewPager != null) {
 			mViewPager.setCurrentItem(tab.getPosition(),true);
-			Log.d("danny", "Set current position = " + tab.getPosition());
+			Log.d(TAG, "Set current position = " + tab.getPosition());
 		}
 	}
 
