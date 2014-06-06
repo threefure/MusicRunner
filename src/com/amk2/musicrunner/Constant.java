@@ -8,13 +8,23 @@ public class Constant {
     public static final long MILLISECONDS_PER_SECOND = 1L;
     public static final long ONE_MINUTE = 60L;
     public static final String SYNC_UPDATE = "com.amk2.musicrunner.update";
+    public static final String SYNC_CITYCODE = "com.amk2.musicrunner.citycode";
+
     public static final String UPDATE_WEATHER = "com.amk2.musicrunner.updateweather";
+    public static final String UPDATE_24HRS_WEATHER = "com.amk2.musicrunner.update24hrsweather";
+    public static final String UPDATE_WEEKLY_WEATHER = "com.amk2.musicrunner.updateweeklyweather";
     public static final String UPDATE_UBIKE = "com.amk2.musicrunner.updateubike";
+
+    public static final int EXPIRATION_DATE_DURATION_DAILY  = 1;
+    public static final int EXPIRATION_DATE_DURATION_24HRS  = 1;
+    public static final int EXPIRATION_DATE_DURATION_WEEKLY = 12;
 
     public static final String JSON_CONTENT = "com.amk2.musicrunner.updateweather.jsoncontent";
     public static final String EXPIRATION_DATE = "com.amk2.musicrunner.updateweather.expirationdate";
 
     public static final String DB_KEY_DAILY_WEATHER = "com.amk2.musicrunner.daily.weather";
+    public static final String DB_KEY_24HRS_WEATHER = "com.amk2.musicrunner.24hrs.weather";
+    public static final String DB_KEY_WEEKLY_WEATHER = "com.amk2.musicrunner.weekly.weather";
     public static final String DB_KEY_YOUBIKE = "com.amk2.musicrunner.youbike";
 
     // Server API

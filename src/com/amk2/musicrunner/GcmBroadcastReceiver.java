@@ -19,7 +19,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
     public static final String ACCOUNT_TYPE = "com.amk2";
     public static final String ACCOUNT = "dummyaccount";
     public static final String KEY_SYNC_REQUEST = "com.amk2.musicrunner.KEY_SYNC_REQUEST";
-    private Account mAccount = MusicRunnerActivity.mAccount;
+    private Account mAccount = MusicTrackMetaData.mAccount;
 
     @Override
     public void onReceive(Context context, Intent intent) {

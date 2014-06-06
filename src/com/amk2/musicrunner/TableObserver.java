@@ -1,7 +1,5 @@
 package com.amk2.musicrunner;
 
-import android.accounts.Account;
-import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -12,10 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
-
-import org.apache.http.auth.AUTH;
 
 /**
  * Created by ktlee on 5/25/14.
@@ -41,21 +36,26 @@ public class TableObserver extends ContentObserver {
         if (changeUri.toString().indexOf(MusicTrackCommonDataDB.CONTENT_URI.toString()) > -1) {
             Message msg = new Message();
             String[] projection = {
-                    MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
-                    MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+                MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE,
+                MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
             };
             try {
                 Cursor cursor = contentResolver.query(changeUri, projection, null, null, null);
                 cursor.moveToFirst();
-                String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.JSON_CONTENT, JSONContent);
+                String DataType = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE));
 
-                msg.setData(bundle);
-                msg.what = Constant.UPDATE_START_FRAGMENT_UI;
-                mHandler.handleMessage(msg);
+                if (DataType.equals(Constant.DB_KEY_DAILY_WEATHER)) {
+                    String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.JSON_CONTENT, JSONContent);
 
-                Log.d("daz", "notify start fragment to update ui");
+                    msg.setData(bundle);
+                    msg.what = Constant.UPDATE_START_FRAGMENT_UI;
+                    mHandler.handleMessage(msg);
+
+                    Log.d("daz", "notify start fragment to update ui");
+                }
             } catch (IllegalArgumentException e){
                 e.printStackTrace();
             }

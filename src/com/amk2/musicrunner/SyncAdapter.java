@@ -9,13 +9,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.amk2.musicrunner.start.LocationHelper;
-import com.amk2.musicrunner.start.WeatherJSONParser;
+import com.amk2.musicrunner.start.LocationMetaData;
 import com.amk2.musicrunner.start.WeatherModel.WeatherEntry;
 import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
 
@@ -30,7 +28,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by ktlee on 5/24/14.
@@ -39,6 +36,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
     private ContentResolver contentResolver;
 
     private static long dailyWeatherID = -1;
+    private static long t24HrsWeatherID = -1;
+    private static long weeklyWeatherID = -1;
 
     public SyncAdapter (Context context, boolean autoInintialize) {
         super(context, autoInintialize);
@@ -55,59 +54,101 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
     public void onPerformSync(Account account, Bundle bundle, String AUTHORITY, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d("Daz", "in syncAdapter, request!!!!!");
         Log.d("daz", bundle.getString(Constant.SYNC_UPDATE));
-        WeatherEntry weatherEntry = null;
         if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEATHER)) {
-            Log.d("daz", "calling weather api");
-            InputStream weatherStream = null;
-            try {
-                weatherStream = downloadUrl(Constant.baseWeatherUrlString + "?" + Constant.cityCodeQuery + LocationHelper.getCityCode());
-                //weatherEntry = WeatherJSONParser.read(weatherStream);
-                String weatherJSONString = getStringFromInputStream(weatherStream);
-                Calendar expirationDate = Calendar.getInstance();
-                expirationDate.add(Calendar.HOUR, 1);
-                Log.d("new data content weatherJSONString", weatherJSONString);
-                Log.d("expirationDate.getTime().toString()", expirationDate.getTime().toString());
-                Log.d("daz", "remodel syncadapter updating db...with id=" + dailyWeatherID);
-                dailyWeatherID = InsertCommonData(
-                        dailyWeatherID,
-                        Constant.DB_KEY_DAILY_WEATHER,
-                        expirationDate.getTime().toString(),
-                        weatherJSONString);
-                Log.d("daz", "updated db, observer should know this change, new provider, with id=" + dailyWeatherID);
-                //-------read db-----------
-                String[] projection = {
-                        MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
-                        MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
-                };
-                String selection = MusicTrackCommonDataDB.COLUMN_NAME_ID + " LIKE ?";
-                String[] selectionArgs = { String.valueOf(dailyWeatherID) };
-                Cursor cursor = contentResolver.query(
-                        MusicTrackCommonDataDB.CONTENT_URI,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null
-                );
-                cursor.moveToFirst();
-                String cor = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
-                Log.d("daz", "weatherJSONString COLUMN_NAME_JSON_CONTENT in db: " + cor);
-                String date = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE));
-                Log.d("daz", "weatherJSONString COLUMN_NAME_EXPIRATION_DATE in db: " + date);
+            // update daily weather
+            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+            String urlString = Constant.baseWeatherUrlString + "?" + Constant.cityCodeQuery + cityCode;
+            dailyWeatherID = GetDataFromServerAndSetExpirationDate(
+                    urlString,
+                    Constant.DB_KEY_DAILY_WEATHER,
+                    Calendar.HOUR,
+                    Constant.EXPIRATION_DATE_DURATION_DAILY,
+                    dailyWeatherID);
+            Log.d("daz", "updated db for daily, observer should know this change, new provider, with id=" + dailyWeatherID);
 
-                //----------------------
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_24HRS_WEATHER)) {
+            // update 24 hours weather
+            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+            String urlString = Constant.baseWeather24HoursUrlString + "?" + Constant.cityCodeQuery + cityCode + "&currentHour=" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            t24HrsWeatherID = GetDataFromServerAndSetExpirationDate(
+                    urlString,
+                    Constant.DB_KEY_24HRS_WEATHER,
+                    Calendar.HOUR,
+                    Constant.EXPIRATION_DATE_DURATION_24HRS,
+                    t24HrsWeatherID);
+            Log.d("daz", "updated db for 24hours, observer should know this change, new provider, with id=" + t24HrsWeatherID);
 
-            //close stream
-            try {
-                weatherStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEEKLY_WEATHER)) {
+            // update weekly weather
+            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+            String urlString = Constant.baseWeatherWeekUrlString + "?" + Constant.cityCodeQuery + cityCode;
+            weeklyWeatherID = GetDataFromServerAndSetExpirationDate(
+                    urlString,
+                    Constant.DB_KEY_WEEKLY_WEATHER,
+                    Calendar.HOUR,
+                    Constant.EXPIRATION_DATE_DURATION_WEEKLY,
+                    weeklyWeatherID);
+            Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
+
         } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_UBIKE)) {
             Log.d("daz", "calling ubike api");
         }
+    }
+
+    private long GetDataFromServerAndSetExpirationDate (String urlString,
+                                                        String DBKeyType,
+                                                        int ExpirationDateDelayType,
+                                                        int ExpirationDateDelayAmount,
+                                                        long _ID) {
+        InputStream stream = null;
+        long returnID = -1;
+        try {
+            stream = downloadUrl(urlString);
+            String JSONString = getStringFromInputStream(stream);
+            Calendar expirationDate = Calendar.getInstance();
+            expirationDate.add(ExpirationDateDelayType, ExpirationDateDelayAmount);
+            //Log.d("new data content weatherJSONString", weatherJSONString);
+            //Log.d("expirationDate.getTime().toString()", expirationDate.getTime().toString());
+            Log.d("daz", "updating db id=" + _ID + " type=" + DBKeyType + " content: " + JSONString);
+            returnID = InsertCommonData(
+                    _ID,
+                    DBKeyType,
+                    expirationDate.getTime().toString(),
+                    JSONString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return returnID;
+    }
+
+    private void readDB() {
+        //-------read db-----------
+        String[] projection = {
+                MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+        };
+        String selection = MusicTrackCommonDataDB.COLUMN_NAME_ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(dailyWeatherID) };
+        Cursor cursor = contentResolver.query(
+                MusicTrackCommonDataDB.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null
+        );
+        cursor.moveToFirst();
+        String cor = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+        Log.d("daz", "weatherJSONString COLUMN_NAME_JSON_CONTENT in db: " + cor);
+        String date = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE));
+        Log.d("daz", "weatherJSONString COLUMN_NAME_EXPIRATION_DATE in db: " + date);
+        //----------------------
     }
 
     private long InsertCommonData (long index, String type, String expirationDate, String jsonContent) {

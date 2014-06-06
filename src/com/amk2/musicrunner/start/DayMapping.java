@@ -7,8 +7,7 @@ import java.util.HashMap;
  */
 public class DayMapping {
     private static HashMap<String, String> map;
-
-    public static void initialMap () {
+    static {
         map = new HashMap<String, String>();
         map.put("0", "Sun");
         map.put("1", "Mon");
@@ -18,6 +17,7 @@ public class DayMapping {
         map.put("5", "Fri");
         map.put("6", "Sat");
     }
+
     public static String getDay(String day) {
         return map.get(day);
     }

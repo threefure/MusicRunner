@@ -1,7 +1,9 @@
 package com.amk2.musicrunner.start;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,12 +14,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.MusicTrackMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
 import com.amk2.musicrunner.start.WeatherModel.WeatherWeekEntry;
 import com.amk2.musicrunner.start.WeatherModel.WeatherHourlyEntry;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -33,8 +43,9 @@ public class WeatherFragment extends Fragment{
     private GetAddressFromLocation getAddress;
     private LayoutInflater inflater;
     private Location location;
-    private Address currentAddress;
     private StartTabFragmentListener mStartTabFragmentListener;
+
+    private ContentResolver mContentResolver;
 
     public void setStartTabFragmentListener(StartTabFragmentListener listener) {
     	mStartTabFragmentListener = listener;
@@ -48,6 +59,7 @@ public class WeatherFragment extends Fragment{
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getAddress = new GetAddressFromLocation(this.getActivity().getApplicationContext());
+        mContentResolver = this.getActivity().getContentResolver();
     }
 
     @Override
@@ -62,64 +74,89 @@ public class WeatherFragment extends Fragment{
         hourlyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.hourly_weather_forecast);
         weeklyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.weekly_weather_forecast);
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        location = LocationHelper.getLocation();
+        location = LocationMetaData.getLocation();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // TODO should store currentAddress in shared area, shouldn't call getAddress again
-        location = new Location("Taipei");
-        location.setLatitude(25.0426572);
-        location.setLongitude(121.5745622);
-        if (location != null) {
-            getAddress.execute(location);
-            try {
-                currentAddress = getAddress.get();
-                //String cityCode = LocationHelper.getCityCode(currentAddress.getAdminArea());
-                //get24HoursForecast(cityCode);
-                //getWeekForecast(cityCode);
-
-            } catch (InterruptedException e) {
-                Log.e("Error", "InterruptedException");
-            } catch (ExecutionException e) {
-                Log.e("Error", "ExecutionException");
-            }
-        }
-        /*for (int i = 0 ; i < 50; i ++) {
-            View hourly = inflater.inflate(R.layout.hourly_template, null);
-            TextView time = (TextView) hourly.findViewById(R.id.time);
-            time.setText("9:00");
-            TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
-            temperature.setText("25.c");
-            hourlyWeatherForecast.addView(hourly);
-        }*/
+        updateWeeklyForecast();
+        update24HoursForecast();
     }
 
-    private void getWeekForecast (String cityCode) {
-        GetWeatherWeekData weatherWeekData = new GetWeatherWeekData();
-        weatherWeekData.execute(cityCode);
+    private void updateWeeklyForecast () {
+        // TODO projection could be moved to a static place
+        String[] projection = {
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+        };
+        String selection = MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(Constant.DB_KEY_WEEKLY_WEATHER) };
+
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        cursor.moveToFirst();
+        String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+        updateWeeklyForecastUI(JSONContent);
+
+        Log.d("daz", "ui got the weather json:" + JSONContent);
+    }
+    private void updateWeeklyForecastUI(String JSONContent) {
         try {
-            ArrayList<WeatherWeekEntry> weatherWeekEntryList = weatherWeekData.get();
-            for (int i = 0; i < weatherWeekEntryList.size(); i++) {
-                addWeekForecast(weatherWeekEntryList.get(i));
+            JSONArray weeklyJSONArray = new JSONArray(JSONContent);
+            int length = weeklyJSONArray.length();
+            for (int i = 0; i < length; i++) {
+                addWeeklyForecast(weeklyJSONArray.getJSONObject(i));
             }
-        } catch (CancellationException e) {
-            Log.d("Error", "This is canceled");
-        } catch (InterruptedException e) {
-            Log.d("Error", "This is interrupted");
-        } catch (ExecutionException e) {
-            Log.d("Error", "Execution error");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
-
-    private void addWeekForecast (WeatherWeekEntry weatherWeekEntry) {
+    private void addWeeklyForecast (JSONObject weeklyJSONObject) throws JSONException {
         View weekly = inflater.inflate(R.layout.weekly_template, null);
         TextView day = (TextView) weekly.findViewById(R.id.day);
-        day.setText(DayMapping.getDay(weatherWeekEntry.day));
         TextView temperature = (TextView) weekly.findViewById(R.id.temperature);
-        temperature.setText(weatherWeekEntry.max_t + "/" + weatherWeekEntry.min_t + ".C");
+
+        day.setText(DayMapping.getDay(weeklyJSONObject.getString("day")));
+        temperature.setText(weeklyJSONObject.getString("maxT") + "/" + weeklyJSONObject.getString("minT") + ".C");
         weeklyWeatherForecast.addView(weekly, weeklyParams);
+    }
+
+    private void update24HoursForecast () {
+        // TODO projection could be moved to a static place
+        String[] projection = {
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+        };
+        String selection = MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(Constant.DB_KEY_24HRS_WEATHER) };
+
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        cursor.moveToFirst();
+        String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+        update24HoursForecastUI(JSONContent);
+
+        Log.d("daz", "ui got the weather json:" + JSONContent);
+    }
+
+    private void update24HoursForecastUI(String JSONContent) {
+        try {
+            JSONArray t24HoursJSONArray = new JSONArray(JSONContent);
+            int length = t24HoursJSONArray.length();
+            for (int i = 0; i < length; i++) {
+                add24HoursForecast(t24HoursJSONArray.getJSONObject(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void add24HoursForecast (JSONObject t24HoursJSONArray) throws JSONException {
+        View hourly = inflater.inflate(R.layout.hourly_template, null);
+        TextView time = (TextView) hourly.findViewById(R.id.time);
+        time.setText(t24HoursJSONArray.getString("time") + ":00");
+        TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
+        temperature.setText(t24HoursJSONArray.getString("maxT") + "/" + t24HoursJSONArray.getString("minT") + ".C");
+        hourlyWeatherForecast.addView(hourly);
     }
 
     private void get24HoursForecast (String cityCode) {
