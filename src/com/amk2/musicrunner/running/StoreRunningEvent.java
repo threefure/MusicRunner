@@ -9,6 +9,8 @@ import java.io.IOException;
 /**
  * Created by ktlee on 5/12/14.
  */
+
+// store the running event to both server and phone
 public class StoreRunningEvent extends AsyncTask<String, Void, Void> {
     NetworkAccess na;
 

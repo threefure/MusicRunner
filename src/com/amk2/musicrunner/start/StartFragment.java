@@ -1,9 +1,12 @@
 package com.amk2.musicrunner.start;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +14,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
-import com.amk2.musicrunner.start.WeatherModel.WeatherEntry;
+import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.TableObserver;
 import com.amk2.musicrunner.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by daz on 2014/4/22.
@@ -43,11 +50,12 @@ public class StartFragment extends Fragment implements
 
     private LocationClient mLocationClient;
     private LocationRequest mLocationRequest;
-    //private InformationUpdater informationUpdater;
     private GetAddressFromLocation getAddress;
     private Address currentAddress;
 
     private StartTabFragmentListener mStartTabFragmentListener;
+
+    private ContentResolver mContentResolver;
 
     public void setStartTabFragmentListener(StartTabFragmentListener listener) {
     	mStartTabFragmentListener = listener;
@@ -61,7 +69,13 @@ public class StartFragment extends Fragment implements
         mLocationClient = new LocationClient(this.getActivity().getApplicationContext(),
                 this, this);
         getAddress = new GetAddressFromLocation(this.getActivity().getApplicationContext());
-        CityCodeMapping.initialMap();
+
+        //-------------Register table observer----------
+        mContentResolver = getActivity().getContentResolver();
+        TableObserver observer = new TableObserver(this.getActivity().getApplicationContext(), UIUpdater);
+        mContentResolver.registerContentObserver(MusicTrackCommonDataDB.CONTENT_URI, true, observer);
+
+        //LocationHelper.initialMap();
         DayMapping.initialMap();
     }
     @Override
@@ -101,13 +115,27 @@ public class StartFragment extends Fragment implements
     public void onConnected (Bundle dataBundle) {
         Log.d("daz", "GooglePlayService conntected");
         Location location = mLocationClient.getLastLocation();
-        CityCodeMapping.setLocation(location);
+        LocationHelper.setLocation(location);
+        getAddress.execute(location);
+        try {
+            currentAddress = getAddress.get();
+            LocationHelper.setCurrentAdminArea(currentAddress.getAdminArea());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    /*public void onConnected (Bundle dataBundle) {
+        Log.d("daz", "GooglePlayService conntected");
+        Location location = mLocationClient.getLastLocation();
+        LocationHelper.setLocation(location);
         getAddress.execute(location);
         Log.v("lat", Double.toString(location.getLatitude()));
         Log.v("lng", Double.toString(location.getLongitude()));
         try {
             currentAddress = getAddress.get();
-            String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
+            String cityCode = LocationHelper.getCityCode(currentAddress.getAdminArea());
             GetWeatherData weatherData = new GetWeatherData();
             weatherData.execute(cityCode);
             try {
@@ -128,7 +156,7 @@ public class StartFragment extends Fragment implements
         } catch (ExecutionException e) {
             Log.e("Error", "ExecutionException");
         }
-    }
+    }*/
 
     @Override
     public void onDisconnected () {
@@ -138,34 +166,33 @@ public class StartFragment extends Fragment implements
     public void onConnectionFailed (ConnectionResult connectionResult) {
         Log.d("LocationUpdater", "GooglePlayService failed");
     }
-/*
-    // should have a data updating center?
-    class InformationUpdater  extends AsyncTask<Void, Void, WeatherEntry> {
-        @Override
-        protected WeatherEntry doInBackground(Void... voids) {
-            Log.d("Daz", "start to update information");
-            WeatherEntry weatherEntry = null;
-            GetWeatherData weatherData = new GetWeatherData();
-            Integer cityCode = 0;
-            Log.d("Daz", "execute getting weather data");
-            weatherData.execute(cityCode);//execute getting weather data
-            try {
-                Log.d("Daz", "try to get weather");
-                weatherEntry = weatherData.get();
-                Log.d("Daz's weather string", weatherEntry.chanceOfRain);
-            } catch (CancellationException e) {
-                Log.d("Error", "This is canceled");
-            } catch (InterruptedException e) {
-                Log.d("Error", "This is interrupted");
-            } catch (ExecutionException e) {
-                Log.d("Error", "Execution error");
-            }
-            return weatherEntry;
-        }
 
-        @Override
-        protected void onPostExecute(WeatherEntry weatherEntry) {
-            Log.d("weather in post", weatherEntry.chanceOfRain);
+    private Handler UIUpdater = new Handler() {
+        public void handleMessage (Message msg) {
+            switch (msg.what) {
+                case Constant.UPDATE_START_FRAGMENT_UI:
+                    Log.d("daz", "i am going to update UI");
+                    Bundle bundle = msg.getData();
+                    String JSONContent = bundle.getString(Constant.JSON_CONTENT);
+                    Log.d("daz in start fragment", "should show json content:" + JSONContent);
+                    updateWeatherUI(JSONContent);
+                    Log.d("daz in start fragment", "completed updating");
+                    break;
+                default:
+
+            }
         }
-    }*/
+    };
+
+    public void updateWeatherUI (String weatherJSONContent) {
+        try {
+            JSONObject weatherJSONObject = new JSONObject(weatherJSONContent);
+            chanceOfRain.setText(weatherJSONObject.getString("chance-of-rain") + "%");
+            uvIndex.setText(weatherJSONObject.getString("uv"));
+            startTemperature.setText(weatherJSONObject.getString("maxT") + ".C");
+            suggestionDialog.setText(weatherJSONObject.getString("feeling") + "," + weatherJSONObject.getString("condition"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -16,7 +16,6 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
 import com.amk2.musicrunner.start.WeatherModel.WeatherWeekEntry;
 import com.amk2.musicrunner.start.WeatherModel.WeatherHourlyEntry;
-import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
@@ -63,7 +62,7 @@ public class WeatherFragment extends Fragment{
         hourlyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.hourly_weather_forecast);
         weeklyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.weekly_weather_forecast);
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        location = CityCodeMapping.getLocation();
+        location = LocationHelper.getLocation();
     }
 
     @Override
@@ -77,9 +76,9 @@ public class WeatherFragment extends Fragment{
             getAddress.execute(location);
             try {
                 currentAddress = getAddress.get();
-                String cityCode = CityCodeMapping.getCityCode(currentAddress.getAdminArea());
-                get24HoursForecast(cityCode);
-                getWeekForecast(cityCode);
+                //String cityCode = LocationHelper.getCityCode(currentAddress.getAdminArea());
+                //get24HoursForecast(cityCode);
+                //getWeekForecast(cityCode);
 
             } catch (InterruptedException e) {
                 Log.e("Error", "InterruptedException");

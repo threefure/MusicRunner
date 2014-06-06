@@ -29,7 +29,7 @@ import android.view.ViewGroup;
  */
 public class UIController implements TabListener, ViewPager.OnPageChangeListener {
 
-	private static final String TAG = "UIController";
+    private static final String TAG = "UIController";
 	private static final int TAB_SIZE = 4;
 
 	private final MusicRunnerActivity mMainActivity;

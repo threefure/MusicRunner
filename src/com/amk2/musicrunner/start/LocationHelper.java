@@ -7,11 +7,12 @@ import java.util.HashMap;
 /**
  * Created by daz on 2014/4/27.
  */
-public class CityCodeMapping {
+public class LocationHelper {
     private static HashMap<String, String> map;
     private static Location location = null;
+    private static String currentAdminArea = null;
 
-    public static void initialMap () {
+    static {
         map = new HashMap<String, String>();
         map.put("台北市", "0");
     }
@@ -24,7 +25,14 @@ public class CityCodeMapping {
         return location;
     }
 
-    public static String getCityCode(String city) {
-        return map.get(city);
+    public static void setCurrentAdminArea (String adminArea) {
+        currentAdminArea = adminArea;
+    }
+    public static String getCityCode() {
+        if (currentAdminArea == null) {
+            return map.get("台北市");
+        } else {
+            return map.get(currentAdminArea);
+        }
     }
 }
