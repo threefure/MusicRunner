@@ -107,6 +107,10 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
         for (String key:bundleMap.keySet()) {
             bundle.putString(key, bundleMap.get(key));
         }
-        mContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle, period);
+        try {
+            mContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle, period);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -4,6 +4,8 @@ package com.amk2.musicrunner;
  * Created by ktlee on 5/25/14.
  */
 public class Constant {
+    public static final boolean isServerOn = false;
+
     //main activity
     public static final long MILLISECONDS_PER_SECOND = 1L;
     public static final long ONE_MINUTE = 60L;
