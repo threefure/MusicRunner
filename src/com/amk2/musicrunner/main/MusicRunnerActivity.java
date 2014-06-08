@@ -27,12 +27,11 @@ public class MusicRunnerActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_music_runner);
-		initialize();
-        initializeLocation();
-        initializeSyncJobs();
 
-		mUIController.onActivityCreate(savedInstanceState);
-        mLocationHelper.Connect();
+        initialize();
+        initializeSyncJobs();
+        initializeLocation();
+        mUIController.onActivityCreate(savedInstanceState);
 	}
 
     @Override
@@ -60,6 +59,9 @@ public class MusicRunnerActivity extends Activity{
 
     private void initializeLocation() {
         mLocationHelper = new LocationHelper(this);
+        if (Constant.isServerOn) {
+            mLocationHelper.Connect();
+        }
     }
 
 	@Override
