@@ -1,197 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
     <LinearLayout
         android:id="@+id/running_info_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/banner"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4">
+            android:layout_weight="4" >
+
             <TextView
-                android:text="@string/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="5dp"
+                android:text="@string/distance"
                 android:textColor="@color/white" />
+
             <TextView
-                android:text="@string/zero"
+                android:id="@+id/running_distance"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/running_distance_unit"
-                android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/running_distance_unit"
                 android:gravity="right"
-                android:textColor="@color/white"
-                android:id="@+id/running_distance" />
+                android:text="@string/zero"
+                android:textColor="@color/white" />
+
             <TextView
-                android:text="@string/km"
+                android:id="@+id/running_distance_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
                 android:layout_marginRight="30dp"
-                android:textColor="@color/white"
-                android:id="@+id/running_distance_unit" />
+                android:layout_marginTop="10dp"
+                android:text="@string/km"
+                android:textColor="@color/white" />
         </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4">
+            android:layout_weight="4" >
+
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
                 android:text="@string/calorie"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="5dp"
                 android:textColor="@color/white" />
+
             <TextView
-                android:text="@string/zero"
+                android:id="@+id/running_calorie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:id="@+id/running_calorie" />
+                android:text="@string/zero"
+                android:textColor="@color/white" />
         </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4">
+            android:layout_weight="4" >
+
             <TextView
-                android:text="@string/speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="5dp"
+                android:text="@string/speed"
                 android:textColor="@color/white" />
+
             <TextView
-                android:text="@string/zero"
+                android:id="@+id/running_speed_ratio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/running_speed_ratio_unit"
-                android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
-                android:textColor="@color/white"
-                android:id="@+id/running_speed_ratio" />
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/running_speed_ratio_unit"
+                android:text="@string/zero"
+                android:textColor="@color/white" />
+
             <TextView
-                android:text="@string/speed_ratio"
+                android:id="@+id/running_speed_ratio_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:id="@+id/running_speed_ratio_unit" />
+                android:text="@string/speed_ratio"
+                android:textColor="@color/white" />
         </RelativeLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/running_timer"
-        android:layout_below="@+id/running_info_bar"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="130dp" >
+        android:layout_height="130dp"
+        android:layout_below="@+id/running_info_bar"
+        android:orientation="horizontal" >
+
         <TextView
             android:id="@+id/camera"
-            android:text="Camera put here"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"/>
+            android:layout_weight="3"
+            android:text="Camera put here" />
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10">
+            android:layout_weight="10" >
+
             <TextView
                 android:id="@+id/timer_hour"
-                android:text="@string/initial_timer_hour"
-                android:textSize="@dimen/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/colon_hour"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:text="@string/initial_timer_hour"
+                android:textSize="@dimen/timer" />
+
             <TextView
-                android:text=":"
                 android:id="@+id/colon_hour"
-                android:layout_toLeftOf="@+id/timer_minute"
-                android:textSize="@dimen/timer"
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/timer_minute"
+                android:text=":"
+                android:textSize="@dimen/timer" />
+
             <TextView
                 android:id="@+id/timer_minute"
-                android:text="@string/initial_timer_minute"
-                android:textSize="@dimen/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:text="@string/initial_timer_minute"
+                android:textSize="@dimen/timer" />
+
             <TextView
-                android:text=":"
                 android:id="@+id/colon_min"
-                android:layout_toRightOf="@+id/timer_minute"
-                android:textSize="@dimen/timer"
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/timer_minute"
+                android:text=":"
+                android:textSize="@dimen/timer" />
+
             <TextView
                 android:id="@+id/timer_second"
-                android:layout_toRightOf="@+id/colon_min"
-                android:layout_centerVertical="true"
-                android:text="@string/initial_timer_second"
-                android:textSize="@dimen/timer"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/colon_min"
+                android:text="@string/initial_timer_second"
+                android:textSize="@dimen/timer" />
         </RelativeLayout>
+
         <TextView
-            android:text=""
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"/>
-
+            android:layout_weight="3"
+            android:text="" />
     </LinearLayout>
+
     <LinearLayout
+        android1:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/stop_running"
-            android:text="@string/stop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4"/>
+            android:layout_weight="4"
+            android:text="@string/stop" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/pause_running"
-            android:text="@string/pause"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:text="@string/pause" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
     </LinearLayout>
 
-<!--TextView
+    <!--
+TextView
     android:id="@+id/timer_hour"
     android:text="@string/initial_timer_hour"
     android:layout_width="wrap_content"
@@ -218,5 +245,41 @@
     android:id="@+id/start_running"
     android:text="Start"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" /-->
+    android:layout_height="wrap_content" /
+    -->
+
+    <TabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/running_timer" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </TabWidget>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" >
+            </FrameLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/running_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+    </TabHost>
+
 </RelativeLayout>

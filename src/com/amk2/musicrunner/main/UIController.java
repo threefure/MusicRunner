@@ -1,8 +1,9 @@
+
 package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.discover.DiscoverFragment;
-import com.amk2.musicrunner.music.MusicFragment;
+import com.amk2.musicrunner.music.MainMusicFragment;
 import com.amk2.musicrunner.my.MyFragment;
 import com.amk2.musicrunner.start.StartFragment;
 import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
@@ -15,337 +16,273 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
- * Manipulate most of UI controls in this app.
- * Note: Operate the UI as far as possible in this class, not in main activity.
+ * Manipulate most of UI controls in this app. Note: Operate the UI as far as
+ * possible in this class, not in main activity.
  *
  * @author DannyLin
  */
 public class UIController implements TabListener, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "UIController";
-	private static final int TAB_SIZE = 4;
+    private static final int TAB_SIZE = 4;
 
-	private final MusicRunnerActivity mMainActivity;
+    private final MusicRunnerActivity mMainActivity;
 
-	private FragmentManager mFragmentManager;
-	private ActionBar mActionBar;
-	private SwipeControllableViewPager mViewPager;
-	private TabViewPagerAdapter mPagerAdapter;
+    private FragmentManager mFragmentManager;
+    private ActionBar mActionBar;
+    private SwipeControllableViewPager mViewPager;
+    private MainTabViewPagerAdapter mMainPagerAdapter;
 
-	// Fragments for each tab
-	private StartFragment mStartFragment;
-	private WeatherFragment mWeatherFragment;
-	private MyFragment mMyFragment;
-	private MusicFragment mMusicFragment;
-	private DiscoverFragment mDiscoverFragment;
+    // Fragments for each tab
+    private StartFragment mStartFragment;
+    private WeatherFragment mWeatherFragment;
+    private MyFragment mMyFragment;
+    private MainMusicFragment mMusicFragment;
+    private DiscoverFragment mDiscoverFragment;
 
-	public static class TabState {
-		public static final int START = 0;
-		public static final int MY = 1;
-		public static final int MUSIC = 2;
-		public static final int DISCOVER = 3;
-	}
+    public static class TabState {
+        public static final int START = 0;
+        public static final int MY = 1;
+        public static final int MUSIC = 2;
+        public static final int DISCOVER = 3;
+    }
 
-	public static class FragmentTag {
-		public static final String START_FRAGMENT_TAG = "start_fragment";
-		public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
-		public static final String MY_FRAGMENT_TAG = "my_fragment";
-		public static final String MUSIC_FRAGMENT_TAG = "music_fragment";
-		public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
-	}
+    public static class FragmentTag {
+        public static final String START_FRAGMENT_TAG = "start_fragment";
+        public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
+        public static final String MY_FRAGMENT_TAG = "my_fragment";
+        public static final String MUSIC_FRAGMENT_TAG = "music_fragment";
+        public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
+    }
 
-	public UIController(MusicRunnerActivity activity) {
-		mMainActivity = activity;
-		mFragmentManager = activity.getFragmentManager();
-		mActionBar = activity.getActionBar();
-	}
+    public UIController(MusicRunnerActivity activity) {
+        mMainActivity = activity;
+        mFragmentManager = activity.getFragmentManager();
+        mActionBar = activity.getActionBar();
+    }
 
-	public void onActivityCreate(Bundle savedInstanceState) {
-		initialize();
-	}
+    public void onActivityCreate(Bundle savedInstanceState) {
+        initialize();
+    }
 
-	private void initialize() {
-		initActionBar();
-		initFragments();
-		initViewPager();
-	}
+    private void initialize() {
+        initActionBar();
+        initFragments();
+        initViewPager();
+    }
 
-	/**
-	 * Create all fragments and add as children of the view pager.
-	 * The pager adapter will only change the visibility(show/hide).
-	 * It'll never create/destroy fragments.
-	 *
-	 * If it's after screen rotation, the fragment have been recreated by
-	 * the FragmentManager. So first see if there're already the target
-	 * fragment existing.
-	 */
-	private void initFragments() {
-		FragmentTransaction transaction = mFragmentManager.beginTransaction();
+    /**
+     * Create all fragments and add as children of the view pager. The pager
+     * adapter will only change the visibility(show/hide). It'll never
+     * create/destroy fragments. If it's after screen rotation, the fragment
+     * have been recreated by the FragmentManager. So first see if there're
+     * already the target fragment existing.
+     */
+    private void initFragments() {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
 
-		// Init StartFragment
-		mStartFragment = (StartFragment) mFragmentManager
-				.findFragmentByTag(FragmentTag.START_FRAGMENT_TAG);
-		if (mStartFragment == null) {
-			mStartFragment = new StartFragment();
-			transaction.add(R.id.tab_pager, mStartFragment,
-					FragmentTag.START_FRAGMENT_TAG);
-		}
+        // Init StartFragment
+        mStartFragment = (StartFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.START_FRAGMENT_TAG);
+        if (mStartFragment == null) {
+            mStartFragment = new StartFragment();
+            transaction.add(R.id.tab_pager, mStartFragment, FragmentTag.START_FRAGMENT_TAG);
+        }
 
-		// Init MyFragment
-		mMyFragment = (MyFragment) mFragmentManager
-				.findFragmentByTag(FragmentTag.MY_FRAGMENT_TAG);
-		if (mMyFragment == null) {
-			mMyFragment = new MyFragment();
-			transaction.add(R.id.tab_pager, mMyFragment,
-					FragmentTag.MY_FRAGMENT_TAG);
-		}
+        // Init MyFragment
+        mMyFragment = (MyFragment) mFragmentManager.findFragmentByTag(FragmentTag.MY_FRAGMENT_TAG);
+        if (mMyFragment == null) {
+            mMyFragment = new MyFragment();
+            transaction.add(R.id.tab_pager, mMyFragment, FragmentTag.MY_FRAGMENT_TAG);
+        }
 
-		// Init MusicFragment
-		mMusicFragment = (MusicFragment) mFragmentManager
-				.findFragmentByTag(FragmentTag.MUSIC_FRAGMENT_TAG);
-		if (mMusicFragment == null) {
-			mMusicFragment = new MusicFragment();
-			transaction.add(R.id.tab_pager, mMusicFragment,
-					FragmentTag.MUSIC_FRAGMENT_TAG);
-		}
+        // Init MusicFragment
+        mMusicFragment = (MainMusicFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.MUSIC_FRAGMENT_TAG);
+        if (mMusicFragment == null) {
+            mMusicFragment = new MainMusicFragment();
+            transaction.add(R.id.tab_pager, mMusicFragment, FragmentTag.MUSIC_FRAGMENT_TAG);
+        }
 
-		// Init DiscoverFragment
-		mDiscoverFragment = (DiscoverFragment) mFragmentManager
-				.findFragmentByTag(FragmentTag.DISCOVER_FRAGMENT_TAG);
-		if (mDiscoverFragment == null) {
-			mDiscoverFragment = new DiscoverFragment();
-			transaction.add(R.id.tab_pager, mDiscoverFragment,
-					FragmentTag.DISCOVER_FRAGMENT_TAG);
-		}
+        // Init DiscoverFragment
+        mDiscoverFragment = (DiscoverFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.DISCOVER_FRAGMENT_TAG);
+        if (mDiscoverFragment == null) {
+            mDiscoverFragment = new DiscoverFragment();
+            transaction.add(R.id.tab_pager, mDiscoverFragment, FragmentTag.DISCOVER_FRAGMENT_TAG);
+        }
 
-		transaction.hide(mStartFragment);
-		transaction.hide(mMyFragment);
-		transaction.hide(mMusicFragment);
-		transaction.hide(mDiscoverFragment);
-		transaction.commit();
-	}
+        transaction.hide(mStartFragment);
+        transaction.hide(mMyFragment);
+        transaction.hide(mMusicFragment);
+        transaction.hide(mDiscoverFragment);
+        transaction.commit();
+    }
 
-	private void initViewPager() {
-		mViewPager = (SwipeControllableViewPager)mMainActivity.findViewById(R.id.tab_pager);
-		mPagerAdapter = new TabViewPagerAdapter(mFragmentManager);
-		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setSwipeable(true);
-		mViewPager.setOnPageChangeListener(this);
-	}
+    private void initViewPager() {
+        mViewPager = (SwipeControllableViewPager) mMainActivity.findViewById(R.id.tab_pager);
+        mMainPagerAdapter = new MainTabViewPagerAdapter(mFragmentManager,TAB_SIZE);
+        mViewPager.setAdapter(mMainPagerAdapter);
+        mViewPager.setSwipeable(true);
+        mViewPager.setOnPageChangeListener(this);
+    }
 
-	private void initActionBar() {
-		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		// Add tabs
-		mActionBar.addTab(mActionBar.newTab()
-				.setText(mMainActivity.getString(R.string.start_tab))
-				.setTabListener(this));
-		mActionBar.addTab(mActionBar.newTab()
-				.setText(mMainActivity.getString(R.string.my_tab))
-				.setTabListener(this));
-		mActionBar.addTab(mActionBar.newTab()
-				.setText(mMainActivity.getString(R.string.music_tab))
-				.setTabListener(this));
-		mActionBar.addTab(mActionBar.newTab()
-				.setText(mMainActivity.getString(R.string.discover_tab))
-				.setTabListener(this));
-	}
+    private void initActionBar() {
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // Add tabs
+        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.start_tab))
+                .setTabListener(this));
+        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.my_tab))
+                .setTabListener(this));
+        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.music_tab))
+                .setTabListener(this));
+        mActionBar.addTab(mActionBar.newTab()
+                .setText(mMainActivity.getString(R.string.discover_tab)).setTabListener(this));
+    }
 
-	public void onActivityRestoreInstanceState(Bundle savedInstanceState) {
+    public void onActivityRestoreInstanceState(Bundle savedInstanceState) {
 
-	}
+    }
 
-	public void onActivityResume() {
+    public void onActivityResume() {
 
-	}
+    }
 
-	public void onActivitySaveInstanceState(Bundle outState) {
+    public void onActivitySaveInstanceState(Bundle outState) {
 
-	}
+    }
 
-	public void onActivityPause() {
+    public void onActivityPause() {
 
-	}
+    }
 
-	public void onActivityDestroy() {
+    public void onActivityDestroy() {
 
-	}
+    }
 
-	public void onActivityBackPressed() {
-		if (mViewPager.getCurrentItem() == 0
-				&& mPagerAdapter.getFragment(0) instanceof WeatherFragment) {
-			((WeatherFragment) mPagerAdapter.getFragment(0))
-					.backPressed();
-		} else {
-			mMainActivity.finish();
-		}
-	}
+    public void onActivityBackPressed() {
+        if (mViewPager.getCurrentItem() == 0
+                && mMainPagerAdapter.getFragment(0) instanceof WeatherFragment) {
+            ((WeatherFragment) mMainPagerAdapter.getFragment(0)).backPressed();
+        } else {
+            mMainActivity.finish();
+        }
+    }
 
-	/**
-	 * Control which fragment needed to be displayed according to the tab
-	 *
-	 * @author DannyLin
-	 */
-	public class TabViewPagerAdapter extends PagerAdapter implements StartTabFragmentListener {
+    /**
+     * Control which fragment needed to be displayed according to the tab
+     *
+     * @author DannyLin
+     */
+    public class MainTabViewPagerAdapter extends AbstractTabViewPagerAdapter implements StartTabFragmentListener {
 
-		private FragmentManager mFm;
-		private FragmentTransaction mCurTransaction = null;
-		private Fragment mFragmentAtStartTab;
+        private Fragment mFragmentAtStartTab;
 
-		public TabViewPagerAdapter(FragmentManager fm) {
-			mFm = fm;
-			setSwitchFragmentListener();
-		}
+        public MainTabViewPagerAdapter(FragmentManager fm, int size) {
+            super(fm, size);
+            setSwitchFragmentListener();
+        }
 
-		private void setSwitchFragmentListener() {
-			mStartFragment.setStartTabFragmentListener(this);
-		}
+        private void setSwitchFragmentListener() {
+            mStartFragment.setStartTabFragmentListener(this);
+        }
 
-		/**
-		 * Show fragment
-		 * Fragments will be instantiated near the current fragment.
-		 * Ex: Current = Fragment2 => Fragment1 and Fragment3 will be instantiated.
-		 */
-		@Override
-		public Object instantiateItem(ViewGroup container, int position) {
-			if (mCurTransaction == null) {
-				mCurTransaction = mFm.beginTransaction();
-			}
+        @Override
+        protected Fragment getFragment(int position) {
+            switch (position) {
+                case TabState.START:
+                    if (mFragmentAtStartTab == null) {
+                        mFragmentAtStartTab = mStartFragment;
+                    }
+                    return mFragmentAtStartTab;
+                case TabState.MY:
+                    return mMyFragment;
+                case TabState.MUSIC:
+                    return mMusicFragment;
+                case TabState.DISCOVER:
+                    return mDiscoverFragment;
+            }
+            return null;
+        }
 
-			Log.d(TAG, "Show Fragment = " + (position+1));
-			Fragment f = getFragment(position);
-			mCurTransaction.show(f);
+        @Override
+        public int getItemPosition(Object object) {
+            if (object instanceof StartFragment && mFragmentAtStartTab instanceof WeatherFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof WeatherFragment && mFragmentAtStartTab instanceof StartFragment) {
+                return POSITION_NONE;
+            }
+            return POSITION_UNCHANGED;
+        }
 
-			return f;
-		}
+        @Override
+        public void onSwitchBetweenStartAndWeatherFragment() {
+            if (mCurTransaction == null) {
+                mCurTransaction = mFragmentManager.beginTransaction();
+            }
+            if (mFragmentAtStartTab instanceof StartFragment) {
+                addWeatherFragment();
+                mFragmentAtStartTab = mWeatherFragment;
+                ((WeatherFragment) mFragmentAtStartTab).setStartTabFragmentListener(this);
+            } else { // Instance of WeatherFragment
+                mCurTransaction.remove(mFragmentAtStartTab);
+                mFragmentAtStartTab = mStartFragment;
+            }
+            notifyDataSetChanged();
+        }
 
-		private Fragment getFragment(int position) {
-			switch(position) {
-			case TabState.START:
-				if(mFragmentAtStartTab == null) {
-					mFragmentAtStartTab = mStartFragment;
-				}
-				return mFragmentAtStartTab;
-			case TabState.MY:
-				return mMyFragment;
-			case TabState.MUSIC:
-				return mMusicFragment;
-			case TabState.DISCOVER:
-				return mDiscoverFragment;
-			}
-			return null;
-		}
+        private void addWeatherFragment() {
+            mWeatherFragment = (WeatherFragment) mFragmentManager
+                    .findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
+            if (mWeatherFragment == null) {
+                mWeatherFragment = new WeatherFragment();
+                mCurTransaction.add(R.id.tab_pager, mWeatherFragment,
+                        FragmentTag.WEATHER_FRAGMENT_TAG);
+            }
+        }
 
-		/**
-		 * We override this method to just hide the fragment instead of destroying it.
-		 */
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			if (mCurTransaction == null) {
-				mCurTransaction = mFm.beginTransaction();
-			}
-			mCurTransaction.hide((Fragment) object);
-		}
+    }
 
-		
-		@Override
-		public void finishUpdate(ViewGroup container) {
-			if (mCurTransaction != null) {
-				mCurTransaction.commit();
-				mCurTransaction = null;
-			}
-		}
+    @Override
+    public void onPageScrollStateChanged(int arg0) {
+        // TODO Auto-generated method stub
 
-		@Override
-		public int getCount() {
-			return TAB_SIZE;
-		}
+    }
 
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return ((Fragment) object).getView() == view;
-		}
+    @Override
+    public void onPageScrolled(int arg0, float arg1, int arg2) {
+        // TODO Auto-generated method stub
 
-		@Override
-		public int getItemPosition(Object object) {
-			if (object instanceof StartFragment
-					&& mFragmentAtStartTab instanceof WeatherFragment) {
-				return POSITION_NONE;
-			}
-			if (object instanceof WeatherFragment
-					&& mFragmentAtStartTab instanceof StartFragment) {
-				return POSITION_NONE;
-			}
-			return POSITION_UNCHANGED;
-		}
+    }
 
-		@Override
-		public void onSwitchBetweenStartAndWeatherFragment() {
-			if (mCurTransaction == null) {
-				mCurTransaction = mFragmentManager.beginTransaction();
-			}
-			if (mFragmentAtStartTab instanceof StartFragment) {
-				addWeatherFragment();
-				mFragmentAtStartTab = mWeatherFragment;
-				((WeatherFragment) mFragmentAtStartTab).setStartTabFragmentListener(this);
-			} else { // Instance of WeatherFragment
-				mCurTransaction.remove(mFragmentAtStartTab);
-				mFragmentAtStartTab = mStartFragment;
-			}
-			notifyDataSetChanged();
-		}
+    @Override
+    public void onPageSelected(int position) {
+        mActionBar.setSelectedNavigationItem(position);
+    }
 
-		private void addWeatherFragment() {
-			mWeatherFragment = (WeatherFragment)mFragmentManager.findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
-			if(mWeatherFragment == null) {
-				mWeatherFragment = new WeatherFragment();
-				mCurTransaction.add(R.id.tab_pager, mWeatherFragment, FragmentTag.WEATHER_FRAGMENT_TAG);
-			}
-		}
+    @Override
+    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        if (mViewPager != null) {
+            mViewPager.setCurrentItem(tab.getPosition(), true);
+            Log.d(TAG, "Set current position = " + tab.getPosition());
+        }
+    }
 
-	}
+    @Override
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void onPageSelected(int position) {
-		mActionBar.setSelectedNavigationItem(position);
-	}
-
-	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		if(mViewPager != null) {
-			mViewPager.setCurrentItem(tab.getPosition(),true);
-			Log.d(TAG, "Set current position = " + tab.getPosition());
-		}
-	}
-
-	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
 }

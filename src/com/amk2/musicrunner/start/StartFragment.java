@@ -1,7 +1,9 @@
 package com.amk2.musicrunner.start;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +22,8 @@ import com.amk2.musicrunner.MusicTrackMetaData;
 import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
 import com.amk2.musicrunner.TableObserver;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.MusicService;
+import com.amk2.musicrunner.running.RunningActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,12 +35,16 @@ import java.util.Date;
 /**
  * Created by daz on 2014/4/22.
  */
-public class StartFragment extends Fragment{
+public class StartFragment extends Fragment implements View.OnClickListener {
 
     public interface StartTabFragmentListener {
     	void onSwitchBetweenStartAndWeatherFragment();
     }
 
+    private Activity mActivity;
+    private Intent mStartMusicServiceIntent;
+
+    private Button mGoRunningButton;
     private TextView chanceOfRain;
     private TextView uvIndex;
     private TextView humidity;
@@ -64,7 +73,10 @@ public class StartFragment extends Fragment{
     @Override
     public void onActivityCreated (Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
+        mActivity = getActivity();
+        mStartMusicServiceIntent = new Intent(getActivity(),MusicService.class);
         View thisView = getView();
+        mGoRunningButton = (Button) thisView.findViewById(R.id.go_running_button);
         chanceOfRain     = (TextView) thisView.findViewById(R.id.chance_of_rain_container);
         uvIndex          = (TextView) thisView.findViewById(R.id.uv_index_container);
         humidity         = (TextView) thisView.findViewById(R.id.humidity_container);
@@ -79,15 +91,23 @@ public class StartFragment extends Fragment{
             	mStartTabFragmentListener.onSwitchBetweenStartAndWeatherFragment();
             }
         });
+        mGoRunningButton.setOnClickListener(this);
 
         checkWeatherInfo();
     }
+
     @Override
     public void onStart() {
         super.onStart();
     }
+
     @Override
-    public void onPause () {
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
         super.onPause();
     }
 
@@ -168,4 +188,15 @@ public class StartFragment extends Fragment{
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.go_running_button:
+                mActivity.startService(mStartMusicServiceIntent);
+                startActivity(new Intent(mActivity,RunningActivity.class));
+                break;
+        }
+    }
+
 }
