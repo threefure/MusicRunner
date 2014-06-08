@@ -1,17 +1,24 @@
 package com.amk2.musicrunner.running;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,8 +26,31 @@ import java.util.TimerTask;
 /**
  * Created by ktlee on 5/10/14.
  */
-public class RunningActivity extends Activity {
-    protected static final int STATE_RUNNING = 1;
+public class RunningActivity extends Activity implements TabHost.OnTabChangeListener,
+        ViewPager.OnPageChangeListener, View.OnClickListener {
+
+    public static final int STATE_RUNNING = 1;
+    public static final int TAB_SIZE = 2;
+    public static final String MAP_TAB_TAG = "map_tab_tag";
+    public static final String MUSIC_TAB_TAG = "music_tab_tag";
+
+    public static class RunningFragmentTag {
+        public static final String MAP_FRAGMENT_TAG = "map_fragment_tag";
+        public static final String MUSIC_FRAGMENT_TAG = "music_fragment_tag";
+    }
+
+    public static class RunningTabState {
+        public static final int MAP = 0;
+        public static final int MUSIC = 1;
+    }
+
+    private FragmentManager mFragmentManager;
+
+    private TabHost mTabHost;
+    private ViewPager mRunningViewPager;
+    private RunningTabViewPagerAdapter mRunningTabViewPagerAdapter;
+    private MapFragment mMapFragment;
+    private MusicFragment mMusicFragment;
 
     private TextView runningDistance;
     private TextView runningCalorie;
@@ -30,6 +60,7 @@ public class RunningActivity extends Activity {
     private TextView sec;
 
     private Button pauseButton;
+    private Button mStopButton;
 
     private boolean isRunning = false;
     private int totalSec   = 0;
@@ -47,25 +78,100 @@ public class RunningActivity extends Activity {
 
     private NotificationCenter notificationCenter;
 
+    public class RunningTabViewPagerAdapter extends AbstractTabViewPagerAdapter {
+
+        public RunningTabViewPagerAdapter(FragmentManager fm, int size) {
+            super(fm, size);
+        }
+
+        @Override
+        protected Fragment getFragment(int position) {
+            switch(position) {
+            case RunningTabState.MAP:
+                return mMapFragment;
+            case RunningTabState.MUSIC:
+                return mMusicFragment;
+            }
+            return null;
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
+        initialize();
+    }
 
+    private void initialize() {
+        findViews();
+        initTabs();
+        initFragments();
+        initViewPager();
+        Timer timer = new Timer();
+        timer.schedule(runningTask, 0, 1000);
+        notificationCenter = new NotificationCenter(this);
+    }
+
+    private void initViewPager() {
+        mRunningTabViewPagerAdapter = new RunningTabViewPagerAdapter(mFragmentManager,TAB_SIZE);
+        mRunningViewPager.setAdapter(mRunningTabViewPagerAdapter);
+        mRunningViewPager.setOnPageChangeListener(this);
+    }
+
+    private void initTabs() {
+        mTabHost.setup();
+        mTabHost.addTab(mTabHost.newTabSpec(MAP_TAB_TAG)
+                .setIndicator(getString(R.string.map_tab_text))
+                .setContent(new RunningTabContentFactory(this)));
+        mTabHost.addTab(mTabHost.newTabSpec(MUSIC_TAB_TAG)
+                .setIndicator(getString(R.string.music_tab_text))
+                .setContent(new RunningTabContentFactory(this)));
+        mTabHost.setOnTabChangedListener(this);
+    }
+
+    private void initFragments() {
+        mFragmentManager = getFragmentManager();
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+        // Init MapFragment
+        mMapFragment = (MapFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MAP_FRAGMENT_TAG);
+        if(mMapFragment == null) {
+            mMapFragment = new MapFragment();
+            transaction.add(R.id.running_view_pager, mMapFragment, RunningFragmentTag.MAP_FRAGMENT_TAG);
+        }
+
+        // Init MusicFragment
+        mMusicFragment = (MusicFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MUSIC_FRAGMENT_TAG);
+        if(mMusicFragment == null) {
+            mMusicFragment = new MusicFragment();
+            transaction.add(R.id.running_view_pager, mMusicFragment, RunningFragmentTag.MUSIC_FRAGMENT_TAG);
+        }
+
+        transaction.hide(mMapFragment);
+        transaction.hide(mMusicFragment);
+
+        transaction.commit();
+    }
+
+
+    private void findViews() {
         hour = (TextView) findViewById(R.id.timer_hour);
-        min  = (TextView) findViewById(R.id.timer_minute);
-        sec  = (TextView) findViewById(R.id.timer_second);
-        runningDistance    = (TextView) findViewById(R.id.running_distance);
-        runningCalorie     = (TextView) findViewById(R.id.running_calorie);
-        runningSpeedRatio  = (TextView) findViewById(R.id.running_speed_ratio);
+        min = (TextView) findViewById(R.id.timer_minute);
+        sec = (TextView) findViewById(R.id.timer_second);
+
+        runningDistance = (TextView) findViewById(R.id.running_distance);
+        runningCalorie = (TextView) findViewById(R.id.running_calorie);
+        runningSpeedRatio = (TextView) findViewById(R.id.running_speed_ratio);
 
         pauseButton = (Button) findViewById(R.id.pause_running);
         pauseButton.setOnClickListener(buttonClickListener);
+        mStopButton = (Button)findViewById(R.id.stop_running);
+        mStopButton.setOnClickListener(this);
 
-        Timer timer = new Timer();
-        timer.schedule(runningTask, 0, 1000);
-
-        notificationCenter = new NotificationCenter(this);
+        mTabHost = (TabHost)findViewById(android.R.id.tabhost);
+        mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
     }
 
     private TimerTask runningTask = new TimerTask() {
@@ -204,4 +310,42 @@ public class RunningActivity extends Activity {
         getMenuInflater().inflate(R.menu.music_runner, menu);
         return true;
     }
+
+    @Override
+    public void onPageScrollStateChanged(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPageScrolled(int arg0, float arg1, int arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPageSelected(int pos) {
+        mTabHost.setCurrentTab(pos);
+    }
+
+    @Override
+    public void onTabChanged(String tabId) {
+        mRunningViewPager.setCurrentItem(mTabHost.getCurrentTab());
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.stop_running:
+                stopService(new Intent(this,MusicService.class));
+                finish();
+                break;
+        }
+    }
+
 }
