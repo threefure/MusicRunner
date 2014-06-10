@@ -1,4 +1,4 @@
-package com.amk2.musicrunner.music;
+package com.amk2.musicrunner.setting;
 
 import com.amk2.musicrunner.R;
 
@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MusicFragment extends Fragment {
+public class SettingFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.music_fragment, container, false);
+		return inflater.inflate(R.layout.discover_fragment, container, false);
 	}
 
 	@Override

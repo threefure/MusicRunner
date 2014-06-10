@@ -1,12 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/white" >
 
     <TextView
+        android:id="@+id/music_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit MusicFragment here!" />
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/previous_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/music_title"
+        android:text="@string/previous_button_text"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/next_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/music_title"
+        android:layout_toRightOf="@+id/previous_button"
+        android:text="@string/next_button_text"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/pause_play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/previous_button"
+        android:visibility="invisible" />
 
 </RelativeLayout>
