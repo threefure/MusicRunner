@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="banner">#33000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#DDDDDD</color>
+    <color name="darkgray">#AAAAAA</color>
+
+    <!-- Running Activity tab view-->
+    <color name="running_tab_widget_background">#000000</color>
+    <color name="running_tab_item_selected">#000000</color>
+    <color name="running_tab_item_normal">#EBEBEB</color>
+    <color name="running_tab_item_text_selected">#FFFFFF</color>
+    <color name="running_tab_item_text_normal">#000000</color>
+</resources>

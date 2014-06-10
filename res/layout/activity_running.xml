@@ -254,7 +254,10 @@ TextView
         android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout1"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/running_timer" >
+        android:layout_below="@+id/running_timer"
+        android:paddingRight="@dimen/tab_view_padding_left_right"
+        android:paddingLeft="@dimen/tab_view_padding_left_right"
+        android:paddingBottom="@dimen/tab_view_padding_bottom" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -264,7 +267,9 @@ TextView
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="@dimen/tab_height"
+                android:showDividers="none"
+                android:background="@drawable/running_tab_widget_background" >
             </TabWidget>
 
             <FrameLayout

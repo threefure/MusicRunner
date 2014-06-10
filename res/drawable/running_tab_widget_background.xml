@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <solid android:color="@color/running_tab_widget_background" />
+    <corners
+        android:bottomLeftRadius="@dimen/running_tab_widget_shape_corner"
+        android:bottomRightRadius="@dimen/running_tab_widget_shape_corner"
+        android:topLeftRadius="@dimen/running_tab_widget_shape_corner"
+        android:topRightRadius="@dimen/running_tab_widget_shape_corner" />
+</shape>
