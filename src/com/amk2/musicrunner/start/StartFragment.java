@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,7 +45,7 @@ public class StartFragment extends Fragment implements View.OnClickListener {
     private Activity mActivity;
     private Intent mStartMusicServiceIntent;
 
-    private Button mGoRunningButton;
+    private ImageButton mGoRunningButton;
     private TextView chanceOfRain;
     private TextView uvIndex;
     private TextView humidity;
@@ -76,7 +77,7 @@ public class StartFragment extends Fragment implements View.OnClickListener {
         mActivity = getActivity();
         mStartMusicServiceIntent = new Intent(getActivity(),MusicService.class);
         View thisView = getView();
-        mGoRunningButton = (Button) thisView.findViewById(R.id.go_running_button);
+        mGoRunningButton = (ImageButton) thisView.findViewById(R.id.go_running_button);
         chanceOfRain     = (TextView) thisView.findViewById(R.id.chance_of_rain_container);
         uvIndex          = (TextView) thisView.findViewById(R.id.uv_index_container);
         humidity         = (TextView) thisView.findViewById(R.id.humidity_container);
