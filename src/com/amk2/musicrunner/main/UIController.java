@@ -165,9 +165,9 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
     }
 
     public void onActivityBackPressed() {
-        if (mViewPager.getCurrentItem() == 0
-                && mMainPagerAdapter.getFragment(0) instanceof WeatherFragment) {
-            ((WeatherFragment) mMainPagerAdapter.getFragment(0)).backPressed();
+        if (mViewPager.getCurrentItem() == TabState.START
+                && mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
+            ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).backPressed();
         } else {
             mMainActivity.finish();
         }
