@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -122,13 +123,28 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private void initTabs() {
         mTabHost.setup();
-        mTabHost.addTab(mTabHost.newTabSpec(MAP_TAB_TAG)
-                .setIndicator(getString(R.string.map_tab_text))
-                .setContent(new RunningTabContentFactory(this)));
-        mTabHost.addTab(mTabHost.newTabSpec(MUSIC_TAB_TAG)
-                .setIndicator(getString(R.string.music_tab_text))
-                .setContent(new RunningTabContentFactory(this)));
+        addTab(MAP_TAB_TAG,getString(R.string.map_tab_text));
+        addTab(MUSIC_TAB_TAG,getString(R.string.music_tab_text));
         mTabHost.setOnTabChangedListener(this);
+    }
+
+    private void addTab(String tag, String labelText) {
+        View tabView = getTabView(tag);
+        TextView tabText = (TextView)tabView.findViewById(R.id.tab_text);
+        tabText.setText(labelText);
+        mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
+                .setContent(new RunningTabContentFactory(this)));
+    }
+
+    private View getTabView(String tag) {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View tabView = new View(this);
+        if(MAP_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.running_map_tab, null);
+        } else if(MUSIC_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.running_music_tab, null);
+        }
+        return tabView;
     }
 
     private void initFragments() {

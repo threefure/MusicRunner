@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" >
+        <shape>
+            <solid android:color="@color/running_tab_item_selected" />
+            <corners
+                android:bottomRightRadius="@dimen/running_tab_widget_shape_corner"
+                android:topRightRadius="@dimen/running_tab_widget_shape_corner" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <solid android:color="@color/running_tab_item_normal" />
+            <corners
+                android:bottomRightRadius="@dimen/running_tab_widget_shape_corner"
+                android:topRightRadius="@dimen/running_tab_widget_shape_corner" />
+        </shape>
+    </item>
+</selector>
