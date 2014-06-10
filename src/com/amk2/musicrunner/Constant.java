@@ -30,7 +30,7 @@ public class Constant {
     public static final String DB_KEY_YOUBIKE = "com.amk2.musicrunner.youbike";
 
     // Server API
-    public static final String HOST = "http://ec2-54-186-18-12.us-west-2.compute.amazonaws.com";
+    public static final String HOST = "http://ec2-54-187-120-188.us-west-2.compute.amazonaws.com";
     public static final String PORT = ":8080";
     public static final String baseWeatherUrlString = HOST + PORT + "/weatherJSON";//TODO need to append city query behind
     public static final String baseWeatherWeekUrlString = HOST + PORT + "/weatherWeekJSON";//TODO need to append city query behind

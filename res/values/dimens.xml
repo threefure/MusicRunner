@@ -6,7 +6,7 @@
 
     <!-- Start Fragment -->
     <dimen name="start_temperature">100dp</dimen>
-    <dimen name="start_city">18dp</dimen>
+    <dimen name="start_city">25dp</dimen>
 
     <!-- Running Activity -->
     <dimen name="timer">50dp</dimen>

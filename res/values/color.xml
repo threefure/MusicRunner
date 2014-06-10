@@ -5,4 +5,6 @@
     <color name="black">#000000</color>
     <color name="gray">#DDDDDD</color>
     <color name="darkgray">#AAAAAA</color>
+    <color name="yellow">#FFD700</color>
+    <color name="darkblue">#104E8B</color>
 </resources>

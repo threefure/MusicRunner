@@ -58,7 +58,7 @@ public class MusicRunnerActivity extends Activity{
 */    }
 
     private void initializeLocation() {
-        mLocationHelper = new LocationHelper(this);
+        mLocationHelper = new LocationHelper(this.getApplicationContext());
         if (Constant.isServerOn) {
             mLocationHelper.Connect();
         }

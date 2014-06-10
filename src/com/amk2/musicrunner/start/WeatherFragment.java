@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -37,6 +41,13 @@ import java.util.concurrent.ExecutionException;
  */
 public class WeatherFragment extends Fragment{
     private static final LinearLayout.LayoutParams weeklyParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+
+    private String sunnyUri     = "@drawable/sunny";
+    private String cloudyUri    = "@drawable/cloudy";
+    private String rainUri      = "@drawable/rainy";
+    private String heavyrainUri = "@drawable/heavilyrain";
+
+    HashMap<String, Integer> condIndex = new HashMap<String, Integer>();
 
     private LinearLayout hourlyWeatherForecast;
     private LinearLayout weeklyWeatherForecast;
@@ -60,6 +71,16 @@ public class WeatherFragment extends Fragment{
         super.onCreate(savedInstanceState);
         getAddress = new GetAddressFromLocation(this.getActivity().getApplicationContext());
         mContentResolver = this.getActivity().getContentResolver();
+
+        int sunnyRes       = getResources().getIdentifier(sunnyUri, null, this.getActivity().getPackageName());
+        int cloudyRes      = getResources().getIdentifier(cloudyUri, null, this.getActivity().getPackageName());
+        int rainyRes       = getResources().getIdentifier(rainUri, null, this.getActivity().getPackageName());
+        int heavilyrainRes = getResources().getIdentifier(heavyrainUri, null, this.getActivity().getPackageName());
+
+        condIndex.put("sunny", sunnyRes);
+        condIndex.put("cloudy", cloudyRes);
+        condIndex.put("rainy", rainyRes);
+        condIndex.put("heavilyrain", heavilyrainRes);
     }
 
     @Override
@@ -80,8 +101,12 @@ public class WeatherFragment extends Fragment{
     @Override
     public void onStart() {
         super.onStart();
-        updateWeeklyForecast();
-        update24HoursForecast();
+        try {
+            updateWeeklyForecast();
+            update24HoursForecast();
+        } catch (CursorIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateWeeklyForecast () {
@@ -154,11 +179,16 @@ public class WeatherFragment extends Fragment{
         View hourly = inflater.inflate(R.layout.hourly_template, null);
         TextView time = (TextView) hourly.findViewById(R.id.time);
         time.setText(t24HoursJSONArray.getString("time") + ":00");
+        ImageView weatherGraph = (ImageView) hourly.findViewById(R.id.weather_graph_24hrs);
+
+        Log.d("daz in weather condindex=", condIndex.get(t24HoursJSONArray.getString("condIndex")).toString());
+        Drawable res = getResources().getDrawable(condIndex.get(t24HoursJSONArray.getString("condIndex")));
+        weatherGraph.setImageDrawable(res);
         TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
         temperature.setText(t24HoursJSONArray.getString("maxT") + "/" + t24HoursJSONArray.getString("minT") + ".C");
         hourlyWeatherForecast.addView(hourly);
     }
-
+/*
     private void get24HoursForecast (String cityCode) {
         GetWeather24HoursData weatherHourData = new GetWeather24HoursData();
         weatherHourData.execute(cityCode);
@@ -182,7 +212,7 @@ public class WeatherFragment extends Fragment{
         TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
         temperature.setText(weatherHourlyEntry.max_t + "/" + weatherHourlyEntry.min_t + ".C");
         hourlyWeatherForecast.addView(hourly);
-    }
+    }*/
 
     @Override
     public void onPause () {

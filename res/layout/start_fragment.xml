@@ -82,32 +82,65 @@
         android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/start_temperature"
-                android:text="10.C"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/start_temperature"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:background="@drawable/fullcloud2"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="120dp"
+                android:layout_marginBottom="30dp"/>
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/sun"/>
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/halfcloud"/>
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="60dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/fullcloud"/>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"/>
-            <TextView
-                android:id="@+id/city"
-                android:text="Taipei"
-                android:textColor="@color/white"
-                android:textSize="@dimen/start_city"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/start_temperature"/>
+                android:layout_marginLeft="30dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/start_temperature"
+                    android:text="10.C"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/start_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/city"
+                    android:text="Taipei"
+                    android:textColor="@color/darkblue"
+                    android:textSize="@dimen/start_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
         </RelativeLayout>
-        <RelativeLayout
+        <!--RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2">
-        </RelativeLayout>
+
+        </RelativeLayout-->
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -122,13 +155,27 @@
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="100dp"
+            android:background="@drawable/forecaster"
+            android:layout_marginRight="-15dp"
+            android:layout_toLeftOf="@+id/suggestion_dialog"/>
     </RelativeLayout>
-    <Button
+    <!--Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Button"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" /-->
+    <ImageButton
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/gorunning"/>
 </RelativeLayout>

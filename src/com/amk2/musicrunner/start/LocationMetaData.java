@@ -22,7 +22,7 @@ public class LocationMetaData{
 
     static {
         map = new HashMap<String, String>();
-        map.put("臺北市", "0");
+        map.put("台北市", "0");
         map.put("新北市", "1");
         map.put("臺中市", "2");
         map.put("臺南市", "3");
