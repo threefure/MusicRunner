@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -21,6 +21,15 @@
         <item name="android:background">@drawable/action_bar_background</item>
         <item name="android:displayOptions">showHome</item>
         <item name="android:icon">@android:color/transparent</item>
+    </style>
+
+    <style name="MainTabItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingTop">@dimen/tab_content_mpadding_top_bottom</item>
+        <item name="android:paddingBottom">@dimen/tab_content_mpadding_top_bottom</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
 </resources>

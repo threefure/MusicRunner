@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/MainTabItem"
+    android:background="@color/black" >
+
+    <ImageView
+        android:layout_width="@dimen/tab_icon_width_height"
+        android:layout_height="@dimen/tab_icon_width_height"
+        android:src="@drawable/main_discover_tab_icon_selector" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/discover_tab"
+        android:textColor="@drawable/main_tab_item_text_color_selector" />
+
+</LinearLayout>

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 
 import java.util.Timer;
