@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MainTabItem"
-    android:background="@color/black" >
+    android:background="@drawable/setting_tab_background" >
 
     <ImageView
         android:layout_width="@dimen/tab_icon_width_height"
