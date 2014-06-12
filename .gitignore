@@ -1,0 +1,5 @@
+.idea/
+app/build/
+app/app.iml
+gradle/
+MusicRunner.iml
