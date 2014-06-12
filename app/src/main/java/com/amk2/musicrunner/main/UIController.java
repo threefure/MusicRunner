@@ -2,6 +2,7 @@
 package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.discover.DiscoverFragment;
 import com.amk2.musicrunner.my.MyFragment;
 import com.amk2.musicrunner.setting.SettingFragment;
@@ -18,6 +19,10 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TabHost;
+import android.widget.TextView;
 
 /**
  * Manipulate most of UI controls in this app. Note: Operate the UI as far as
@@ -25,12 +30,14 @@ import android.util.Log;
  *
  * @author DannyLin
  */
-public class UIController implements TabListener, ViewPager.OnPageChangeListener {
+public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "UIController";
     private static final int TAB_SIZE = 4;
 
     private final MusicRunnerActivity mMainActivity;
+
+    private TabHost mTabHost;
 
     private FragmentManager mFragmentManager;
     private ActionBar mActionBar;
@@ -49,6 +56,13 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
         public static final int START = 1;
         public static final int DISCOVER = 2;
         public static final int SETTING = 3;
+    }
+
+    public static class TabTag {
+        public static final String MY_TAB_TAG = "my_tab_tag";
+        public static final String START_TAB_TAG = "start_tab_tag";
+        public static final String DISCOVER_TAB_TAG = "discover_tab_tag";
+        public static final String SETTING_TAB_TAG = "setting_tab_tag";
     }
 
     public static class FragmentTag {
@@ -70,9 +84,40 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
     }
 
     private void initialize() {
-        initActionBar();
+        initTabs();
         initFragments();
         initViewPager();
+    }
+
+    private void initTabs() {
+        mTabHost = (TabHost)mMainActivity.findViewById(android.R.id.tabhost);
+        mTabHost.setup();
+        addTab(TabTag.MY_TAB_TAG,mMainActivity.getString(R.string.my_tab));
+        addTab(TabTag.START_TAB_TAG,mMainActivity.getString(R.string.start_tab));
+        addTab(TabTag.DISCOVER_TAB_TAG,mMainActivity.getString(R.string.discover_tab));
+        addTab(TabTag.SETTING_TAB_TAG,mMainActivity.getString(R.string.setting_tab));
+        mTabHost.setOnTabChangedListener(this);
+    }
+
+    private void addTab(String tag, String labelText) {
+        View tabView = getTabView(tag);
+        mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
+                .setContent(new RunningTabContentFactory(mMainActivity)));
+    }
+
+    private View getTabView(String tag) {
+        LayoutInflater layoutInflater = LayoutInflater.from(mMainActivity);
+        View tabView = new View(mMainActivity);
+        if(TabTag.MY_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.my_tab, null);
+        } else if(TabTag.START_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.start_tab, null);
+        } else if(TabTag.DISCOVER_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.discover_tab, null);
+        } else if(TabTag.SETTING_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.setting_tab, null);
+        }
+        return tabView;
     }
 
     /**
@@ -129,19 +174,6 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
         mViewPager.setAdapter(mMainPagerAdapter);
         mViewPager.setSwipeable(true);
         mViewPager.setOnPageChangeListener(this);
-    }
-
-    private void initActionBar() {
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        // Add tabs
-        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.my_tab))
-                .setTabListener(this));
-        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.start_tab))
-                .setTabListener(this));
-        mActionBar.addTab(mActionBar.newTab()
-                .setText(mMainActivity.getString(R.string.discover_tab)).setTabListener(this));
-        mActionBar.addTab(mActionBar.newTab().setText(mMainActivity.getString(R.string.setting_tab))
-                .setTabListener(this));
     }
 
     public void onActivityRestoreInstanceState(Bundle savedInstanceState) {
@@ -262,27 +294,15 @@ public class UIController implements TabListener, ViewPager.OnPageChangeListener
 
     @Override
     public void onPageSelected(int position) {
-        mActionBar.setSelectedNavigationItem(position);
+        mTabHost.setCurrentTab(position);
     }
 
     @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    public void onTabChanged(String tabId) {
         if (mViewPager != null) {
-            mViewPager.setCurrentItem(tab.getPosition(), true);
-            Log.d(TAG, "Set current position = " + tab.getPosition());
+            mViewPager.setCurrentItem(mTabHost.getCurrentTab());
+            Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
         }
-    }
-
-    @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
-        // TODO Auto-generated method stub
-
     }
 
 }

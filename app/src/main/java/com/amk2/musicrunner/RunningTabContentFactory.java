@@ -1,4 +1,4 @@
-package com.amk2.musicrunner.running;
+package com.amk2.musicrunner;
 
 import android.content.Context;
 import android.view.View;

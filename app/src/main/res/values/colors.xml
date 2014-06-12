@@ -8,6 +8,10 @@
     <color name="yellow">#FFD700</color>
     <color name="darkblue">#104E8B</color>
 
+    <!-- Main Activity tab view-->
+    <color name="main_tab_item_text_selected">#706E06</color>
+    <color name="main_tab_item_text_normal">#FFFFFF</color>
+
     <!-- Running Activity tab view-->
     <color name="running_tab_widget_background">#000000</color>
     <color name="running_tab_item_selected">#000000</color>
