@@ -18,11 +18,13 @@
         android:layout_height="match_parent"
         android:src="@drawable/my_banner"/>
     <EditText
+        android:id="@+id/account_info"
         android:layout_weight="4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/my_username"/>
     <EditText
+        android:id="@+id/password"
         android:inputType="textPassword"
         android:layout_weight="4"
         android:layout_width="match_parent"
@@ -36,15 +38,18 @@
         <ImageButton
             android:src="@drawable/my_login"
             android:layout_weight="1"
+            android:onClick="loginAccount"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <ImageButton
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:onClick="registerAccount"
             android:src="@drawable/my_signup"/>
     </LinearLayout>
-    <EditText
+    <TextView
+        android:id="@+id/loginPageStatus"
         android:layout_weight="4"
         android:background="@null"
         android:layout_width="match_parent"

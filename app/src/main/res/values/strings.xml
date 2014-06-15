@@ -39,7 +39,9 @@
 
     <!-- Map fragment -->
     <string name="map_fragment_text">Map</string>
-
     <string name="authority"></string>
+
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
