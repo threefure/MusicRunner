@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
+import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 
 import java.util.Timer;
@@ -380,6 +381,12 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             case R.id.stop_running:
                 stopService(new Intent(this,MusicService.class));
                 finish();
+
+                Intent finishRunningIntent = new Intent(getApplication(), FinishRunningActivity.class);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_DISTANCE, distanceString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, ratioString);
+                startActivity(finishRunningIntent);
                 break;
             case R.id.pause_running:
                 isRunning = !isRunning;
