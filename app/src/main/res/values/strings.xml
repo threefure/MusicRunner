@@ -10,7 +10,7 @@
     <string name="discover_tab">Discover</string>
     <string name="setting_tab">Setting</string>
 
-    <!-- Start Fragment-->
+    <!-- Start Fragment -->
     <string name="chance_of_rain">Chance of Rain</string>
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
@@ -39,7 +39,9 @@
 
     <!-- Map fragment -->
     <string name="map_fragment_text">Map</string>
-
     <string name="authority"></string>
+    <string name="google_map_api_key">AIzaSyBlxzYrGcBWFudPtLJoSc8nXBFHwZDXRC8</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
