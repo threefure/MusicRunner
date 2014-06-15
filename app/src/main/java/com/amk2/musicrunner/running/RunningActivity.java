@@ -5,21 +5,26 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
+import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 
 import java.util.Timer;
@@ -30,6 +35,8 @@ import java.util.TimerTask;
  */
 public class RunningActivity extends Activity implements TabHost.OnTabChangeListener,
         ViewPager.OnPageChangeListener, View.OnClickListener {
+
+    public static final int REQUEST_IMAGE_CAPTURE = 1;
 
     public static final int STATE_RUNNING = 1;
     public static final int TAB_SIZE = 2;
@@ -63,6 +70,9 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private Button pauseButton;
     private Button mStopButton;
+
+    private ImageView picPreview;
+    private ImageButton camera;
 
     private boolean isRunning = false;
     private int totalSec   = 0;
@@ -183,9 +193,13 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         runningSpeedRatio = (TextView) findViewById(R.id.running_speed_ratio);
 
         pauseButton = (Button) findViewById(R.id.pause_running);
-        pauseButton.setOnClickListener(buttonClickListener);
+        pauseButton.setOnClickListener(this);
         mStopButton = (Button)findViewById(R.id.stop_running);
         mStopButton.setOnClickListener(this);
+
+        picPreview = (ImageView) findViewById(R.id.pic_preview);
+        camera = (ImageButton) findViewById(R.id.camera);
+        camera.setOnClickListener(this);
 
         mTabHost = (TabHost)findViewById(android.R.id.tabhost);
         mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
@@ -265,17 +279,6 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         }
     };
 
-    private OnClickListener buttonClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.pause_running:
-                    isRunning = !isRunning;
-                    break;
-            }
-        }
-    };
-
     /*
      * truncateDoubleString: truncate double number to 小數點後兩位
      * str: string of double number
@@ -290,6 +293,22 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         return str;
     };
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resCode, Intent data) {
+        if (reqCode == REQUEST_IMAGE_CAPTURE && resCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            picPreview.setImageBitmap(imageBitmap);
+        }
+    }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -299,6 +318,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     @Override
     protected void onStart () {
         super.onStart();
+        isRunning = true;
     }
 
     @Override
@@ -361,6 +381,18 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             case R.id.stop_running:
                 stopService(new Intent(this,MusicService.class));
                 finish();
+
+                Intent finishRunningIntent = new Intent(getApplication(), FinishRunningActivity.class);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_DISTANCE, distanceString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, ratioString);
+                startActivity(finishRunningIntent);
+                break;
+            case R.id.pause_running:
+                isRunning = !isRunning;
+                break;
+            case R.id.camera:
+                dispatchTakePictureIntent();
                 break;
         }
     }

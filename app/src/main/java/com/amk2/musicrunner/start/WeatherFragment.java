@@ -49,6 +49,8 @@ public class WeatherFragment extends Fragment{
 
     HashMap<String, Integer> condIndex = new HashMap<String, Integer>();
 
+    private TextView weatherTemp;
+    private TextView weatherSummary;
     private LinearLayout hourlyWeatherForecast;
     private LinearLayout weeklyWeatherForecast;
     private GetAddressFromLocation getAddress;
@@ -95,16 +97,44 @@ public class WeatherFragment extends Fragment{
         hourlyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.hourly_weather_forecast);
         weeklyWeatherForecast = (LinearLayout) thisView.findViewById(R.id.weekly_weather_forecast);
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        location = LocationMetaData.getLocation();
+
+        weatherTemp    = (TextView) thisView.findViewById(R.id.weather_temp);
+        weatherSummary = (TextView) thisView.findViewById(R.id.weather_summary);
+        //location = LocationMetaData.getLocation();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         try {
-            updateWeeklyForecast();
+            updateWeatherSummary();            updateWeeklyForecast();
             update24HoursForecast();
         } catch (CursorIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateWeatherSummary () {
+        // TODO projection could be moved to a static place
+        String[] projection = {
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+        };
+        String selection = MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(Constant.DB_KEY_DAILY_WEATHER) };
+
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        cursor.moveToFirst();
+        String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+        updateWeatherSummary(JSONContent);
+    }
+
+    private void updateWeatherSummary (String JSONContent) {
+        try {
+            JSONObject weatherJSONObject = new JSONObject(JSONContent);
+            weatherTemp.setText(weatherJSONObject.getString("maxT") + ".C");
+            weatherSummary.setText(weatherJSONObject.getString("feeling") + "," + weatherJSONObject.getString("condition"));
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -181,7 +211,7 @@ public class WeatherFragment extends Fragment{
         time.setText(t24HoursJSONArray.getString("time") + ":00");
         ImageView weatherGraph = (ImageView) hourly.findViewById(R.id.weather_graph_24hrs);
 
-        Log.d("daz in weather condindex=", condIndex.get(t24HoursJSONArray.getString("condIndex")).toString());
+        Log.d("daz in weather condindex=", t24HoursJSONArray.getString("condIndex").toString());
         Drawable res = getResources().getDrawable(condIndex.get(t24HoursJSONArray.getString("condIndex")));
         weatherGraph.setImageDrawable(res);
         TextView temperature = (TextView) hourly.findViewById(R.id.temperature);

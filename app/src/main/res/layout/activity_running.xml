@@ -113,13 +113,18 @@
         android:layout_height="130dp"
         android:layout_below="@+id/running_info_bar"
         android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/camera"
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="Camera put here" />
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <ImageButton
+                android:id="@+id/camera"
+                android:background="@drawable/camera"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -171,11 +176,17 @@
                 android:textSize="@dimen/timer" />
         </RelativeLayout>
 
-        <TextView
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="" />
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <ImageView
+                android:id="@+id/pic_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
