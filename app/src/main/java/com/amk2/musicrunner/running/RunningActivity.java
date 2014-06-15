@@ -299,6 +299,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     @Override
     protected void onStart () {
         super.onStart();
+        isRunning = true;
     }
 
     @Override
