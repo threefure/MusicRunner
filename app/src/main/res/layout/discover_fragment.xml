@@ -2,11 +2,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit DiscoverFragment here!" />
+    <LinearLayout
+        android:id="@+id/discoverMainLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:weightSum="50">
+
+        <LinearLayout
+            android:id="@+id/discoverMapLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="35"
+            android:orientation="horizontal">
+
+            <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/mapView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/seperateline"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <ImageButton
+                android:id="@+id/discover_bikestore"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+                android:layout_toRightOf="@+id/linearLayout"
+                android:layout_weight="1"
+                android:background="@drawable/discover_bikestore"
+                android:clickable="true" />
+
+            <ImageButton
+                android:id="@+id/discover_famous_spots"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+                android:layout_toRightOf="@+id/linearLayout"
+                android:layout_weight="1"
+                android:background="@drawable/discover_famous_spots" />
+
+            <ImageButton
+                android:id="@+id/discover_ubike"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+                android:layout_toRightOf="@+id/linearLayout"
+                android:layout_weight="1"
+                android:background="@drawable/discover_ubike" />
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
