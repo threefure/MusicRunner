@@ -40,6 +40,9 @@
     <!-- Map fragment -->
     <string name="map_fragment_text">Map</string>
 
+    <!-- Discover fragment -->
+    <string name="discover_fragment_tag">Discover Fragment</string>
+
     <!-- Finish running activity -->
     <string name="save">Save</string>
     <string name="discard">Discard</string>
