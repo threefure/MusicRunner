@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,22 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
-import com.amk2.musicrunner.start.WeatherModel.WeatherWeekEntry;
-import com.amk2.musicrunner.start.WeatherModel.WeatherHourlyEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -212,11 +204,15 @@ public class WeatherFragment extends Fragment{
         ImageView weatherGraph = (ImageView) hourly.findViewById(R.id.weather_graph_24hrs);
 
         Log.d("daz in weather condindex=", t24HoursJSONArray.getString("condIndex").toString());
-        Drawable res = getResources().getDrawable(condIndex.get(t24HoursJSONArray.getString("condIndex")));
-        weatherGraph.setImageDrawable(res);
-        TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
-        temperature.setText(t24HoursJSONArray.getString("maxT") + "/" + t24HoursJSONArray.getString("minT") + ".C");
-        hourlyWeatherForecast.addView(hourly);
+        try {
+            Drawable res = getResources().getDrawable(condIndex.get(t24HoursJSONArray.getString("condIndex")));
+            weatherGraph.setImageDrawable(res);
+            TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
+            temperature.setText(t24HoursJSONArray.getString("maxT") + "/" + t24HoursJSONArray.getString("minT") + ".C");
+            hourlyWeatherForecast.addView(hourly);
+        } catch (NullPointerException e) {
+            Log.d("daz in weather condindex=", t24HoursJSONArray.getString("condIndex").toString());
+        }
     }
 /*
     private void get24HoursForecast (String cityCode) {

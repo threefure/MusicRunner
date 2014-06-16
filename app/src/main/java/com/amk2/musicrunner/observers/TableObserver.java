@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.observers;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -10,7 +10,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
 
 /**
  * Created by ktlee on 5/25/14.

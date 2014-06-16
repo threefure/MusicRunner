@@ -1,4 +1,4 @@
-package com.amk2.musicrunner.start;
+package com.amk2.musicrunner.location;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -83,6 +83,11 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
             weeklyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEEKLY_WEATHER);
             weeklyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
             addPeriodSync(weeklyBundleSettings, Constant.ONE_MINUTE);
+
+            Log.d("daz", "set up youbike updater");
+            HashMap<String, String> youbikeBundleSettings = new HashMap<String, String>();
+            youbikeBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_UBIKE);
+            addPeriodSync(youbikeBundleSettings, Constant.ONE_MINUTE);
 
         } catch (IllegalStateException e) {
             Log.e("Error", "task has already been executed");

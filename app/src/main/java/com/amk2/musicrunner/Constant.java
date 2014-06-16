@@ -20,6 +20,7 @@ public class Constant {
     public static final int EXPIRATION_DATE_DURATION_DAILY  = 1;
     public static final int EXPIRATION_DATE_DURATION_24HRS  = 1;
     public static final int EXPIRATION_DATE_DURATION_WEEKLY = 12;
+    public static final int EXPIRATION_DATE_DURATION_YOUBIKE = 5;
 
     public static final String JSON_CONTENT = "com.amk2.musicrunner.updateweather.jsoncontent";
     public static final String EXPIRATION_DATE = "com.amk2.musicrunner.updateweather.expirationdate";
@@ -30,11 +31,12 @@ public class Constant {
     public static final String DB_KEY_YOUBIKE = "com.amk2.musicrunner.youbike";
 
     // Server API
-    public static final String HOST = "http://ec2-54-187-120-188.us-west-2.compute.amazonaws.com";
+    public static final String HOST = "http://192.168.1.29";
     public static final String PORT = ":8080";
     public static final String baseWeatherUrlString = HOST + PORT + "/weatherJSON";//TODO need to append city query behind
     public static final String baseWeatherWeekUrlString = HOST + PORT + "/weatherWeekJSON";//TODO need to append city query behind
     public static final String baseWeather24HoursUrlString = HOST + PORT + "/weather24HoursJSON";//TODO need to append city query behind
+    public static final String baseYoubikeUrlString = HOST + PORT + "/youBikeJSON";//TODO need to append city query behind
     public static final String storeRunningEventUrlString = HOST + PORT + "store?type=event";//TODO need to append city query behind
     public static final String cityCodeQuery = "cityCode=";
 

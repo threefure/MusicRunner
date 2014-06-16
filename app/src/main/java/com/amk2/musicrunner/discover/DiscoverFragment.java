@@ -1,9 +1,12 @@
 package com.amk2.musicrunner.discover;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -11,6 +14,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Color;
 import android.location.LocationListener;
 import android.app.Fragment;
@@ -26,6 +32,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +62,8 @@ public class DiscoverFragment extends Fragment
     private ImageButton mFamousSpotsButton;
     private ImageButton mUBikeButton;
 
+    /* Content Resolver */
+    private ContentResolver mContentResolver;
 
     Context mContext;
 
@@ -80,6 +92,8 @@ public class DiscoverFragment extends Fragment
         mBikeStoreButton.setOnClickListener(this);
         mFamousSpotsButton.setOnClickListener(this);
         mUBikeButton.setOnClickListener(this);
+
+        mContentResolver = getActivity().getContentResolver();
 	}
 
     @Override
@@ -217,6 +231,7 @@ public class DiscoverFragment extends Fragment
                 break;
             case R.id.discover_ubike:
                 // TODO::discover_ubike button
+                updateYoubike();
                 break;
 
         }
@@ -288,5 +303,43 @@ public class DiscoverFragment extends Fragment
         }
 
     };
+
+    private void updateYoubike () {
+        String[] projection = {
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+        };
+        String selection = MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(Constant.DB_KEY_YOUBIKE) };
+
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        cursor.moveToFirst();
+        try {
+            String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+            updateYoubike(JSONContent);
+        } catch (CursorIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            Log.d("Daz", "there's no youbike data stored in the phone");
+        }
+    }
+
+    private void updateYoubike (String JSONContent) {
+        try {
+            JSONArray youbikeJSONArray = new JSONArray(JSONContent);
+            int length = youbikeJSONArray.length();
+            for (int i = 0; i < length; i++) {
+                JSONObject entry = youbikeJSONArray.getJSONObject(i);
+
+                //------ should merged with showMarkerMe() with the extended title feature -----------
+                MarkerOptions mo = new MarkerOptions();
+                mo.position(new LatLng(Double.parseDouble(entry.getString("lat")), Double.parseDouble(entry.getString("lng"))));
+                mo.title(entry.getString("sna"));
+                mMap.addMarker(mo);
+                //------ should merged with showMarkerMe() -----------
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

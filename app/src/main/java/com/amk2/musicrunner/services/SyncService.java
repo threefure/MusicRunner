@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.services;
 
 import android.app.Service;
 import android.content.Intent;

@@ -1,6 +1,4 @@
-package com.amk2.musicrunner;
-
-import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
+package com.amk2.musicrunner.sqliteDB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,9 +16,9 @@ public class MusicTrackDBHelper extends SQLiteOpenHelper {
                     MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                     MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + TEXT_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE + TEXT_TYPE + COMMA_SEP +
-                    MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT + TEXT_TYPE +
+                    MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT + TEXT_TYPE +
                     " )";
-    private static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + MusicTrackCommonDataDB.TABLE_NAME;
+    private static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + MusicTrackMetaData.MusicTrackCommonDataDB.TABLE_NAME;
 
     public static final int DATA_VERSION = 4;
     public static final String DATABASE_NAME = "MusicTrackRunner.db";

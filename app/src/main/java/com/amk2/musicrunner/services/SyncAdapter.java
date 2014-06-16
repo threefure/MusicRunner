@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.services;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -13,9 +13,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.amk2.musicrunner.start.LocationMetaData;
-import com.amk2.musicrunner.start.WeatherModel.WeatherEntry;
-import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -38,6 +38,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
     private static long dailyWeatherID = -1;
     private static long t24HrsWeatherID = -1;
     private static long weeklyWeatherID = -1;
+    private static long youbikeID = -1;
 
     public SyncAdapter (Context context, boolean autoInintialize) {
         super(context, autoInintialize);
@@ -92,6 +93,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
 
         } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_UBIKE)) {
             Log.d("daz", "calling ubike api");
+            String urlString = Constant.baseYoubikeUrlString;
+            youbikeID = GetDataFromServerAndSetExpirationDate(
+                    urlString,
+                    Constant.DB_KEY_YOUBIKE,
+                    Calendar.MINUTE,
+                    Constant.EXPIRATION_DATE_DURATION_YOUBIKE,
+                    youbikeID);
+            Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
+
         }
     }
 

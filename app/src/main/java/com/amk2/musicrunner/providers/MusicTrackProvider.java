@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -10,7 +10,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.amk2.musicrunner.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicTrackDBHelper;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
 
 /**
  * Created by ktlee on 5/24/14.

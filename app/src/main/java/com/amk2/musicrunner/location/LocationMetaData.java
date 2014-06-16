@@ -1,4 +1,4 @@
-package com.amk2.musicrunner.start;
+package com.amk2.musicrunner.location;
 
 import android.location.Address;
 import android.location.Location;

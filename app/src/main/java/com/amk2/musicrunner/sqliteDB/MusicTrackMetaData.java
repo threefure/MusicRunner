@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.sqliteDB;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

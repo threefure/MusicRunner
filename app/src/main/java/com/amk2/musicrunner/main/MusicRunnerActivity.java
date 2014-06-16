@@ -2,11 +2,11 @@
 package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService;
 import com.amk2.musicrunner.running.RunningActivity;
-import com.amk2.musicrunner.start.LocationHelper;
+import com.amk2.musicrunner.location.LocationHelper;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -15,10 +15,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Main activity of MusicRunner+

@@ -1,4 +1,4 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.services;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -6,8 +6,6 @@ import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Bundle;
-
-import org.apache.http.auth.AUTH;
 
 /**
  * Created by ktlee on 5/24/14.

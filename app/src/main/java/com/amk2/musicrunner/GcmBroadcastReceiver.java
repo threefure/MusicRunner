@@ -5,9 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 
-import com.amk2.musicrunner.main.MusicRunnerActivity;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**

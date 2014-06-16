@@ -1,10 +1,8 @@
-package com.amk2.musicrunner;
+package com.amk2.musicrunner.services;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-
-import com.amk2.musicrunner.Authenticator;
 
 /**
  * Created by ktlee on 5/24/14.
