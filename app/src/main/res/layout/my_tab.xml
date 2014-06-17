@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/my_tab"
-        android:textColor="@drawable/main_tab_item_text_color_selector" />
+        android:textColor="@drawable/main_tab_item_text_color_selector"
+        android:textSize="@dimen/tab_text_size" />
 
 </LinearLayout>
