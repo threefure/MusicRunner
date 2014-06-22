@@ -150,6 +150,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                     <ImageButton
+                        android:id="@+id/my_past_record_button"
                         android:src="@drawable/my_past_record"
                         android:padding="10dp"
                         android:scaleType="fitXY"

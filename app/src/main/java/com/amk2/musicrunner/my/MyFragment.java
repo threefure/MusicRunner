@@ -7,9 +7,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -35,7 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyFragment extends Fragment implements TabHost.OnTabChangeListener {
+public class MyFragment extends Fragment implements TabHost.OnTabChangeListener, View.OnClickListener {
     private ProgressBar timesBar;
     private ProgressBar speedsBar;
     private ProgressBar caloriesBar;
@@ -44,6 +46,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener 
     private Integer speedsBarStatus;
     private Integer caloriesBarStatus;
     private Integer distanceBarStatus;
+    private ImageButton pastRecordMutton;
     private Handler handler = new Handler();
 
 	@Override
@@ -104,6 +107,9 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener 
         distanceBar = (ProgressBar) getView().findViewById(R.id.distance_bar);
         distanceBar.setMax(100);
 
+        pastRecordMutton = (ImageButton) getView().findViewById(R.id.my_past_record_button);
+        pastRecordMutton.setOnClickListener(this);
+
         String jsonString = getMyStatus();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -121,6 +127,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener 
 
         } catch (JSONException jsonException) {
 
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
 
     }
@@ -158,5 +166,15 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener 
         tab.getTabWidget().getChildAt(tab.getCurrentTab())
                 .setBackgroundResource(R.color.my_background_tab_selected); // selected
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.my_past_record_button:
+                // go to past record fragment
+                Log.d("Daz", "past record button is pressed");
+                break;
+        }
     }
 }

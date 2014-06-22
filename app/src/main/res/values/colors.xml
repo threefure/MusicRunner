@@ -27,4 +27,9 @@
 
     <!-- Music fragment -->
     <color name="music_info_text_color">#FFFFFF</color>
+
+    <!-- Past Record fragment -->
+    <color name="light_yellow">#F3F781</color>
+    <color name="green_blue">#81CDD2</color>
+    <color name="dark_green_blue">#50AEC3</color>
 </resources>

@@ -61,4 +61,9 @@
     <string name="my_running_calories">Calories</string>
     <string name="my_running_distances">Distance</string>
 
+    <!-- Past Record -->
+    <string name="past_record_sessions">Sessions</string>
+    <string name="past_record_duration">Duration</string>
+    <string name="past_record_elevation">Elevation</string>
+
 </resources>

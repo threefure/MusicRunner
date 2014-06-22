@@ -118,7 +118,8 @@ public class WeatherFragment extends Fragment{
     public void onStart() {
         super.onStart();
         try {
-            updateWeatherSummary();            updateWeeklyForecast();
+            updateWeatherSummary();
+            updateWeeklyForecast();
             update24HoursForecast();
         } catch (CursorIndexOutOfBoundsException e) {
             e.printStackTrace();
@@ -240,31 +241,6 @@ public class WeatherFragment extends Fragment{
             Log.d("daz in weather condindex=", t24HoursJSONArray.getString("condIndex").toString());
         }
     }
-/*
-    private void get24HoursForecast (String cityCode) {
-        GetWeather24HoursData weatherHourData = new GetWeather24HoursData();
-        weatherHourData.execute(cityCode);
-        try {
-            ArrayList<WeatherHourlyEntry> weatherHourlyEntryList = weatherHourData.get();
-            for (int i = 0; i < weatherHourlyEntryList.size(); i++) {
-                addHourForecast(weatherHourlyEntryList.get(i));
-            }
-        } catch (CancellationException e) {
-            Log.d("Error", "This is canceled");
-        } catch (InterruptedException e) {
-            Log.d("Error", "This is interrupted");
-        } catch (ExecutionException e) {
-            Log.d("Error", "Execution error");
-        }
-    }
-    private void addHourForecast (WeatherHourlyEntry weatherHourlyEntry) {
-        View hourly = inflater.inflate(R.layout.hourly_template, null);
-        TextView time = (TextView) hourly.findViewById(R.id.time);
-        time.setText(weatherHourlyEntry.time + ":00");
-        TextView temperature = (TextView) hourly.findViewById(R.id.temperature);
-        temperature.setText(weatherHourlyEntry.max_t + "/" + weatherHourlyEntry.min_t + ".C");
-        hourlyWeatherForecast.addView(hourly);
-    }*/
 
     @Override
     public void onPause () {
