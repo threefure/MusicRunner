@@ -18,4 +18,10 @@
     <color name="running_tab_item_normal">#EBEBEB</color>
     <color name="running_tab_item_text_selected">#FFFFFF</color>
     <color name="running_tab_item_text_normal">#000000</color>
+
+    <!-- My Activity tab view-->
+    <color name="my_text_tab_selected">#ffffff</color>
+    <color name="my_text_tab_unselected">#000000</color>
+    <color name="my_background_tab_selected">#000000</color>
+    <color name="my_background_tab_unselected">#ffffff</color>
 </resources>

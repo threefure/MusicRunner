@@ -54,4 +54,10 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="hello_world">Hello world!</string>
 
+    <!-- My Running -->
+    <string name="my_running_times">Times</string>
+    <string name="my_running_speeds">Speeds</string>
+    <string name="my_running_calories">Calories</string>
+    <string name="my_running_distances">Distance</string>
+
 </resources>
