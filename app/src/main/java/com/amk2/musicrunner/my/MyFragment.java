@@ -122,12 +122,13 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener 
         } catch (JSONException jsonException) {
 
         }
+
     }
 
     private String getMyStatus(){
         SharedPreferences preferences = getActivity().getSharedPreferences(SharedPreferenceConstants.PREFERENCE_NAME, getActivity().MODE_PRIVATE);
-        String account =  preferences.getString(SharedPreferenceConstants.ACCOUNT_PARAMS, null);
-
+//        String account =  preferences.getString(SharedPreferenceConstants.ACCOUNT_PARAMS, null);
+        String account = "paulou";
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         HttpClient client = new DefaultHttpClient();
