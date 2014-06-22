@@ -28,4 +28,5 @@
     <dimen name="music_control_button_width_height">30dp</dimen>
     <dimen name="music_info_container_padding_left_right">10dp</dimen>
     <dimen name="music_control_container_padding_left_right">20dp</dimen>
+    <dimen name="music_album_art_width_height">120dp</dimen>
 </resources>

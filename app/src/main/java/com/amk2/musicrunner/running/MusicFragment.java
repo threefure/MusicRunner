@@ -1,34 +1,38 @@
 package com.amk2.musicrunner.running;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.running.MusicService.MusicBinder;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.MusicService.MusicBinder;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MusicFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
@@ -49,6 +53,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private View mMusicControlContainer;
     private TextView mMusicTitle;
     private TextView mMusicArtist;
+    private ImageView mMusicAlbumArt;
     private ImageView mPreviousButton;
     private ImageView mNextButton;
     private ImageView mPlayPauseButton;
@@ -64,10 +69,17 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private ServiceConnection mMusicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("danny", "Service connection in MusicFragment");
+            //Log.d("danny", "Service connection in MusicFragment");
             mIsBindToService = true;
             MusicBinder binder = (MusicBinder) service;
             mMusicService = binder.getService();
+            mMusicService.setOnPlayingSongCompletionListener(new MusicService.OnPlayingSongCompletionListener() {
+                @Override
+                public void onPlayingSongCompletion() {
+                    setMusicText();
+                    setMusicAlbumArt();
+                }
+            });
             if (!mMusicService.isMusicPlayerStartRunning()) {
                 mMusicService.setMusicList(mMusicSongList);
                 mMusicService.setSong(mCurrentMusicIndex);
@@ -75,6 +87,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
             }
             mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
             setMusicText();
+            setMusicAlbumArt();
             setPlayPauseIcon();
             setAllViewsVisible();
         }
@@ -136,6 +149,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         mMusicControlContainer = mFragmentView.findViewById(R.id.music_control_container);
 
         // Music information
+        mMusicAlbumArt = (ImageView) mFragmentView.findViewById(R.id.music_album_art);
         mMusicArtist = (TextView) mFragmentView.findViewById(R.id.music_artist);
         mMusicTitle = (TextView) mFragmentView.findViewById(R.id.music_title);
 
@@ -179,11 +193,55 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         if (data != null) {
             data.moveToPosition(-1);
             while (data.moveToNext()) {
-                songList.add(new MusicSong(data.getLong(MUSIC_ID), data.getString(MUSIC_TITLE),
-                        data.getString(MUSIC_ARTIST)));
+                long id = data.getLong(MUSIC_ID);
+                String title = data.getString(MUSIC_TITLE);
+                String artist = data.getString(MUSIC_ARTIST);
+                Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
+                String musicFilePath = getMusicFilePath(musicUri);
+                if(isMusicFile(musicFilePath)) {
+                    //Log.d("danny","Add music file path = " + musicFilePath);
+                    songList.add(new MusicSong(id, title, artist));
+                }
             }
         }
         return songList;
+    }
+
+    private boolean isMusicFile(String filePath) {
+        if (!TextUtils.isEmpty(filePath) && (filePath.endsWith("mp3") || filePath.endsWith("MP3"))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private String getMusicFilePath(Uri uri) {
+        String filePath = null;
+        if(uri != null) {
+            Cursor cursor = null;
+            try {
+                cursor = mActivity.getContentResolver().query(uri, new String[]{
+                        MediaStore.Audio.AudioColumns.DATA
+                }, null, null, null);
+                cursor.moveToFirst();
+                filePath = cursor.getString(0);
+
+                if(filePath == null || filePath.trim().isEmpty()) {
+                    filePath = uri.toString();
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+                filePath = uri.toString();
+            } finally {
+                if(cursor != null) {
+                    cursor.close();
+                }
+            }
+        } else {
+            filePath = uri.toString();
+        }
+
+        return filePath;
     }
 
     @Override
@@ -195,15 +253,19 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.music_shuffle:
-                setShuffle();
+                setShuffleIcon();
                 break;
             case R.id.previous_button:
                 mMusicService.playPreviousSong();
                 setMusicText();
+                setMusicAlbumArt();
+                setPlayPauseIcon();
                 break;
             case R.id.next_button:
                 mMusicService.playNextSong();
                 setMusicText();
+                setMusicAlbumArt();
+                setPlayPauseIcon();
                 break;
             case R.id.play_pause_button:
                 if(mMusicService.isPlaying()) {
@@ -216,7 +278,44 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
-    private void setShuffle() {
+    private void setMusicAlbumArt() {
+        long id = mMusicService.getPlayingSong().mId;
+        Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
+        String musicFilePath = getMusicFilePath(musicUri);
+        mMusicAlbumArt.setImageBitmap(getMusicAlbumArt(musicFilePath));
+    }
+
+    private Bitmap getMusicAlbumArt(String filePath) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            Log.d("danny","setDataSource before");
+            retriever.setDataSource(filePath);
+            Log.d("danny","setDataSource after");
+            byte[] data = retriever.getEmbeddedPicture();
+            Log.d("danny","Data size = " + data.length);
+            if (data != null) {
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            }
+            if (bitmap == null) {
+                Log.d("danny","Bitmap is null");
+                return null;
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        } catch(NoSuchMethodError ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return bitmap;
+    }
+
+    private void setShuffleIcon() {
         mMusicService.setShuffle();
         if(mMusicService.isShuffle()) {
             mShuffleButton.setImageResource(R.drawable.shuffle);
@@ -232,4 +331,5 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
             mPlayPauseButton.setImageResource(R.drawable.play);
         }
     }
+
 }

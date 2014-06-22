@@ -39,15 +39,15 @@
 
             <ImageView
                 android:id="@+id/music_album_art"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/oldpi"/>
+                android:layout_width="@dimen/music_album_art_width_height"
+                android:layout_height="@dimen/music_album_art_width_height" />
 
             <TextView
                 android:id="@+id/music_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/music_info_text_color" />
 
             <TextView

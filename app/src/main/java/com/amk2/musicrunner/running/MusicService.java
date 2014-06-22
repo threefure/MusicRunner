@@ -246,7 +246,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCompletion(MediaPlayer mp) {
         playNextSong();
-        // mOnPlayingSongCompletionListener.onPlayingSongCompletion();
+        mOnPlayingSongCompletionListener.onPlayingSongCompletion();
     }
 
     @Override
