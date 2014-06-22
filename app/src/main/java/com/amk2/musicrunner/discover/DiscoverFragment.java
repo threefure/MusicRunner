@@ -101,8 +101,6 @@ public class DiscoverFragment extends Fragment
         super.onStart();
         if (initLocationProvider()) {
             currentLocation();
-        } else {
-            Log.d("onstart init: ", "please turn on the location service！");
         }
     }
 
@@ -182,7 +180,6 @@ public class DiscoverFragment extends Fragment
 
         MarkerOptions markerOpt = new MarkerOptions();
         markerOpt.position(new LatLng(lat, lng));
-        markerOpt.title("Hello!");
         mMarker = mMap.addMarker(markerOpt);
 
         Toast.makeText(mContext, "lat:" + lat + ",lng:" + lng, Toast.LENGTH_SHORT).show();
@@ -245,19 +242,15 @@ public class DiscoverFragment extends Fragment
         public void onGpsStatusChanged(int event) {
             switch (event) {
                 case GpsStatus.GPS_EVENT_STARTED:
-                    Log.d(String.valueOf(R.string.discover_fragment_tag), "GPS_EVENT_STARTED");
                     break;
 
                 case GpsStatus.GPS_EVENT_STOPPED:
-                    Log.d(String.valueOf(R.string.discover_fragment_tag), "GPS_EVENT_STOPPED");
                     break;
 
                 case GpsStatus.GPS_EVENT_FIRST_FIX:
-                    Log.d(String.valueOf(R.string.discover_fragment_tag), "GPS_EVENT_FIRST_FIX");
                     break;
 
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    Log.d(String.valueOf(R.string.discover_fragment_tag), "GPS_EVENT_SATELLITE_STATUS");
                     break;
             }
         }
@@ -285,17 +278,14 @@ public class DiscoverFragment extends Fragment
         public void onStatusChanged(String provider, int status, Bundle extras) {
             switch (status) {
                 case LocationProvider.OUT_OF_SERVICE:
-                    Log.v(String.valueOf(R.string.discover_fragment_tag), "Status Changed: Out of Service");
                     Toast.makeText(mContext, "Status Changed: Out of Service",
                             Toast.LENGTH_SHORT).show();
                     break;
                 case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Log.v(String.valueOf(R.string.discover_fragment_tag), "Status Changed: Temporarily Unavailable");
                     Toast.makeText(mContext, "Status Changed: Temporarily Unavailable",
                             Toast.LENGTH_SHORT).show();
                     break;
                 case LocationProvider.AVAILABLE:
-                    Log.v(String.valueOf(R.string.discover_fragment_tag), "Status Changed: Available");
                     Toast.makeText(mContext, "Status Changed: Available",
                             Toast.LENGTH_SHORT).show();
                     break;
