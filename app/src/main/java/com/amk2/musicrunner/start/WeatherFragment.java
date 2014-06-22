@@ -39,7 +39,14 @@ public class WeatherFragment extends Fragment{
     private String rainUri      = "@drawable/rainy";
     private String heavyrainUri = "@drawable/heavilyrain";
 
+    private String weeklySunnyUri  = "@drawable/weather_sunny";
+    private String weeklyHotUri    = "@drawable/weather_hot";
+    private String weeklyColdUri   = "@drawable/weather_cold";
+    private String weeklyRainyUri  = "@drawable/weather_rainy";
+    private String weeklyCloudyUri = "@drawable/weather_cloudy";
+
     HashMap<String, Integer> condIndex = new HashMap<String, Integer>();
+    HashMap<String, Integer> weeklyCondIndex = new HashMap<String, Integer>();
 
     private TextView weatherTemp;
     private TextView weatherSummary;
@@ -71,10 +78,22 @@ public class WeatherFragment extends Fragment{
         int rainyRes       = getResources().getIdentifier(rainUri, null, this.getActivity().getPackageName());
         int heavilyrainRes = getResources().getIdentifier(heavyrainUri, null, this.getActivity().getPackageName());
 
+        int weeklySunnyRes  = getResources().getIdentifier(weeklySunnyUri, null, this.getActivity().getPackageName());
+        int weeklyColdRes   = getResources().getIdentifier(weeklyColdUri, null, this.getActivity().getPackageName());
+        int weeklyHotRes    = getResources().getIdentifier(weeklyHotUri, null, this.getActivity().getPackageName());
+        int weeklyRainyRes  = getResources().getIdentifier(weeklyRainyUri, null, this.getActivity().getPackageName());
+        int weeklyCloudyRes = getResources().getIdentifier(weeklyCloudyUri, null, this.getActivity().getPackageName());
+
         condIndex.put("sunny", sunnyRes);
         condIndex.put("cloudy", cloudyRes);
         condIndex.put("rainy", rainyRes);
         condIndex.put("heavilyrain", heavilyrainRes);
+
+        weeklyCondIndex.put("sunny",  weeklySunnyRes);
+        weeklyCondIndex.put("cold",   weeklyColdRes);
+        weeklyCondIndex.put("hot",    weeklyHotRes);
+        weeklyCondIndex.put("rainy",  weeklyRainyRes);
+        weeklyCondIndex.put("cloudy", weeklyCloudyRes);
     }
 
     @Override
@@ -162,10 +181,17 @@ public class WeatherFragment extends Fragment{
         View weekly = inflater.inflate(R.layout.weekly_template, null);
         TextView day = (TextView) weekly.findViewById(R.id.day);
         TextView temperature = (TextView) weekly.findViewById(R.id.temperature);
+        ImageView forecastGraph = (ImageView) weekly.findViewById(R.id.forecast_graph);
 
-        day.setText(DayMapping.getDay(weeklyJSONObject.getString("day")));
-        temperature.setText(weeklyJSONObject.getString("maxT") + "/" + weeklyJSONObject.getString("minT") + ".C");
-        weeklyWeatherForecast.addView(weekly, weeklyParams);
+        try {
+            day.setText(DayMapping.getDay(weeklyJSONObject.getString("day")));
+            temperature.setText(weeklyJSONObject.getString("maxT") + "/" + weeklyJSONObject.getString("minT") + ".C");
+            Drawable res = getResources().getDrawable(weeklyCondIndex.get(weeklyJSONObject.getString("condIndex")));
+            forecastGraph.setImageDrawable(res);
+            weeklyWeatherForecast.addView(weekly, weeklyParams);
+        } catch (NullPointerException e) {
+            Log.d("daz in weekly weather condindex=", weeklyJSONObject.getString("condIndex").toString());
+        }
     }
 
     private void update24HoursForecast () {

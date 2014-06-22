@@ -1,8 +1,11 @@
 package com.amk2.musicrunner.finish;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,7 +14,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
 
 /**
@@ -28,14 +34,22 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView speedTextView;
     private ImageView photoImageView;
 
+    private String distance  = null;
+    private String calories  = null;
+    private String speed     = null;
+    private String photoPath = null;
 
     private Button saveButton;
     private Button discardButton;
+
+    private ContentResolver mContentResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_running);
+
+        mContentResolver = getContentResolver();
 
         Intent intent = getIntent();
 
@@ -48,19 +62,23 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
-        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo1);
+        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
 
-        if (intent.getStringExtra(FINISH_RUNNING_DISTANCE) != null) {
-            distanceTextView.setText(intent.getStringExtra(FINISH_RUNNING_DISTANCE));
+        distance  = intent.getStringExtra(FINISH_RUNNING_DISTANCE);
+        calories  = intent.getStringExtra(FINISH_RUNNING_CALORIES);
+        speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
+        photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
+
+        if (distance != null) {
+            distanceTextView.setText(distance);
         }
-        if (intent.getStringExtra(FINISH_RUNNING_CALORIES) != null) {
-            caloriesTextView.setText(intent.getStringExtra(FINISH_RUNNING_CALORIES));
+        if (calories != null) {
+            caloriesTextView.setText(calories);
         }
-        if (intent.getStringExtra(FINISH_RUNNING_SPEED) != null) {
-            speedTextView.setText(intent.getStringExtra(FINISH_RUNNING_SPEED));
+        if (speed != null) {
+            speedTextView.setText(speed);
         }
-        if (intent.getStringExtra(FINISH_RUNNING_PHOTO) != null) {
-            String photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
+        if (photoPath != null) {
             Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
             photoImageView.setImageBitmap(resizedPhoto);
         }
@@ -95,7 +113,13 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.save_running_event:
-                Log.d("daz", "save running event");
+                ContentValues values = new ContentValues();
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES, calories);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PICTURE_PATH, photoPath);
+                Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
+                Log.d("Save running event, uri=", uri.toString());
                 finish();
                 break;
             case R.id.discard_running_event:
