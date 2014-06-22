@@ -6,7 +6,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -20,13 +22,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
+import com.amk2.musicrunner.utilities.PhotoLib;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -88,7 +95,11 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private String calorieString;
     private String ratioString;
 
+    private String photoPath;
+
     private NotificationCenter notificationCenter;
+
+    private File musicRunnerDir;
 
     public class RunningTabViewPagerAdapter extends AbstractTabViewPagerAdapter {
 
@@ -203,6 +214,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
         mTabHost = (TabHost)findViewById(android.R.id.tabhost);
         mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
+
+        musicRunnerDir = getAlbumStorageDir(Constant.Album);
     }
 
     private TimerTask runningTask = new TimerTask() {
@@ -296,16 +309,26 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+
         }
     }
 
     @Override
     protected void onActivityResult(int reqCode, int resCode, Intent data) {
         if (reqCode == REQUEST_IMAGE_CAPTURE && resCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            picPreview.setImageBitmap(imageBitmap);
+            galleryAddPic();
+            Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreview.getLayoutParams().width, picPreview.getLayoutParams().height);
+            picPreview.setImageBitmap(resizedPhoto);
         }
     }
 
@@ -386,6 +409,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_DISTANCE, distanceString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, ratioString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
                 startActivity(finishRunningIntent);
                 break;
             case R.id.pause_running:
@@ -397,4 +421,26 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         }
     }
 
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File image = File.createTempFile(imageFileName, ".jpg", musicRunnerDir);
+        photoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void galleryAddPic() {
+        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.parse("file://" + photoPath)));
+    }
+
+    public File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs() || file.isDirectory()) {
+            Log.e("Album", "Directory not created");
+        }
+        return file;
+    }
 }

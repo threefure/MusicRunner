@@ -42,4 +42,7 @@ public class Constant {
 
     public static final int UPDATE_START_FRAGMENT_UI = 1;
 
+    // Album name
+    public static final String Album = "MusicRunner";
+
 }

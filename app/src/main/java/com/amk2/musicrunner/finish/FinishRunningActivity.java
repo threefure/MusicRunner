@@ -2,14 +2,17 @@ package com.amk2.musicrunner.finish;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.utilities.PhotoLib;
 
 /**
  * Created by daz on 2014/6/15.
@@ -18,10 +21,13 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public static String FINISH_RUNNING_DISTANCE = "com.amk2.distance";
     public static String FINISH_RUNNING_CALORIES = "com.amk2.calories";
     public static String FINISH_RUNNING_SPEED    = "com.amk2.speed";
+    public static String FINISH_RUNNING_PHOTO    = "com.amk2.photo";
 
     private TextView distanceTextView;
     private TextView caloriesTextView;
     private TextView speedTextView;
+    private ImageView photoImageView;
+
 
     private Button saveButton;
     private Button discardButton;
@@ -42,6 +48,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
+        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo1);
 
         if (intent.getStringExtra(FINISH_RUNNING_DISTANCE) != null) {
             distanceTextView.setText(intent.getStringExtra(FINISH_RUNNING_DISTANCE));
@@ -51,6 +58,11 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         }
         if (intent.getStringExtra(FINISH_RUNNING_SPEED) != null) {
             speedTextView.setText(intent.getStringExtra(FINISH_RUNNING_SPEED));
+        }
+        if (intent.getStringExtra(FINISH_RUNNING_PHOTO) != null) {
+            String photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
+            Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
+            photoImageView.setImageBitmap(resizedPhoto);
         }
     }
 
