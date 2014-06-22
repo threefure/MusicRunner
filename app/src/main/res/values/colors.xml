@@ -8,11 +8,11 @@
     <color name="yellow">#FFD700</color>
     <color name="darkblue">#104E8B</color>
 
-    <!-- Main Activity tab view-->
+    <!-- Main Activity tab view -->
     <color name="main_tab_item_text_selected">#706E06</color>
     <color name="main_tab_item_text_normal">#FFFFFF</color>
 
-    <!-- Running Activity tab view-->
+    <!-- Running Activity tab view -->
     <color name="running_tab_widget_background">#000000</color>
     <color name="running_tab_item_selected">#000000</color>
     <color name="running_tab_item_normal">#EBEBEB</color>
@@ -24,4 +24,7 @@
     <color name="my_text_tab_unselected">#000000</color>
     <color name="my_background_tab_selected">#000000</color>
     <color name="my_background_tab_unselected">#ffffff</color>
+
+    <!-- Music fragment -->
+    <color name="music_info_text_color">#FFFFFF</color>
 </resources>

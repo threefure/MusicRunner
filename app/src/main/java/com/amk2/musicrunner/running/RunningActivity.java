@@ -362,6 +362,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this,MusicService.class));
         runningTask.cancel();
     }
 

@@ -18,13 +18,16 @@ import android.content.Loader;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MusicFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
@@ -42,10 +45,14 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int MUSIC_ARTIST = 2;
     private static boolean mIsBindToService = false;
 
+    private View mMusicInfoContainer;
+    private View mMusicControlContainer;
     private TextView mMusicTitle;
-    private Button mPreviousButton;
-    private Button mNextButton;
-    private Button mPausePlayButton;
+    private TextView mMusicArtist;
+    private ImageView mPreviousButton;
+    private ImageView mNextButton;
+    private ImageView mPlayPauseButton;
+    private ImageView mShuffleButton;
 
     private Activity mActivity;
     private View mFragmentView;
@@ -67,8 +74,8 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
                 mMusicService.playSong();
             }
             mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
-            mMusicTitle.setText(mMusicService.getPlayingSong().mTitle);
-            setPauseAndPlayContent();
+            setMusicText();
+            setPlayPauseIcon();
             setAllViewsVisible();
         }
 
@@ -78,11 +85,19 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     };
 
+    private void setMusicText() {
+        String artist = mMusicService.getPlayingSong().mArtist;
+        String title = mMusicService.getPlayingSong().mTitle;
+        if(TextUtils.isEmpty(artist)) {
+            artist = getString(R.string.empty_music_artist);
+        }
+        mMusicArtist.setText(artist);
+        mMusicTitle.setText(title);
+    }
+
     private void setAllViewsVisible() {
-        mMusicTitle.setVisibility(View.VISIBLE);
-        mPreviousButton.setVisibility(View.VISIBLE);
-        mNextButton.setVisibility(View.VISIBLE);
-        mPausePlayButton.setVisibility(View.VISIBLE);
+        mMusicInfoContainer.setVisibility(View.VISIBLE);
+        mMusicControlContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -117,13 +132,22 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void setViews() {
+        mMusicInfoContainer = mFragmentView.findViewById(R.id.music_info_container);
+        mMusicControlContainer = mFragmentView.findViewById(R.id.music_control_container);
+
+        // Music information
+        mMusicArtist = (TextView) mFragmentView.findViewById(R.id.music_artist);
         mMusicTitle = (TextView) mFragmentView.findViewById(R.id.music_title);
-        mPreviousButton = (Button) mFragmentView.findViewById(R.id.previous_button);
-        mNextButton = (Button) mFragmentView.findViewById(R.id.next_button);
-        mPausePlayButton = (Button) mFragmentView.findViewById(R.id.pause_play_button);
+
+        // Music control buttons
+        mShuffleButton = (ImageView) mFragmentView.findViewById(R.id.music_shuffle);
+        mPreviousButton = (ImageView) mFragmentView.findViewById(R.id.previous_button);
+        mNextButton = (ImageView) mFragmentView.findViewById(R.id.next_button);
+        mPlayPauseButton = (ImageView) mFragmentView.findViewById(R.id.play_pause_button);
+        mShuffleButton.setOnClickListener(this);
         mPreviousButton.setOnClickListener(this);
         mNextButton.setOnClickListener(this);
-        mPausePlayButton.setOnClickListener(this);
+        mPlayPauseButton.setOnClickListener(this);
     }
 
     private void bindToMusicService() {
@@ -170,30 +194,42 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
+            case R.id.music_shuffle:
+                setShuffle();
+                break;
             case R.id.previous_button:
                 mMusicService.playPreviousSong();
-                mMusicTitle.setText(mMusicService.getPlayingSong().mTitle);
+                setMusicText();
                 break;
             case R.id.next_button:
                 mMusicService.playNextSong();
-                mMusicTitle.setText(mMusicService.getPlayingSong().mTitle);
+                setMusicText();
                 break;
-            case R.id.pause_play_button:
+            case R.id.play_pause_button:
                 if(mMusicService.isPlaying()) {
                     mMusicService.pausePlayer();
                 } else {
                     mMusicService.playPlayer();
                 }
-                setPauseAndPlayContent();
+                setPlayPauseIcon();
                 break;
         }
     }
 
-    private void setPauseAndPlayContent() {
-        if(mMusicService.isPlaying()) {
-            mPausePlayButton.setText(getString(R.string.pause_button_text));
+    private void setShuffle() {
+        mMusicService.setShuffle();
+        if(mMusicService.isShuffle()) {
+            mShuffleButton.setImageResource(R.drawable.shuffle);
         } else {
-            mPausePlayButton.setText(getString(R.string.play_button_text));
+            mShuffleButton.setImageResource(R.drawable.unshuffle);
+        }
+    }
+
+    private void setPlayPauseIcon() {
+        if(mMusicService.isPlaying()) {
+            mPlayPauseButton.setImageResource(R.drawable.pause);
+        } else {
+            mPlayPauseButton.setImageResource(R.drawable.play);
         }
     }
 }

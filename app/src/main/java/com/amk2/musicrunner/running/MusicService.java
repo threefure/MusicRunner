@@ -199,6 +199,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return mIsPlaying;
     }
 
+    public boolean isShuffle() {
+        return mIsShuffle;
+    }
+
     public void pausePlayer() {
         mIsPlaying = false;
         mMusicPlayer.pause();
@@ -260,7 +264,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         Notification.Builder builder = new Notification.Builder(this);
 
-        builder.setContentIntent(pendInt).setSmallIcon(R.drawable.music_player_play)
+        builder.setContentIntent(pendInt).setSmallIcon(R.drawable.play)
                 // .setTicker(getPlayingSong().getMusicSongTitle())
                 .setOngoing(true).setContentTitle(getPlayingSong().mTitle)
                 .setContentText(getPlayingSong().mArtist);
@@ -275,7 +279,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
-        setNotification();
+        //setNotification();
     }
 
     @Override
