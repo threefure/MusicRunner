@@ -40,6 +40,14 @@ public class Constant {
     public static final String storeRunningEventUrlString = HOST + PORT + "store?type=event";//TODO need to append city query behind
     public static final String cityCodeQuery = "cityCode=";
 
+    //AWS Setting
+    public static final String AWS_HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080";
+
+    //SharedPreference Parameters
+    public static final String PREFERENCE_NAME = "musicrun";
+    public static final String ACCOUNT_PARAMS = "account";
+
+
     public static final int UPDATE_START_FRAGMENT_UI = 1;
 
     // Album name

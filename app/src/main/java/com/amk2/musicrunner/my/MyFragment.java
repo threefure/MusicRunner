@@ -17,8 +17,8 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.constants.SharedPreferenceConstants;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 
 import org.apache.http.HttpResponse;
@@ -60,8 +60,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 		super.onActivityCreated(savedInstanceState);
 		// This function is like onCreate() in activity.
 		// You can start from here.
-        SharedPreferences preferences = this.getActivity().getSharedPreferences(SharedPreferenceConstants.PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String account = preferences.getString(SharedPreferenceConstants.ACCOUNT_PARAMS, null);
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        String account = preferences.getString(Constant.ACCOUNT_PARAMS, null);
 //        TextView textView = (TextView) getView().findViewById(R.id.my_view);
 //        textView.setText(account,TextView.BufferType.EDITABLE);
         initializeTab();
@@ -134,13 +134,12 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     }
 
     private String getMyStatus(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(SharedPreferenceConstants.PREFERENCE_NAME, getActivity().MODE_PRIVATE);
-//        String account =  preferences.getString(SharedPreferenceConstants.ACCOUNT_PARAMS, null);
-        String account = "paulou";
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, getActivity().MODE_PRIVATE);
+        String account =  preferences.getString(Constant.ACCOUNT_PARAMS, null);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080/getMyStatus");
+        HttpPost post = new HttpPost(Constant.AWS_HOST + "/getMyStatus");
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         pairs.add(new BasicNameValuePair("userAccount", account));
         HttpResponse response = null;

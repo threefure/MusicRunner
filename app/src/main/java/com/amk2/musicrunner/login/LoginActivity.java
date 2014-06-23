@@ -4,31 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.constants.SharedPreferenceConstants;
-import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.constants.StatusCode;
+import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.utilities.RegisterValidator;
+import com.amk2.musicrunner.utilities.RestfulUtility;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,24 +48,11 @@ public class LoginActivity extends Activity {
             TextView statusEditText = (TextView)findViewById(R.id.loginPageStatus);
             statusEditText.setText("Invalid password: password cannot be empty", TextView.BufferType.EDITABLE);
         }else{
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080/register");
             List<NameValuePair> pairs = new ArrayList<NameValuePair>();
             pairs.add(new BasicNameValuePair("userAccount", account));
             pairs.add(new BasicNameValuePair("password",password));
-            try {
-                post.setEntity(new UrlEncodedFormEntity(pairs));
-                HttpResponse response = client.execute(post);
-                setStatusToEditText(response);
-            } catch (UnsupportedEncodingException uee) {
-
-            } catch (ClientProtocolException cpe) {
-                //ignore this exception for now
-            } catch (IOException ioe) {
-                //ignore this exception for now
-            }
+            HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
+            setStatusToEditText(response);
         }
     }
 
@@ -82,33 +63,20 @@ public class LoginActivity extends Activity {
         EditText passwordEditText = (EditText) findViewById(R.id.password);
         String password = passwordEditText.getText().toString();
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080/login");
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         pairs.add(new BasicNameValuePair("userAccount", account));
         pairs.add(new BasicNameValuePair("password",password));
-        try {
-            post.setEntity(new UrlEncodedFormEntity(pairs));
-            HttpResponse response = client.execute(post);
-            boolean isSuccessful = setStatusToEditText(response);
 
-            if(isSuccessful){
-                SharedPreferences preferences = getSharedPreferences(SharedPreferenceConstants.PREFERENCE_NAME, MODE_PRIVATE);
-                preferences.edit().putString(SharedPreferenceConstants.ACCOUNT_PARAMS, account).commit();
-                Intent intent = new Intent(this, MusicRunnerActivity.class);
-                startActivity(intent);
-            }
+        HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.LOGIN_ENDPOINT,pairs);
+        boolean isSuccessful = setStatusToEditText(response);
 
-
-        } catch (UnsupportedEncodingException uee) {
-
-        } catch (ClientProtocolException cpe) {
-            //ignore this exception for now
-        } catch (IOException ioe) {
-            //ignore this exception for now
+        if(isSuccessful){
+            SharedPreferences preferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
+            preferences.edit().putString(Constant.ACCOUNT_PARAMS, account).commit();
+            Intent intent = new Intent(this, MusicRunnerActivity.class);
+            startActivity(intent);
         }
+
     }
 
 //    @Override
@@ -150,6 +118,10 @@ public class LoginActivity extends Activity {
             return "No Such User";
         } else if (StatusCode.WRONG_PASSWORD.equals(statusCode)){
             return "Password is not correct";
+        } else if (StatusCode.REGISTER_SUCCESSFULLY.equals(statusCode)){
+            return "Register Successfully";
+        } else if (StatusCode.REGISTER_FAIL.equals(statusCode)) {
+            return "Register fails";
         } else {
             return "Login Successfully";
         }
