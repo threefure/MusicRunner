@@ -89,11 +89,11 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private Double distance = 0.0;
     private Double calorie = 0.0;
-    private Double running_ratio = 0.0;
+    private Double running_speed = 0.0;
 
     private String distanceString;
     private String calorieString;
-    private String ratioString;
+    private String speedString;
 
     private String photoPath;
 
@@ -278,14 +278,14 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     runningCalorie.setText(calorieString);
 
                     //update ratio
-                    running_ratio += 0.01;
-                    ratioString = running_ratio.toString();
-                    ratioString = truncateDoubleString(ratioString, 2);
-                    runningSpeedRatio.setText(ratioString);
+                    running_speed += 0.01;
+                    speedString = running_speed.toString();
+                    speedString = truncateDoubleString(speedString, 2);
+                    runningSpeedRatio.setText(speedString);
 
                     if (actualSec % 20 == 0) {
                         Log.v("Timer notifies per 10 sec", "lool");
-                        notificationCenter.notifyStatus(actualSec, actualSec, distance, running_ratio);
+                        notificationCenter.notifyStatus(actualSec, actualSec, distance, running_speed);
                     }
                     break;
             }
@@ -407,9 +407,10 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 finish();
 
                 Intent finishRunningIntent = new Intent(getApplication(), FinishRunningActivity.class);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_DURATION, totalSec);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_DISTANCE, distanceString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
-                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, ratioString);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, speedString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
                 startActivity(finishRunningIntent);
                 break;

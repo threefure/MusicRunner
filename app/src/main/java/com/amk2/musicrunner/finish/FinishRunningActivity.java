@@ -24,6 +24,7 @@ import com.amk2.musicrunner.utilities.PhotoLib;
  * Created by daz on 2014/6/15.
  */
 public class FinishRunningActivity extends Activity implements View.OnClickListener{
+    public static String FINISH_RUNNING_DURATION = "com.amk2.duration";
     public static String FINISH_RUNNING_DISTANCE = "com.amk2.distance";
     public static String FINISH_RUNNING_CALORIES = "com.amk2.calories";
     public static String FINISH_RUNNING_SPEED    = "com.amk2.speed";
@@ -32,8 +33,12 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView distanceTextView;
     private TextView caloriesTextView;
     private TextView speedTextView;
+    private TextView secTextView;
+    private TextView minTextView;
+    private TextView hourTextView;
     private ImageView photoImageView;
 
+    private int totalSec = 0;
     private String distance  = null;
     private String calories  = null;
     private String speed     = null;
@@ -63,12 +68,47 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
         photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
+        secTextView      = (TextView) findViewById(R.id.timer_second);
+        minTextView      = (TextView) findViewById(R.id.timer_minute);
+        hourTextView     = (TextView) findViewById(R.id.timer_hour);
 
+        totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);
         distance  = intent.getStringExtra(FINISH_RUNNING_DISTANCE);
         calories  = intent.getStringExtra(FINISH_RUNNING_CALORIES);
         speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
 
+        if (totalSec > 0) {
+            int actualSec  = totalSec%60;
+            int actualMin  = 0;
+            int actualHour = 0;
+
+            if (actualSec < 10) {
+                secTextView.setText("0" + actualSec);
+            } else {
+                secTextView.setText("" + actualSec);
+            }
+
+            if (actualSec == 0) {
+                actualMin = (actualMin + 1) % 60;
+
+                if (actualMin < 10) {
+                    minTextView.setText("0" + actualMin);
+                } else {
+                    minTextView.setText("" + actualMin);
+                }
+
+                if (actualMin == 0) {
+                    actualHour += 1;
+
+                    if (actualHour < 10) {
+                        hourTextView.setText("0" + actualHour);
+                    } else {
+                        hourTextView.setText("" + actualHour);
+                    }
+                }
+            }
+        }
         if (distance != null) {
             distanceTextView.setText(distance);
         }
@@ -114,6 +154,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         switch(view.getId()) {
             case R.id.save_running_event:
                 ContentValues values = new ContentValues();
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION, totalSec);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES, calories);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);

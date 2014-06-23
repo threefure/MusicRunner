@@ -10,6 +10,7 @@ import android.util.Log;
  */
 public class MusicTrackDBHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
+    private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_COMMON_DATA_TABLE =
             "CREATE TABLE " + MusicTrackMetaData.MusicTrackCommonDataDB.TABLE_NAME + " (" +
@@ -21,6 +22,7 @@ public class MusicTrackDBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_RUNNING_EVENT_DATA_TABLE =
             "CREATE TABLE " + MusicTrackMetaData.MusicTrackRunningEventDataDB.TABLE_NAME + " (" +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE + INTEGER_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES + TEXT_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE + TEXT_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED + TEXT_TYPE + COMMA_SEP +

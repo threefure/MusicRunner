@@ -55,6 +55,7 @@ public class MusicTrackMetaData {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/RunningEventData");
         public static final String TABLE_NAME           = "RunningEventData";
         public static final String COLUMN_NAME_ID       = "id";
+        public static final String COLUMN_NAME_DURATION = "duration";
         public static final String COLUMN_NAME_CALORIES = "calories";
         public static final String COLUMN_NAME_DISTANCE = "distance";
         public static final String COLUMN_NAME_SPEED    = "speed";
