@@ -5,6 +5,7 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.discover.DiscoverFragment;
 import com.amk2.musicrunner.my.MyFragment;
+import com.amk2.musicrunner.my.PastRecordFragment;
 import com.amk2.musicrunner.setting.SettingFragment;
 import com.amk2.musicrunner.start.StartFragment;
 import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
@@ -46,6 +47,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     // Fragments for each tab
     private MyFragment mMyFragment;
+    private PastRecordFragment mPastRecordFragment;
     private StartFragment mStartFragment;
     private WeatherFragment mWeatherFragment;
     private DiscoverFragment mDiscoverFragment;
@@ -67,6 +69,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     public static class FragmentTag {
         public static final String MY_FRAGMENT_TAG = "my_fragment";
+        public static final String PAST_RECORD_FRAGMENT_TAG = "past_record_fragment";
         public static final String START_FRAGMENT_TAG = "start_fragment";
         public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
         public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
@@ -197,11 +200,27 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     }
 
     public void onActivityBackPressed() {
-        if (mViewPager.getCurrentItem() == TabState.START
-                && mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
-            ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).backPressed();
-        } else {
-            mMainActivity.finish();
+        switch(mViewPager.getCurrentItem()) {
+            case TabState.MY:
+                if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
+                    ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
+                } else {
+                    mMainActivity.finish();
+                }
+                break;
+            case TabState.START:
+                if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
+                    ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
+                } else {
+                    mMainActivity.finish();
+                }
+                break;
+            case TabState.DISCOVER:
+                mMainActivity.finish();
+                break;
+            case TabState.SETTING:
+                mMainActivity.finish();
+                break;
         }
     }
 
@@ -210,8 +229,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
      *
      * @author DannyLin
      */
-    public class MainTabViewPagerAdapter extends AbstractTabViewPagerAdapter implements StartTabFragmentListener {
+    public class MainTabViewPagerAdapter extends AbstractTabViewPagerAdapter implements StartTabFragmentListener,
+            MyFragment.MyTabFragmentListener {
 
+        private Fragment mFragmentAtMyTab;
         private Fragment mFragmentAtStartTab;
 
         public MainTabViewPagerAdapter(FragmentManager fm, int size) {
@@ -220,6 +241,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         }
 
         private void setSwitchFragmentListener() {
+            mMyFragment.setMyTabFragmentListener(this);
             mStartFragment.setStartTabFragmentListener(this);
         }
 
@@ -227,7 +249,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         protected Fragment getFragment(int position) {
             switch (position) {
                 case TabState.MY:
-                    return mMyFragment;
+                    if (mFragmentAtMyTab == null) {
+                        mFragmentAtMyTab = mMyFragment;
+                    }
+                    return mFragmentAtMyTab;
                 case TabState.START:
                     if (mFragmentAtStartTab == null) {
                         mFragmentAtStartTab = mStartFragment;
@@ -247,6 +272,12 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 return POSITION_NONE;
             }
             if (object instanceof WeatherFragment && mFragmentAtStartTab instanceof StartFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof MyFragment && mFragmentAtMyTab instanceof PastRecordFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof PastRecordFragment && mFragmentAtMyTab instanceof MyFragment) {
                 return POSITION_NONE;
             }
             return POSITION_UNCHANGED;
@@ -278,6 +309,31 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             }
         }
 
+        @Override
+        public void onSwitchBetweenMyAndPastRecordFragment() {
+            if (mCurTransaction == null) {
+                mCurTransaction = mFragmentManager.beginTransaction();
+            }
+            if (mFragmentAtMyTab instanceof MyFragment) {
+                addPastRecordFragment();
+                mFragmentAtMyTab = mPastRecordFragment;
+                ((PastRecordFragment) mFragmentAtMyTab).setMyTabFragmentListener(this);
+            } else { // Instance of PastRecordFragment
+                mCurTransaction.remove(mFragmentAtMyTab);
+                mFragmentAtMyTab = mMyFragment;
+            }
+            notifyDataSetChanged();
+        }
+
+        private void addPastRecordFragment() {
+            mPastRecordFragment = (PastRecordFragment) mFragmentManager
+                    .findFragmentByTag(FragmentTag.PAST_RECORD_FRAGMENT_TAG);
+            if (mPastRecordFragment == null) {
+                mPastRecordFragment = new PastRecordFragment();
+                mCurTransaction.add(R.id.tab_pager, mPastRecordFragment,
+                        FragmentTag.PAST_RECORD_FRAGMENT_TAG);
+            }
+        }
     }
 
     @Override

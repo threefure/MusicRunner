@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
+
 import com.amk2.musicrunner.R;
 
 /**
@@ -17,7 +19,16 @@ import com.amk2.musicrunner.R;
  */
 public class PastRecordFragment extends Fragment {
 
+    private MyTabFragmentListener mMyTabFragmentListener;
     private TextView textViewTotalDistance;
+
+    public void setMyTabFragmentListener(MyTabFragmentListener listener) {
+        mMyTabFragmentListener = listener;
+    }
+
+    public void onBackPressed() {
+        mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();
+    }
 
     @Override
     public void onCreate (Bundle savedInstanceState) {

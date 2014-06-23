@@ -63,7 +63,7 @@ public class WeatherFragment extends Fragment{
     	mStartTabFragmentListener = listener;
     }
 
-    public void backPressed() {
+    public void onBackPressed() {
     	mStartTabFragmentListener.onSwitchBetweenStartAndWeatherFragment();
     }
 

@@ -38,6 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyFragment extends Fragment implements TabHost.OnTabChangeListener, View.OnClickListener {
+
+    public interface MyTabFragmentListener {
+        void onSwitchBetweenMyAndPastRecordFragment();
+    }
+
+    private MyTabFragmentListener mMyTabFragmentListener;
+
     private ProgressBar timesBar;
     private ProgressBar speedsBar;
     private ProgressBar caloriesBar;
@@ -48,6 +55,10 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     private Integer distanceBarStatus;
     private ImageButton pastRecordMutton;
     private Handler handler = new Handler();
+
+    public void setMyTabFragmentListener(MyTabFragmentListener listener) {
+        mMyTabFragmentListener = listener;
+    }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -171,8 +182,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.my_past_record_button:
-                // go to past record fragment
-                Log.d("Daz", "past record button is pressed");
+                // Go to past record fragment
+                mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();
                 break;
         }
     }
