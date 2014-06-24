@@ -22,11 +22,12 @@ public class MusicTrackDBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_RUNNING_EVENT_DATA_TABLE =
             "CREATE TABLE " + MusicTrackMetaData.MusicTrackRunningEventDataDB.TABLE_NAME + " (" +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION + INTEGER_TYPE + COMMA_SEP +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES + TEXT_TYPE + COMMA_SEP +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE + TEXT_TYPE + COMMA_SEP +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED + TEXT_TYPE + COMMA_SEP +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH + TEXT_TYPE +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION            + INTEGER_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND + TEXT_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES            + TEXT_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE            + TEXT_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED               + TEXT_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH          + TEXT_TYPE +
                     " )";
     private static final String SQL_DELETE_COMMON_DATA_TABLE = "DROP TABLE IF EXISTS " + MusicTrackMetaData.MusicTrackCommonDataDB.TABLE_NAME;
     private static final String SQL_DELETE_RUNNING_EVENT_DATA_TABLE = "DROP TABLE IF EXISTS " + MusicTrackMetaData.MusicTrackRunningEventDataDB.TABLE_NAME;

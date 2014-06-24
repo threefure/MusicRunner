@@ -20,6 +20,8 @@ import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
 
+import java.util.Calendar;
+
 /**
  * Created by daz on 2014/6/15.
  */
@@ -153,14 +155,19 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.save_running_event:
+                Calendar calendar = Calendar.getInstance();
+                long timeInMillis = calendar.getTimeInMillis();
                 ContentValues values = new ContentValues();
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION, totalSec);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES, calories);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
+
                 Log.d("Save running event, uri=", uri.toString());
+
                 finish();
                 break;
             case R.id.discard_running_event:
