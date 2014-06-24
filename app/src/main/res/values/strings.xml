@@ -10,7 +10,7 @@
     <string name="discover_tab">Discover</string>
     <string name="setting_tab">Setting</string>
 
-    <!-- Start Fragment-->
+    <!-- Start Fragment -->
     <string name="chance_of_rain">Chance of Rain</string>
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
@@ -47,11 +47,9 @@
     <!-- Finish running activity -->
     <string name="save">Save</string>
     <string name="discard">Discard</string>
-
     <string name="authority"></string>
     <string name="google_map_api_key">AIzaSyBlxzYrGcBWFudPtLJoSc8nXBFHwZDXRC8</string>
     <string name="title_activity_maps">MapsActivity</string>
-
     <string name="title_activity_login">LoginActivity</string>
     <string name="hello_world">Hello world!</string>
 
@@ -60,6 +58,12 @@
     <string name="my_running_speeds">Speeds</string>
     <string name="my_running_calories">Calories</string>
     <string name="my_running_distances">Distance</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--share Perf-->
+    <string name="cur_location">CURRENT_LOC</string>
+    <string name="cur_location_lng">CURRENT_LOC_LNG</string>
+    <string name="cur_location_lat">CURRENT_LOC_LAT</string>
 
     <!-- Past Record -->
     <string name="past_record_sessions">Sessions</string>

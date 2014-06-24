@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Color;
@@ -134,9 +136,17 @@ public class DiscoverFragment extends Fragment
             double lat = location.getLatitude();
             float speed = location.getSpeed();
             long time = location.getTime();
+            Resources res = getResources();
             String timeString = getTimeString(time);
 
             where = lng + lat + speed + timeString + provider;
+
+            SharedPreferences prefs = mContext.getSharedPreferences(res.getString(R.string.cur_location), Context.MODE_WORLD_READABLE);
+            SharedPreferences.Editor editor = prefs.edit();
+            //Save it as a float since SharedPreferences can't deal with doubles
+            editor.putFloat(res.getString(R.string.cur_location_lat), (float) lat);
+            editor.putFloat(res.getString(R.string.cur_location_lng), (float) lng);
+            editor.commit();
 
             showMarkerMe(lat, lng);
             //cameraFocusOnMe(lat, lng);
@@ -182,7 +192,7 @@ public class DiscoverFragment extends Fragment
         markerOpt.position(new LatLng(lat, lng));
         mMarker = mMap.addMarker(markerOpt);
 
-        Toast.makeText(mContext, "lat:" + lat + ",lng:" + lng, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "lat:" + lat + ",lng:" + lng, Toast.LENGTH_SHORT).show();
     }
 
     private String getTimeString(long timeInMilliseconds){

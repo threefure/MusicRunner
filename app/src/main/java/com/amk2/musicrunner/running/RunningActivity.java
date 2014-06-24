@@ -65,7 +65,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private TabHost mTabHost;
     private ViewPager mRunningViewPager;
     private RunningTabViewPagerAdapter mRunningTabViewPagerAdapter;
-    private MapFragment mMapFragment;
+    private MapFragmentRun mMapFragment;
     private MusicFragment mMusicFragment;
 
     private TextView runningDistance;
@@ -145,8 +145,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private void initTabs() {
         mTabHost.setup();
-        addTab(MAP_TAB_TAG,getString(R.string.map_tab_text));
-        addTab(MUSIC_TAB_TAG,getString(R.string.music_tab_text));
+        addTab(MAP_TAB_TAG, getString(R.string.map_tab_text));
+        addTab(MUSIC_TAB_TAG, getString(R.string.music_tab_text));
         mTabHost.setOnTabChangedListener(this);
     }
 
@@ -174,9 +174,9 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
 
         // Init MapFragment
-        mMapFragment = (MapFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MAP_FRAGMENT_TAG);
+        mMapFragment = (MapFragmentRun)mFragmentManager.findFragmentByTag(RunningFragmentTag.MAP_FRAGMENT_TAG);
         if(mMapFragment == null) {
-            mMapFragment = new MapFragment();
+            mMapFragment = new MapFragmentRun();
             transaction.add(R.id.running_view_pager, mMapFragment, RunningFragmentTag.MAP_FRAGMENT_TAG);
         }
 
