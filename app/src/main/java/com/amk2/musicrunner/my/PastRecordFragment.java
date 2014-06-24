@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,11 +25,12 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimerTask;
 
 /**
  * Created by daz on 2014/6/22.
  */
-public class PastRecordFragment extends Fragment {
+public class PastRecordFragment extends Fragment implements View.OnClickListener{
 
     private ContentResolver mContentResolver;
     private MyTabFragmentListener mMyTabFragmentListener;
@@ -130,21 +132,28 @@ public class PastRecordFragment extends Fragment {
 
     private void addPastRecord (int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath) {
         View pastRecord = inflater.inflate(R.layout.past_record_template, null);
-        TextView textViewDistance  = (TextView) pastRecord.findViewById(R.id.past_record_entry_distance);
-        TextView textViewDate      = (TextView) pastRecord.findViewById(R.id.past_record_date);
-        TextView textViewDuration  = (TextView) pastRecord.findViewById(R.id.past_record_entry_duration);
-        TextView textViewElevation = (TextView) pastRecord.findViewById(R.id.past_record_entry_elevation);
+        TextView textViewDistance    = (TextView) pastRecord.findViewById(R.id.past_record_entry_distance);
+        TextView textViewDate        = (TextView) pastRecord.findViewById(R.id.past_record_date);
+        TextView textViewDuration    = (TextView) pastRecord.findViewById(R.id.past_record_entry_duration);
+        TextView textViewElevation   = (TextView) pastRecord.findViewById(R.id.past_record_entry_elevation);
+        ImageButton imageButtonShare = (ImageButton) pastRecord.findViewById(R.id.past_record_entry_share_button);
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(durationInSec);
         String durationString = TimeConverter.getDurationString(readableTime);
+        String dateString = TimeConverter.getDateString(timeInMillis);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMillis);
-        int day = calendar.get(Calendar.DAY_OF_WEEK) -1;
-
-        textViewDate.setText(DayMapping.getDay(Integer.toString(day)));
+        textViewDate.setText(dateString);
         textViewDistance.setText(distance);
         textViewDuration.setText(durationString);
         pastRecordRunningEventContainer.addView(pastRecord);
+        imageButtonShare.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.past_record_entry_share_button:
+                // sharing running event should be put here
+                break;
+        }
+    }
 }
