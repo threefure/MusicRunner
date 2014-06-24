@@ -49,8 +49,10 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int MUSIC_ARTIST = 2;
     private static boolean mIsBindToService = false;
 
+    private View mMusicController;
     private View mMusicInfoContainer;
     private View mMusicControlContainer;
+    private TextView mEmptyMusicText;
     private TextView mMusicTitle;
     private TextView mMusicArtist;
     private ImageView mMusicAlbumArt;
@@ -69,27 +71,11 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private ServiceConnection mMusicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            //Log.d("danny", "Service connection in MusicFragment");
-            mIsBindToService = true;
-            MusicBinder binder = (MusicBinder) service;
-            mMusicService = binder.getService();
-            mMusicService.setOnPlayingSongCompletionListener(new MusicService.OnPlayingSongCompletionListener() {
-                @Override
-                public void onPlayingSongCompletion() {
-                    setMusicText();
-                    setMusicAlbumArt();
-                }
-            });
-            if (!mMusicService.isMusicPlayerStartRunning()) {
-                mMusicService.setMusicList(mMusicSongList);
-                mMusicService.setSong(mCurrentMusicIndex);
-                mMusicService.playSong();
+            if(mMusicSongList.isEmpty()) {
+                showEmptyMusicView();
+            } else {
+                startPlayMusic(service);
             }
-            mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
-            setMusicText();
-            setMusicAlbumArt();
-            setPlayPauseIcon();
-            setAllViewsVisible();
         }
 
         @Override
@@ -97,6 +83,37 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
             mIsBindToService = false;
         }
     };
+
+    private void showEmptyMusicView() {
+        mMusicController.setVisibility(View.GONE);
+        mEmptyMusicText.setVisibility(View.VISIBLE);
+    }
+
+    private void startPlayMusic(IBinder service) {
+        mMusicController.setVisibility(View.VISIBLE);
+        mEmptyMusicText.setVisibility(View.GONE);
+        //Log.d("danny", "Service connection in MusicFragment");
+        mIsBindToService = true;
+        MusicBinder binder = (MusicBinder) service;
+        mMusicService = binder.getService();
+        mMusicService.setOnPlayingSongCompletionListener(new MusicService.OnPlayingSongCompletionListener() {
+            @Override
+            public void onPlayingSongCompletion() {
+                setMusicText();
+                setMusicAlbumArt();
+            }
+        });
+        if (!mMusicService.isMusicPlayerStartRunning()) {
+            mMusicService.setMusicList(mMusicSongList);
+            mMusicService.setSong(mCurrentMusicIndex);
+            mMusicService.playSong();
+        }
+        mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
+        setMusicText();
+        setMusicAlbumArt();
+        setPlayPauseIcon();
+        setAllViewsVisible();
+    }
 
     private void setMusicText() {
         String artist = mMusicService.getPlayingSong().mArtist;
@@ -145,8 +162,10 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void setViews() {
+        mMusicController = mFragmentView.findViewById(R.id.music_controller);
         mMusicInfoContainer = mFragmentView.findViewById(R.id.music_info_container);
         mMusicControlContainer = mFragmentView.findViewById(R.id.music_control_container);
+        mEmptyMusicText = (TextView) mFragmentView.findViewById(R.id.empty_music_text);
 
         // Music information
         mMusicAlbumArt = (ImageView) mFragmentView.findViewById(R.id.music_album_art);

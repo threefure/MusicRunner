@@ -32,6 +32,7 @@
     <string name="music_tab_text">MUSIC</string>
 
     <!-- Music fragment -->
+    <string name="empty_music_text">Please add music to rock!</string>
     <string name="empty_music_artist">Unknown artist</string>
     <string name="previous_button_text">Previous</string>
     <string name="next_button_text">Next</string>
