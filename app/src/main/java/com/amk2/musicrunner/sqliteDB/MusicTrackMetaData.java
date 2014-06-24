@@ -59,6 +59,6 @@ public class MusicTrackMetaData {
         public static final String COLUMN_NAME_CALORIES = "calories";
         public static final String COLUMN_NAME_DISTANCE = "distance";
         public static final String COLUMN_NAME_SPEED    = "speed";
-        public static final String COLUMN_NAME_PICTURE_PATH  = "pic";
+        public static final String COLUMN_NAME_PHOTO_PATH  = "pic";
     }
 }

@@ -158,7 +158,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES, calories);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PICTURE_PATH, photoPath);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
                 Log.d("Save running event, uri=", uri.toString());
                 finish();
