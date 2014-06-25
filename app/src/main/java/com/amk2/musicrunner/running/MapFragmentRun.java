@@ -12,6 +12,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -178,8 +179,10 @@ public class MapFragmentRun extends Fragment implements
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
 
 
-        mMarker = mMap.addMarker( new MarkerOptions().position(
-                    new LatLng(lat,lng)).title("Yo"));
+        mMarker = mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
+                .anchor(0.0f, 1.0f)
+                .position(new LatLng(lat, lng)).title("Yo"));
     }
 
 
