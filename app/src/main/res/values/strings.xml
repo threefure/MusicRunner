@@ -61,6 +61,8 @@
     <string name="my_running_distances">Distance</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- Latitude, longitude format -->
+    <string name="latitude_longitude">%1$.8f, %2$.8f</string>
     <!--share Perf-->
     <string name="cur_location">CURRENT_LOC</string>
     <string name="cur_location_lng">CURRENT_LOC_LNG</string>
@@ -70,5 +72,12 @@
     <string name="past_record_sessions">Sessions</string>
     <string name="past_record_duration">Duration</string>
     <string name="past_record_elevation">Elevation</string>
+
+    <string name="resolved">Error resolved. Please re-try operation.</string>
+    <string name="no_resolution">Google Play services: unable to resolve connection error.</string>
+    <string name="unknown_activity_request_code">
+        Received an unknown activity request code %1$d in onActivityResult.
+    </string>
+    <string name="play_services_available">Google Play services is available</string>
 
 </resources>

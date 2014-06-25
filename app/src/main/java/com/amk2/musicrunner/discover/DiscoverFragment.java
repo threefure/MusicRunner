@@ -191,8 +191,6 @@ public class DiscoverFragment extends Fragment
         MarkerOptions markerOpt = new MarkerOptions();
         markerOpt.position(new LatLng(lat, lng));
         mMarker = mMap.addMarker(markerOpt);
-
-        //Toast.makeText(mContext, "lat:" + lat + ",lng:" + lng, Toast.LENGTH_SHORT).show();
     }
 
     private String getTimeString(long timeInMilliseconds){
