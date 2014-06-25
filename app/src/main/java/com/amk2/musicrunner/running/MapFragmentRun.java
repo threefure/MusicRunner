@@ -39,6 +39,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -52,6 +53,7 @@ public class MapFragmentRun extends Fragment implements
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
+    private Marker mMarker = null;
 
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
@@ -105,14 +107,20 @@ public class MapFragmentRun extends Fragment implements
 
     @Override
     public void onStop() {
-        // If the client is connected
-        if (mLocationClient.isConnected()) {
-            stopPeriodicUpdates();
-        }
 
+        stopUpdates(this.getView());
         // After disconnect() is called, the client is considered "dead".
         mLocationClient.disconnect();
         super.onStop();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Connect the client.
+        mLocationClient.connect();
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -123,14 +131,6 @@ public class MapFragmentRun extends Fragment implements
         mEditor.commit();
 
         super.onPause();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Connect the client.
-        mLocationClient.connect();
     }
 
     @Override
@@ -158,10 +158,6 @@ public class MapFragmentRun extends Fragment implements
 
         getLocation(this.getView());
         startUpdates(this.getView());
-
-        if (mUpdatesRequested) {
-            startPeriodicUpdates();
-        }
     }
 
     @Override
@@ -172,19 +168,18 @@ public class MapFragmentRun extends Fragment implements
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        mMap.clear();
-        Marker marker =
-                mMap.addMarker(
-                        new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(),
-                                location.getLongitude())).title("Marker"));
-        int padding = 2;
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        LatLng curLoc = new LatLng(lat, lng);
 
-        builder.include(marker.getPosition());
-        LatLngBounds bounds = builder.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        mMap.moveCamera(cu);
+        if (mMarker != null)
+            mMarker.remove();
+        else
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
+
+
+        mMarker = mMap.addMarker( new MarkerOptions().position(
+                    new LatLng(lat,lng)).title("Yo"));
     }
 
 
