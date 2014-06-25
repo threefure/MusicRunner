@@ -56,6 +56,8 @@ public class MapFragmentRun extends Fragment implements
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
     private Marker mMarker = null;
 
+    private ArrayList<LatLng> mTrackList;
+
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
     private LocationClient mLocationClient;
@@ -178,13 +180,30 @@ public class MapFragmentRun extends Fragment implements
         else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
 
-
         mMarker = mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
                 .anchor(0.0f, 1.0f)
                 .position(new LatLng(lat, lng)).title("Yo"));
+
+        DrawLine(lat, lng);
     }
 
+    private void DrawLine(double lat, double lng){
+        if (mTrackList == null) {
+            mTrackList = new ArrayList<LatLng>();
+        }
+        mTrackList.add(new LatLng(lat, lng));
+
+        PolylineOptions polylineOpt = new PolylineOptions();
+        for (LatLng latlng : mTrackList) {
+            polylineOpt.add(latlng);
+        }
+
+        polylineOpt.color(Color.RED);
+
+        Polyline line = mMap.addPolyline(polylineOpt);
+        line.setWidth(10);
+    }
 
     private boolean servicesConnected() {
         // Check that Google Play services is available
