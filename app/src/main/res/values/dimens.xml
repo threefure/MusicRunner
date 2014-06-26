@@ -18,8 +18,8 @@
     <dimen name="timer">50dp</dimen>
 
     <!-- Running Activity tab view -->
-    <dimen name="tab_view_padding_left_right">40dp</dimen>
-    <dimen name="tab_view_padding_bottom">60dp</dimen>
+    <dimen name="tab_view_padding_left_right">30dp</dimen>
+    <dimen name="tab_view_padding_bottom">30dp</dimen>
     <dimen name="tab_height">40dp</dimen>
     <dimen name="running_tab_widget_shape_corner">6dp</dimen>
     <dimen name="running_tab_item_content_margin">6dp</dimen>

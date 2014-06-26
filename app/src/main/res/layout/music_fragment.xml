@@ -52,7 +52,7 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
 
-                <ImageView
+                <com.amk2.musicrunner.CircularImageView
                     android:id="@+id/music_album_art"
                     android:layout_width="@dimen/music_album_art_width_height"
                     android:layout_height="@dimen/music_album_art_width_height" />
@@ -62,7 +62,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
                     android:textColor="@color/music_info_text_color" />
 
                 <TextView
