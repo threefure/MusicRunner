@@ -56,7 +56,14 @@ public class MapFragmentRun extends Fragment implements
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
     private Marker mMarker = null;
 
+    private LatLng mlastLoc = null;
     private ArrayList<LatLng> mTrackList;
+
+
+
+    private static float mSpeed;
+    private static double mTotalDistance;
+    private double mTolerance = 0.5;
 
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
@@ -173,6 +180,9 @@ public class MapFragmentRun extends Fragment implements
     public void onLocationChanged(Location location) {
         double lat = location.getLatitude();
         double lng = location.getLongitude();
+        float speed = location.getSpeed();
+
+        mSpeed = location.getSpeed();
         LatLng curLoc = new LatLng(lat, lng);
 
         if (mMarker != null)
@@ -183,26 +193,56 @@ public class MapFragmentRun extends Fragment implements
         mMarker = mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
                 .anchor(0.0f, 1.0f)
-                .position(new LatLng(lat, lng)).title("Yo"));
+                .position(curLoc).title("Yo"));
 
-        DrawLine(lat, lng);
+
+        drawLine(curLoc, speed);
     }
 
-    private void DrawLine(double lat, double lng){
+    private void drawLine(LatLng curr, float speed) {
+        double distance = 0;
         if (mTrackList == null) {
             mTrackList = new ArrayList<LatLng>();
         }
-        mTrackList.add(new LatLng(lat, lng));
+        if (mlastLoc == null) {
+            mlastLoc = curr;
+            mTrackList.add(new LatLng(curr.latitude, curr.longitude));
+        } else {
+            distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
 
-        PolylineOptions polylineOpt = new PolylineOptions();
-        for (LatLng latlng : mTrackList) {
-            polylineOpt.add(latlng);
+            if ( (mTolerance * LocationUtils.TOLERANCE_TIMES) > distance &&  distance > LocationUtils.MIN_DISTANCE) {
+                mTolerance = distance;
+                mTotalDistance += distance;
+                mSpeed = speed;
+                mTrackList.add(curr);
+                PolylineOptions polylineOpt = new PolylineOptions();
+                polylineOpt.add(mlastLoc).add(curr);
+                polylineOpt.color(Color.RED);
+                Polyline line = mMap.addPolyline(polylineOpt);
+                line.setWidth(LocationUtils.LINE_WIDTH);
+
+                mlastLoc = curr;
+            } else {
+                mSpeed = 0;
+            }
+            Toast.makeText(this.getView().getContext(), "mDistance = " + mTotalDistance + ", mSpeed = " + mSpeed,
+                    Toast.LENGTH_SHORT).show();
         }
+    }
 
-        polylineOpt.color(Color.RED);
+    private double CalculationByDistance(double lat_a, double lng_a, double lat_b, double lng_b) {
+        double earthRadius = LocationUtils.EARTH_RADIOUS;
+        double latDiff = Math.toRadians(lat_b-lat_a);
+        double lngDiff = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
 
-        Polyline line = mMap.addPolyline(polylineOpt);
-        line.setWidth(10);
+        int meterConversion = LocationUtils.METER_CONVERSTION;
+
+        return new Float(distance * meterConversion).floatValue();
     }
 
     private boolean servicesConnected() {
@@ -344,5 +384,13 @@ public class MapFragmentRun extends Fragment implements
             mMap = ((MapFragment) getFragmentManager()
                     .findFragmentById(R.id.running_map)).getMap();
         }
+    }
+
+    public static double getmTotalDistance() {
+        return mTotalDistance;
+    }
+
+    public static float getmSpeed() {
+        return mSpeed;
     }
 }

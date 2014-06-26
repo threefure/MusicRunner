@@ -37,6 +37,8 @@ public final class LocationUtils {
     public static final String KEY_UPDATES_REQUESTED =
             "com.example.android.location.KEY_UPDATES_REQUESTED";
 
+    public static final float EARTH_RADIOUS = 6371;
+
     /*
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult
@@ -50,10 +52,16 @@ public final class LocationUtils {
     public static final int MILLISECONDS_PER_SECOND = 1000;
 
     // The update interval
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 1;
 
     // A fast interval ceiling
     public static final int FAST_CEILING_IN_SECONDS = 1;
+
+    public static final int LINE_WIDTH = 10;
+    public static final int TOLERANCE_TIMES = 5;
+    public static final double MIN_DISTANCE = 1;
+    public static final int METER_CONVERSTION = 1609;
+    public static final double EARTH_RADIOUS_MILES = 3958.75;
 
     // Update interval in milliseconds
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS =

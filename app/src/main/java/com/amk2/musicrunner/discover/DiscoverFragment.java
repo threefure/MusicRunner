@@ -33,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -286,16 +285,10 @@ public class DiscoverFragment extends Fragment
         public void onStatusChanged(String provider, int status, Bundle extras) {
             switch (status) {
                 case LocationProvider.OUT_OF_SERVICE:
-                    Toast.makeText(mContext, "Status Changed: Out of Service",
-                            Toast.LENGTH_SHORT).show();
                     break;
                 case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Toast.makeText(mContext, "Status Changed: Temporarily Unavailable",
-                            Toast.LENGTH_SHORT).show();
                     break;
                 case LocationProvider.AVAILABLE:
-                    Toast.makeText(mContext, "Status Changed: Available",
-                            Toast.LENGTH_SHORT).show();
                     break;
             }
         }
