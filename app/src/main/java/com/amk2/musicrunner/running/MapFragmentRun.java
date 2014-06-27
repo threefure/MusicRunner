@@ -59,10 +59,9 @@ public class MapFragmentRun extends Fragment implements
     private LatLng mlastLoc = null;
     private ArrayList<LatLng> mTrackList;
 
-
-
-    private static float mSpeed;
+    private static double mSpeed;
     private static double mTotalDistance;
+
     private double mTolerance = 0.5;
 
     // A request to connect to Location Services
@@ -180,9 +179,7 @@ public class MapFragmentRun extends Fragment implements
     public void onLocationChanged(Location location) {
         double lat = location.getLatitude();
         double lng = location.getLongitude();
-        float speed = location.getSpeed();
 
-        mSpeed = location.getSpeed();
         LatLng curLoc = new LatLng(lat, lng);
 
         if (mMarker != null)
@@ -196,10 +193,10 @@ public class MapFragmentRun extends Fragment implements
                 .position(curLoc).title("Yo"));
 
 
-        drawLine(curLoc, speed);
+        drawLine(curLoc);
     }
 
-    private void drawLine(LatLng curr, float speed) {
+    private void drawLine(LatLng curr) {
         double distance = 0;
         if (mTrackList == null) {
             mTrackList = new ArrayList<LatLng>();
@@ -210,10 +207,10 @@ public class MapFragmentRun extends Fragment implements
         } else {
             distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
 
-            if ( (mTolerance * LocationUtils.TOLERANCE_TIMES) > distance &&  distance > LocationUtils.MIN_DISTANCE) {
+            if ( distance > LocationUtils.MIN_DISTANCE ) {
                 mTolerance = distance;
                 mTotalDistance += distance;
-                mSpeed = speed;
+                mSpeed = distance / LocationUtils.UPDATE_INTERVAL_IN_SECONDS;
                 mTrackList.add(curr);
                 PolylineOptions polylineOpt = new PolylineOptions();
                 polylineOpt.add(mlastLoc).add(curr);
@@ -390,7 +387,11 @@ public class MapFragmentRun extends Fragment implements
         return mTotalDistance;
     }
 
-    public static float getmSpeed() {
+    public static double getmSpeed() {
         return mSpeed;
+    }
+
+    public static void resetmTotalDistance() {
+        MapFragmentRun.mTotalDistance = 0;
     }
 }
