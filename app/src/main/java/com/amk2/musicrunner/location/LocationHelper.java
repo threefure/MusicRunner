@@ -64,30 +64,7 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
             } else {
                 Log.d("daz in locationhelper", "cannot determine address");
             }
-
-            Log.d("daz", "set up daily weather updater");
-            HashMap<String, String> dailyBundleSettings = new HashMap<String, String>();
-            dailyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
-            dailyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
-            addPeriodSync(dailyBundleSettings, Constant.ONE_MINUTE);
-
-            Log.d("daz", "set up 24hrs weather updater");
-            HashMap<String, String> t24HrsBundleSettings = new HashMap<String, String>();
-            t24HrsBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_24HRS_WEATHER);
-            t24HrsBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
-            addPeriodSync(t24HrsBundleSettings, Constant.ONE_MINUTE);
-
-            Log.d("daz", "set up weekly weather updater");
-            HashMap<String, String> weeklyBundleSettings = new HashMap<String, String>();
-            weeklyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEEKLY_WEATHER);
-            weeklyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
-            addPeriodSync(weeklyBundleSettings, Constant.ONE_MINUTE);
-
-            Log.d("daz", "set up youbike updater");
-            HashMap<String, String> youbikeBundleSettings = new HashMap<String, String>();
-            youbikeBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_UBIKE);
-            addPeriodSync(youbikeBundleSettings, Constant.ONE_MINUTE);
-
+            registerPeriodicSyncs();
         } catch (IllegalStateException e) {
             Log.e("Error", "task has already been executed");
             e.printStackTrace();
@@ -99,6 +76,39 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
     @Override
     public void onDisconnected() {
         Log.d("daz", "location helper disconnected");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    public void registerPeriodicSyncs () {
+        Log.d("daz", "set up daily weather updater");
+        HashMap<String, String> dailyBundleSettings = new HashMap<String, String>();
+        dailyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
+        dailyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        addPeriodSync(dailyBundleSettings, Constant.ONE_MINUTE);
+
+        Log.d("daz", "set up 24hrs weather updater");
+        HashMap<String, String> t24HrsBundleSettings = new HashMap<String, String>();
+        t24HrsBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_24HRS_WEATHER);
+        t24HrsBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        addPeriodSync(t24HrsBundleSettings, Constant.ONE_MINUTE);
+
+        Log.d("daz", "set up weekly weather updater");
+        HashMap<String, String> weeklyBundleSettings = new HashMap<String, String>();
+        weeklyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEEKLY_WEATHER);
+        weeklyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        addPeriodSync(weeklyBundleSettings, Constant.ONE_MINUTE);
+
+        Log.d("daz", "set up youbike updater");
+        HashMap<String, String> youbikeBundleSettings = new HashMap<String, String>();
+        youbikeBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_UBIKE);
+        addPeriodSync(youbikeBundleSettings, Constant.ONE_MINUTE);
+    }
+
+    public void unregisterPeriodicSyncs () {
         Log.d("daz", "remove daily weather updater");
         HashMap<String, String> dailyBundleSettings = new HashMap<String, String>();
         dailyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
@@ -121,11 +131,6 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
         HashMap<String, String> youbikeBundleSettings = new HashMap<String, String>();
         youbikeBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_UBIKE);
         removePeriodSync(youbikeBundleSettings);
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
     }
 
     private void addPeriodSync (HashMap<String, String> bundleMap, long period) {

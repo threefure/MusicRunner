@@ -126,6 +126,7 @@ public class MusicRunnerActivity extends Activity {
             Intent intent = new Intent(this, SyncService.class);
             stopService(intent);
             Log.d("daz", "stop sync service");
+            mLocationHelper.unregisterPeriodicSyncs();
             mLocationHelper.Disconnect();
         }
         super.onStop();

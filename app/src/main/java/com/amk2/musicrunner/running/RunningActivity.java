@@ -90,7 +90,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private Double distance = 0.0;
     private Double calorie = 0.0;
-    private float running_speed = 0;
+    private Double running_speed = 0.0;
 
     private String distanceString;
     private String calorieString;
@@ -282,12 +282,12 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     //update ratio
                     //running_speed += 0.01;
                     running_speed = MapFragmentRun.getmSpeed();
-                    speedString = Double.toString(running_speed);
+                    speedString = running_speed.toString();
                     speedString = truncateDoubleString(speedString, 2);
                     runningSpeedRatio.setText(speedString);
 
                     if (actualSec % 65 == 0) {
-                        notificationCenter.notifyStatus(actualSec, actualSec, distance, Double.parseDouble(speedString));
+                        notificationCenter.notifyStatus(actualSec, actualSec, distance, running_speed);
                     }
                     break;
             }
