@@ -19,8 +19,10 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.TimeConverter;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created by daz on 2014/6/15.
@@ -35,9 +37,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView distanceTextView;
     private TextView caloriesTextView;
     private TextView speedTextView;
-    private TextView secTextView;
-    private TextView minTextView;
-    private TextView hourTextView;
+    private TextView finishTimeTextView;
     private ImageView photoImageView;
 
     private int totalSec = 0;
@@ -70,9 +70,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
         photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
-        secTextView      = (TextView) findViewById(R.id.timer_second);
-        minTextView      = (TextView) findViewById(R.id.timer_minute);
-        hourTextView     = (TextView) findViewById(R.id.timer_hour);
+        finishTimeTextView = (TextView) findViewById(R.id.finish_time);
 
         totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);
         distance  = intent.getStringExtra(FINISH_RUNNING_DISTANCE);
@@ -81,35 +79,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
 
         if (totalSec > 0) {
-            int actualSec  = totalSec%60;
-            int actualMin  = 0;
-            int actualHour = 0;
-
-            if (actualSec < 10) {
-                secTextView.setText("0" + actualSec);
-            } else {
-                secTextView.setText("" + actualSec);
-            }
-
-            if (actualSec == 0) {
-                actualMin = (actualMin + 1) % 60;
-
-                if (actualMin < 10) {
-                    minTextView.setText("0" + actualMin);
-                } else {
-                    minTextView.setText("" + actualMin);
-                }
-
-                if (actualMin == 0) {
-                    actualHour += 1;
-
-                    if (actualHour < 10) {
-                        hourTextView.setText("0" + actualHour);
-                    } else {
-                        hourTextView.setText("" + actualHour);
-                    }
-                }
-            }
+            HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
+            String duration = TimeConverter.getDurationString(time);
+            finishTimeTextView.setText(duration);
         }
         if (distance != null) {
             distanceTextView.setText(distance);

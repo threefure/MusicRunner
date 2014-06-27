@@ -9,47 +9,12 @@
         android:layout_weight="2"
         android:gravity="center">
         <TextView
-            android:id="@+id/timer_hour"
+            android:id="@+id/finish_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/colon_hour"
-            android:text="@string/initial_timer_hour"
-            android:textSize="@dimen/timer" />
-
-        <TextView
-            android:id="@+id/colon_hour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/timer_minute"
-            android:text=":"
-            android:textSize="@dimen/timer" />
-
-        <TextView
-            android:id="@+id/timer_minute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/initial_timer_minute"
-            android:textSize="@dimen/timer" />
-
-        <TextView
-            android:id="@+id/colon_min"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/timer_minute"
-            android:text=":"
-            android:textSize="@dimen/timer" />
-
-        <TextView
-            android:id="@+id/timer_second"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/colon_min"
-            android:text="@string/initial_timer_second"
+            android:text="00:00:00"
             android:textSize="@dimen/timer" />
     </LinearLayout>
     <RelativeLayout

@@ -40,7 +40,6 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
     }
 
     public void Connect () {
-        Log.d("daz in locationhelper", "location connect");
         mLocationClient.connect();
     }
 
@@ -99,7 +98,29 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
 
     @Override
     public void onDisconnected() {
+        Log.d("daz", "location helper disconnected");
+        Log.d("daz", "remove daily weather updater");
+        HashMap<String, String> dailyBundleSettings = new HashMap<String, String>();
+        dailyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
+        dailyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        removePeriodSync(dailyBundleSettings);
 
+        Log.d("daz", "remove 24hrs weather updater");
+        HashMap<String, String> t24HrsBundleSettings = new HashMap<String, String>();
+        t24HrsBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_24HRS_WEATHER);
+        t24HrsBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        removePeriodSync(t24HrsBundleSettings);
+
+        Log.d("daz", "remove weekly weather updater");
+        HashMap<String, String> weeklyBundleSettings = new HashMap<String, String>();
+        weeklyBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_WEEKLY_WEATHER);
+        weeklyBundleSettings.put(Constant.SYNC_CITYCODE, LocationMetaData.getCityCode());
+        removePeriodSync(weeklyBundleSettings);
+
+        Log.d("daz", "remove youbike updater");
+        HashMap<String, String> youbikeBundleSettings = new HashMap<String, String>();
+        youbikeBundleSettings.put(Constant.SYNC_UPDATE, Constant.UPDATE_UBIKE);
+        removePeriodSync(youbikeBundleSettings);
     }
 
     @Override
@@ -113,8 +134,21 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
             bundle.putString(key, bundleMap.get(key));
         }
         try {
-            Log.d("daz", "register updating weather");
+            Log.d("daz", "add period sync");
             mContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle, period);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removePeriodSync (HashMap<String, String> bundleMap) {
+        Bundle bundle = new Bundle();
+        for (String key:bundleMap.keySet()) {
+            bundle.putString(key, bundleMap.get(key));
+        }
+        try {
+            Log.d("daz", "remove period sync");
+            mContentResolver.removePeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

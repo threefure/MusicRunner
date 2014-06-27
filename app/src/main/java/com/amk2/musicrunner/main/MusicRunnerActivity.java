@@ -2,6 +2,7 @@
 package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.services.SyncService;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService;
@@ -15,6 +16,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 /**
@@ -58,7 +60,12 @@ public class MusicRunnerActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        if (Constant.isServerOn) {
+            mLocationHelper.Connect();
+            Intent intent = new Intent(this, SyncService.class);
+            startService(intent);
+            Log.d("daz", "start sync service");
+        }
     }
 
     private void initialize() {
@@ -83,9 +90,7 @@ public class MusicRunnerActivity extends Activity {
 
     private void initializeLocation() {
         mLocationHelper = new LocationHelper(this.getApplicationContext());
-        if (Constant.isServerOn) {
-            mLocationHelper.Connect();
-        }
+
     }
 
     @Override
@@ -109,11 +114,20 @@ public class MusicRunnerActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("daz", "activity pause");
         mUIController.onActivityPause();
     }
 
     @Override
     protected void onStop() {
+        Log.d("daz", "activity stop");
+        if (Constant.isServerOn) {
+            Log.d("daz", "call disconnect()");
+            Intent intent = new Intent(this, SyncService.class);
+            stopService(intent);
+            Log.d("daz", "stop sync service");
+            mLocationHelper.Disconnect();
+        }
         super.onStop();
     }
 
