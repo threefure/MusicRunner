@@ -324,7 +324,7 @@ public class DiscoverFragment extends Fragment
                 //------ should merged with showMarkerMe() with the extended title feature -----------
                 MarkerOptions mo = new MarkerOptions();
                 mo.position(new LatLng(Double.parseDouble(entry.getString("lat")), Double.parseDouble(entry.getString("lng"))));
-                mo.title(entry.getString("sna"));
+                mo.title(entry.getString("sna")).snippet(entry.getString("sbi") + "/" + entry.getString("tot"));
                 mMap.addMarker(mo);
                 //------ should merged with showMarkerMe() -----------
             }
