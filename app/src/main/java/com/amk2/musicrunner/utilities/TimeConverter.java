@@ -58,7 +58,16 @@ public class TimeConverter {
         int date    = calendar.get(Calendar.DAY_OF_MONTH);
         int hour    = calendar.get(Calendar.HOUR_OF_DAY);
         int min     = calendar.get(Calendar.MINUTE);
-        String dateString = month + "/" + date + " " + day + " " + hour + ":" + min;
+
+        String dateString = month + "/" + date + " " + day + " ";
+        if (hour < 10) {
+            dateString += "0";
+        }
+        dateString += (hour + ":");
+        if (min < 10) {
+            dateString += "0";
+        }
+        dateString += min;
         return dateString;
     }
 }

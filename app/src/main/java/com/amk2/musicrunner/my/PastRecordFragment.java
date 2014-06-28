@@ -3,6 +3,7 @@ package com.amk2.musicrunner.my;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
 
 import com.amk2.musicrunner.R;
@@ -74,12 +76,12 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mContentResolver = getActivity().getContentResolver();
+        getPastRecords();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getPastRecords();
     }
 
     @Override
@@ -88,6 +90,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
     }
 
     private void getPastRecords() {
+        int id;
         int durationInSec;
         int totalDurationInSec = 0;
         int totalSessions      = 0;
@@ -98,6 +101,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
 
 
         String[] projection = {
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
@@ -107,6 +111,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         };
         Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
         while(cursor.moveToNext()) {
+            id                 = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID));
             durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
             timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
             distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
@@ -116,7 +121,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
             timeInMillis       = Long.parseLong(timeInMillisString);
 
             Log.d("past records", "duration:" + durationInSec + ", distance:" + distance + ", calories:" + calories + ", speed:" + speed + ", photoPath:" + photoPath);
-            addPastRecord(durationInSec, timeInMillis, distance, calories, speed, photoPath);
+            addPastRecord(id, durationInSec, timeInMillis, distance, calories, speed, photoPath);
 
             totalSessions++;
             totalDurationInSec += durationInSec;
@@ -130,8 +135,9 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         textViewTotalSessions.setText(Integer.toString(totalSessions));
     }
 
-    private void addPastRecord (int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath) {
+    private void addPastRecord (int id, int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath) {
         View pastRecord = inflater.inflate(R.layout.past_record_template, null);
+        TextView textViewId          = (TextView) pastRecord.findViewById(R.id.past_record_id);
         TextView textViewDistance    = (TextView) pastRecord.findViewById(R.id.past_record_entry_distance);
         TextView textViewDate        = (TextView) pastRecord.findViewById(R.id.past_record_date);
         TextView textViewDuration    = (TextView) pastRecord.findViewById(R.id.past_record_entry_duration);
@@ -141,11 +147,13 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         String durationString = TimeConverter.getDurationString(readableTime);
         String dateString = TimeConverter.getDateString(timeInMillis);
 
+        textViewId.setText(Integer.toString(id));
         textViewDate.setText(dateString);
         textViewDistance.setText(distance);
         textViewDuration.setText(durationString);
         pastRecordRunningEventContainer.addView(pastRecord);
         imageButtonShare.setOnClickListener(this);
+        pastRecord.setOnClickListener(this);
     }
 
     @Override
@@ -153,6 +161,13 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         switch(v.getId()){
             case R.id.past_record_entry_share_button:
                 // sharing running event should be put here
+                break;
+            case R.id.past_record:
+                TextView textViewId = (TextView) v.findViewById(R.id.past_record_id);
+                Log.d("daz", "past record is pressed, id is " + textViewId.getText());
+                Intent pastRecordDetailsIntent = new Intent(getActivity(), PastRecordDetailsActivity.class);
+                pastRecordDetailsIntent.putExtra(PastRecordDetailsActivity.PAST_RECORD_ID, textViewId.getText());
+                startActivity(pastRecordDetailsIntent);
                 break;
         }
     }

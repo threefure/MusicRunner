@@ -302,7 +302,6 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     public static String truncateDoubleString (String str, int allowedDigits) {
         int dot_position = str.indexOf(".");
         if (str.length() - dot_position > (allowedDigits + 1)) { //小數點後數字大於兩位
-            Log.d("truncate", "truncate");
             str = str.substring(0, dot_position + allowedDigits + 1);
         }
         return str;

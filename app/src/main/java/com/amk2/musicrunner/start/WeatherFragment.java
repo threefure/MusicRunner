@@ -111,12 +111,7 @@ public class WeatherFragment extends Fragment{
 
         weatherTemp    = (TextView) thisView.findViewById(R.id.weather_temp);
         weatherSummary = (TextView) thisView.findViewById(R.id.weather_summary);
-        //location = LocationMetaData.getLocation();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
         try {
             updateWeatherSummary();
             updateWeeklyForecast();
@@ -124,6 +119,11 @@ public class WeatherFragment extends Fragment{
         } catch (CursorIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     private void updateWeatherSummary () {
