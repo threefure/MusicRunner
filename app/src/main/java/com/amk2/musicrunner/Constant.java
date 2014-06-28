@@ -50,6 +50,8 @@ public class Constant {
 
     public static final int UPDATE_START_FRAGMENT_UI = 1;
 
+    //Facebook Setting
+    public static final String FACEBOOK_ACCOUNT_PREFIX = "facebook.";
     // Album name
     public static final String Album = "MusicRunner";
 

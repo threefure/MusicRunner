@@ -15,6 +15,7 @@
         android:layout_marginTop="20dp"
         android:background="#80000000">
         <TextView
+            android:id="@+id/my_user_name"
             android:layout_marginLeft="110dp"
             android:layout_marginRight="110dp"
             android:width="400dp"

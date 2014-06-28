@@ -33,6 +33,11 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.login);
     }
 
+    public void facebookLogin(View view){
+        Intent intent = new Intent(this, FBLogin.class);
+        startActivity(intent);
+    }
+
     public void registerAccount(View view) {
         // Do something in response to button
         EditText accountEditText = (EditText) findViewById(R.id.account_info);

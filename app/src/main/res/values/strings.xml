@@ -63,7 +63,7 @@
 
     <!-- Latitude, longitude format -->
     <string name="latitude_longitude">%1$.8f, %2$.8f</string>
-    <!--share Perf-->
+    <!-- share Perf -->
     <string name="cur_location">CURRENT_LOC</string>
     <string name="cur_location_lng">CURRENT_LOC_LNG</string>
     <string name="cur_location_lat">CURRENT_LOC_LAT</string>
@@ -72,12 +72,13 @@
     <string name="past_record_sessions">Sessions</string>
     <string name="past_record_duration">Duration</string>
     <string name="past_record_elevation">Elevation</string>
-
     <string name="resolved">Error resolved. Please re-try operation.</string>
     <string name="no_resolution">Google Play services: unable to resolve connection error.</string>
-    <string name="unknown_activity_request_code">
-        Received an unknown activity request code %1$d in onActivityResult.
-    </string>
+    <string name="unknown_activity_request_code">        Received an unknown activity request code %1$d in onActivityResult.</string>
     <string name="play_services_available">Google Play services is available</string>
+
+    <!-- Facebook Setting -->
+    <string name="title_activity_fblogin">FBLogin</string>
+    <string name="facebook_app_id">445576178911956</string>
 
 </resources>

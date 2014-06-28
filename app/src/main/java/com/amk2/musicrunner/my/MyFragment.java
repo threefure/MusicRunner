@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.utilities.RestfulUtility;
+import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -142,6 +142,11 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
             e.printStackTrace();
         }
 
+
+        //showing user name
+        String userName = SharedPreferencesUtility.getAccount(getActivity());
+        TextView userNameTextView = (TextView) getView().findViewById(R.id.my_user_name);
+        userNameTextView.setText(userName);
     }
 
     private String getMyStatus(){
