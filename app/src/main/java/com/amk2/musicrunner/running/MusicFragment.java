@@ -49,6 +49,11 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int MUSIC_ARTIST = 2;
     private static boolean mIsBindToService = false;
 
+    public interface OnChangeSongListener {
+        void onChangeMusicSong(MusicSong currentMusicSong);
+    }
+    private OnChangeSongListener mOnChangeSongListener;
+
     private View mMusicController;
     private View mMusicInfoContainer;
     private View mMusicControlContainer;
@@ -67,6 +72,10 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private Intent mPlayIntent;
     private int mCurrentMusicIndex = 0;
     private ArrayList<MusicSong> mMusicSongList;
+
+    public void setOnChangeSongListener(OnChangeSongListener listener) {
+        mOnChangeSongListener = listener;
+    }
 
     private ServiceConnection mMusicConnection = new ServiceConnection() {
         @Override
@@ -101,12 +110,14 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
             public void onPlayingSongCompletion() {
                 setMusicText();
                 setMusicAlbumArt();
+                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
             }
         });
         if (!mMusicService.isMusicPlayerStartRunning()) {
             mMusicService.setMusicList(mMusicSongList);
             mMusicService.setSong(mCurrentMusicIndex);
             mMusicService.playSong();
+            mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
         }
         mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
         setMusicText();
@@ -279,12 +290,14 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
                 setMusicText();
                 setMusicAlbumArt();
                 setPlayPauseIcon();
+                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
                 break;
             case R.id.next_button:
                 mMusicService.playNextSong();
                 setMusicText();
                 setMusicAlbumArt();
                 setPlayPauseIcon();
+                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
                 break;
             case R.id.play_pause_button:
                 if(mMusicService.isPlaying()) {
@@ -351,4 +364,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
+    public MusicSong getCurrentMusic() {
+        return mMusicService.getPlayingSong();
+    }
 }

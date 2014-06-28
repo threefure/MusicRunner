@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
@@ -42,7 +43,7 @@ import java.util.TimerTask;
  * Created by ktlee on 5/10/14.
  */
 public class RunningActivity extends Activity implements TabHost.OnTabChangeListener,
-        ViewPager.OnPageChangeListener, View.OnClickListener {
+        ViewPager.OnPageChangeListener, View.OnClickListener, MusicFragment.OnChangeSongListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -189,6 +190,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             mMusicFragment = new MusicFragment();
             transaction.add(R.id.running_view_pager, mMusicFragment, RunningFragmentTag.MUSIC_FRAGMENT_TAG);
         }
+        mMusicFragment.setOnChangeSongListener(this);
 
         transaction.hide(mMapFragment);
         transaction.hide(mMusicFragment);
@@ -463,5 +465,10 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             Log.e("Album", "Directory not created");
         }
         return file;
+    }
+
+    @Override
+    public void onChangeMusicSong(MusicSong currentMusicSong) {
+        Toast.makeText(this,currentMusicSong.mTitle,Toast.LENGTH_SHORT).show();
     }
 }
