@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Manipulate most of UI controls in this app. Note: Operate the UI as far as
@@ -87,9 +88,9 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     }
 
     private void initialize() {
-        initTabs();
         initFragments();
         initViewPager();
+        initTabs();
     }
 
     private void initTabs() {
@@ -100,6 +101,54 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         addTab(TabTag.DISCOVER_TAB_TAG,mMainActivity.getString(R.string.discover_tab));
         addTab(TabTag.SETTING_TAB_TAG,mMainActivity.getString(R.string.setting_tab));
         mTabHost.setOnTabChangedListener(this);
+        setTabClickListener();
+    }
+
+    private void setTabClickListener() {
+        if (mViewPager != null) {
+            // My
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.MY).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(TabState.MY);
+                    if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
+                        ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
+                    }
+                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
+                }
+            });
+
+            // Start
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.START).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(TabState.START);
+                    if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
+                        ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
+                    }
+                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
+                }
+            });
+
+            // Discover
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.DISCOVER).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(TabState.DISCOVER);
+                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
+                }
+            });
+
+            // Setting
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.SETTING).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(TabState.SETTING);
+                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
+                }
+            });
+
+        }
     }
 
     private void addTab(String tag, String labelText) {
@@ -212,14 +261,14 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
                     ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
                 } else {
-                    mMainActivity.finish();
+                    mViewPager.setCurrentItem(TabState.MY);
                 }
                 break;
             case TabState.DISCOVER:
-                mMainActivity.finish();
+                mViewPager.setCurrentItem(TabState.MY);
                 break;
             case TabState.SETTING:
-                mMainActivity.finish();
+                mViewPager.setCurrentItem(TabState.MY);
                 break;
         }
     }
@@ -355,10 +404,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     @Override
     public void onTabChanged(String tabId) {
-        if (mViewPager != null) {
-            mViewPager.setCurrentItem(mTabHost.getCurrentTab());
-            Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
-        }
+
     }
 
 }
