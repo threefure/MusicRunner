@@ -3,30 +3,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center">
+        android:layout_weight="2">
         <TextView
             android:id="@+id/finish_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/colon_hour"
+            android:layout_centerInParent="true"
             android:text="00:00:00"
             android:textSize="@dimen/timer" />
-    </LinearLayout>
-    <!--RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4">
         <ImageView
             android:id="@+id/finish_running_photo"
-            android:layout_width="120dp"
-            android:layout_height="150dp"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout-->
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"/>
+    </RelativeLayout>
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/finish_running_map"
         android:name="com.google.android.gms.maps.MapFragment"

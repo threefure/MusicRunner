@@ -82,7 +82,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
-        //photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
+        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
         finishTimeTextView = (TextView) findViewById(R.id.finish_time);
 
         totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);

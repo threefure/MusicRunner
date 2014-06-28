@@ -156,11 +156,11 @@ public class StartFragment extends Fragment implements View.OnClickListener {
 
     // should not call sync adapter for manually update?
     private void manuallyUpdateWeather () {
-        Bundle bundle = new Bundle();
+        //Bundle bundle = new Bundle();
         //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        bundle.putString(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
-        ContentResolver.requestSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
+        //bundle.putString(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
+        //ContentResolver.requestSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
     }
 
     private Handler UIUpdater = new Handler() {
