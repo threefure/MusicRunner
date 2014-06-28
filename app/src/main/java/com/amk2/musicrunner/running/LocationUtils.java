@@ -40,6 +40,8 @@ public final class LocationUtils {
 
     public static final float EARTH_RADIOUS = 6371;
 
+    public static final int CAMERA_PAD = 15;
+
     /*
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult

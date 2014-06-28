@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +17,22 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by daz on 2014/6/15.
@@ -41,11 +50,14 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView finishTimeTextView;
     private ImageView photoImageView;
 
+    private GoogleMap mMap;
+
     private int totalSec = 0;
     private String distance  = null;
     private String calories  = null;
     private String speed     = null;
     private String photoPath = null;
+    private String route     = null;
 
     private Button saveButton;
     private Button discardButton;
@@ -70,7 +82,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
-        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
+        //photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
         finishTimeTextView = (TextView) findViewById(R.id.finish_time);
 
         totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);
@@ -97,6 +109,13 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
             photoImageView.setImageBitmap(resizedPhoto);
         }
+
+        // Get a handle to the Map Fragment
+        mMap = ((MapFragment) getFragmentManager()
+                .findFragmentById(R.id.finish_running_map)).getMap();
+        // Draw the map base on last run
+        mDrawRoute();
+
     }
 
     @Override
@@ -137,9 +156,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, MapFragmentRun.getmRoute());
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, route);
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
-                Log.e("Route String", MapFragmentRun.getmRoute());
+
                 Log.d("Save running event, uri=", uri.toString());
 
                 finish();
@@ -150,5 +169,13 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 break;
         }
         MapFragmentRun.resetAllParam();
+    }
+
+    private void mDrawRoute() {
+        ArrayList<LatLng> polylines = MapFragmentRun.getmTrackList();
+        if(polylines.size() > 0) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polylines.get(0), LocationUtils.CAMERA_PAD));
+            mMap.addPolyline(new PolylineOptions().geodesic(true).color(Color.BLUE).addAll(polylines));
+        }
     }
 }

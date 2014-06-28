@@ -17,7 +17,7 @@
             android:text="00:00:00"
             android:textSize="@dimen/timer" />
     </LinearLayout>
-    <RelativeLayout
+    <!--RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4">
@@ -26,13 +26,19 @@
             android:layout_width="120dp"
             android:layout_height="150dp"
             android:layout_centerInParent="true"/>
-    </RelativeLayout>
+    </RelativeLayout-->
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/finish_running_map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"/>
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="3"
         android:gravity="center">
         <TextView
             android:text="distance:"

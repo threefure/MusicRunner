@@ -59,11 +59,11 @@ public class MapFragmentRun extends Fragment implements
     private Marker mMarker = null;
 
     private LatLng mlastLoc = null;
-    private ArrayList<LatLng> mTrackList;
 
     private static double mSpeed;
     private static double mTotalDistance;
-    private static String mRoute;
+
+    private static ArrayList<LatLng> mTrackList;
 
     private double mTolerance = 0.5;
 
@@ -188,7 +188,7 @@ public class MapFragmentRun extends Fragment implements
         if (mMarker != null)
             mMarker.remove();
         else
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, LocationUtils.CAMERA_PAD));
 
         mMarker = mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
@@ -223,9 +223,7 @@ public class MapFragmentRun extends Fragment implements
                 line.setWidth(LocationUtils.LINE_WIDTH);
 
                 String locString = LocationUtils.getLatLng(this.getView().getContext(), curr);
-                if (locString != LocationUtils.EMPTY_STRING) {
-                    mRoute = (mRoute == null) ? (locString + "@") : (mRoute + (locString + "@"));
-                }
+
                 mlastLoc = curr;
             } else {
                 mSpeed = 0;
@@ -401,11 +399,11 @@ public class MapFragmentRun extends Fragment implements
         return mSpeed;
     }
 
-    public static String getmRoute() { return mRoute; }
+    public static ArrayList<LatLng> getmTrackList() { return mTrackList; }
 
     public static void resetAllParam() {
         MapFragmentRun.mTotalDistance = 0;
         MapFragmentRun.mSpeed = 0;
-        MapFragmentRun.mRoute = "";
+        MapFragmentRun.mTrackList.clear();
     }
 }
