@@ -1,6 +1,7 @@
 package com.amk2.musicrunner.running;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -61,6 +63,7 @@ public class MapFragmentRun extends Fragment implements
 
     private static double mSpeed;
     private static double mTotalDistance;
+    private static String mRoute;
 
     private double mTolerance = 0.5;
 
@@ -207,7 +210,8 @@ public class MapFragmentRun extends Fragment implements
         } else {
             distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
 
-            if ( distance > LocationUtils.MIN_DISTANCE ) {
+            // draw the line, and save it.
+            if (distance > LocationUtils.MIN_DISTANCE) {
                 mTolerance = distance;
                 mTotalDistance += distance;
                 mSpeed = distance / LocationUtils.UPDATE_INTERVAL_IN_SECONDS;
@@ -218,23 +222,29 @@ public class MapFragmentRun extends Fragment implements
                 Polyline line = mMap.addPolyline(polylineOpt);
                 line.setWidth(LocationUtils.LINE_WIDTH);
 
+                String locString = LocationUtils.getLatLng(this.getView().getContext(), curr);
+                if (locString != LocationUtils.EMPTY_STRING) {
+                    mRoute = (mRoute == null) ? (locString + "@") : (mRoute + (locString + "@"));
+                }
                 mlastLoc = curr;
             } else {
                 mSpeed = 0;
             }
+
             Toast.makeText(this.getView().getContext(), "mDistance = " + mTotalDistance + ", mSpeed = " + mSpeed,
                     Toast.LENGTH_SHORT).show();
+
         }
     }
 
     private double CalculationByDistance(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = LocationUtils.EARTH_RADIOUS;
-        double latDiff = Math.toRadians(lat_b-lat_a);
-        double lngDiff = Math.toRadians(lng_b-lng_a);
-        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+        double latDiff = Math.toRadians(lat_b - lat_a);
+        double lngDiff = Math.toRadians(lng_b - lng_a);
+        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
                 Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = earthRadius * c;
 
         int meterConversion = LocationUtils.METER_CONVERSTION;
@@ -391,7 +401,11 @@ public class MapFragmentRun extends Fragment implements
         return mSpeed;
     }
 
-    public static void resetmTotalDistance() {
+    public static String getmRoute() { return mRoute; }
+
+    public static void resetAllParam() {
         MapFragmentRun.mTotalDistance = 0;
+        MapFragmentRun.mSpeed = 0;
+        MapFragmentRun.mRoute = "";
     }
 }

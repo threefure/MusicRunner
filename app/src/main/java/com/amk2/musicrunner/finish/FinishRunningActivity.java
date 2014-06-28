@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
@@ -136,9 +137,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
-                //values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, "someroute, type should be string");
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, MapFragmentRun.getmRoute());
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
-
+                Log.e("Route String", MapFragmentRun.getmRoute());
                 Log.d("Save running event, uri=", uri.toString());
 
                 finish();
@@ -148,5 +149,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 finish();
                 break;
         }
+        MapFragmentRun.resetAllParam();
     }
 }

@@ -415,7 +415,6 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, speedString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
                 startActivity(finishRunningIntent);
-                MapFragmentRun.resetmTotalDistance();
                 break;
             case R.id.pause_running:
                 isRunning = !isRunning;

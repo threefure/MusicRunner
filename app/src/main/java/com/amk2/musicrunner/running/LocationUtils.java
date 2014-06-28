@@ -20,6 +20,7 @@ import android.content.Context;
 import android.location.Location;
 
 import com.amk2.musicrunner.R;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Defines app-wide constants and utilities
@@ -82,15 +83,15 @@ public final class LocationUtils {
      * @return The latitude and longitude of the current location, or null if no
      * location is available.
      */
-    public static String getLatLng(Context context, Location currentLocation) {
+    public static String getLatLng(Context context, LatLng currentLocation) {
         // If the location is valid
         if (currentLocation != null) {
 
             // Return the latitude and longitude as strings
             return context.getString(
                     R.string.latitude_longitude,
-                    currentLocation.getLatitude(),
-                    currentLocation.getLongitude());
+                    currentLocation.latitude,
+                    currentLocation.longitude);
         } else {
 
             // Otherwise, return the empty string
