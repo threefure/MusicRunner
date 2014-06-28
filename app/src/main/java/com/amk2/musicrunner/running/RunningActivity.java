@@ -88,6 +88,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private int actualMin  = 0;
     private int actualHour = 0;
 
+    private Double mockDistance = 0.0;
+
     private Double distance = 0.0;
     private Double calorie = 0.0;
     private Double running_speed = 0.0;
@@ -274,7 +276,9 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     runningDistance.setText(distanceString);
 
                     //update calorie
-                    calorie += 0.1;
+                    //calorie += 0.1;
+                    //mockDistance += 2.41;
+                    calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
                     calorieString = calorie.toString();
                     calorieString = truncateDoubleString(calorieString, 1);
                     runningCalorie.setText(calorieString);
@@ -322,6 +326,20 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             }
 
         }
+    }
+
+    private Double calculateCalories (int timeInSec, Double distanceInMeter) {
+        if (distanceInMeter == 0.0) {
+            return 0.0;
+        }
+        double mins  = (double) timeInSec / 60;
+        double hours = (double) timeInSec / 3600;
+        double per400meters = distanceInMeter / 400;
+        double speed = mins / per400meters;
+        double K = 30 / speed;
+        double calories = 70*hours*K;
+
+        return calories;
     }
 
     @Override
