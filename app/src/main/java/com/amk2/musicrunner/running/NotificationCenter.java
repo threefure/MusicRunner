@@ -40,13 +40,15 @@ public class NotificationCenter {
         soundMap.put("time", mSoundPool.load(context, R.raw.time, 1));
         soundMap.put("distance", mSoundPool.load(context, R.raw.distance, 1));
         soundMap.put("unit", mSoundPool.load(context, R.raw.km, 1));
-        soundMap.put("dot", mSoundPool.load(context, R.raw.dot, 1));
-        soundMap.put("avgSpeed", mSoundPool.load(context, R.raw.speed, 1));
+        soundMap.put("dot", mSoundPool.load(context, R.raw.point, 1));
+        soundMap.put("avgSpeed", mSoundPool.load(context, R.raw.average_pace, 1));
         soundMap.put("every", mSoundPool.load(context, R.raw.every, 1));
+        soundMap.put("consumeCalories", mSoundPool.load(context, R.raw.consumed_calories, 1));
+        soundMap.put("kcal", mSoundPool.load(context, R.raw.kcal, 1));
     }
 
-    public void notifyStatus (int min, int sec, Double distance, Double speed) {
-        Thread routine = new Thread(new NotificationRoutine(min, sec, distance, speed));
+    public void notifyStatus (int min, int sec, Double distance, Double speed, Double calories) {
+        Thread routine = new Thread(new NotificationRoutine(min, sec, distance, speed, calories));
         routine.start();
     }
 
@@ -57,19 +59,22 @@ public class NotificationCenter {
         private Integer toPlay;
         private Double distance;
         private Double speed;
+        private Double calories;
         private String distanceString;
         private String speedString;
 
-        public NotificationRoutine (int _min, int _sec, Double _distance, Double _speed) {
+        public NotificationRoutine (int _min, int _sec, Double _distance, Double _speed, Double _calories) {
             this.min = _min;
             this.sec = _sec;
             this.distance = _distance;
             this.speed = _speed;
+            this.calories = _calories;
         }
         @Override
         public void run () {
             reportTime();
             reportDistance();
+            reportCalories();
             reportSpeed();
         }
         /*
@@ -142,6 +147,45 @@ public class NotificationCenter {
 
             this.play(soundMap.get("unit"), 1200);
         }
+
+        public void reportCalories () {
+            this.play(soundMap.get("consumeCalories"), 2000);
+
+            if (calories >= 20) {
+                // second digit
+                toPlay = calories.intValue() / 10;
+                this.play(soundMap.get(toPlay.toString()), 700);
+            }
+            if (calories >= 10) {
+                // ten
+                this.play(soundMap.get("10"), 700);
+            }
+            if (calories > 0) {
+                // first digit
+                toPlay = calories.intValue() % 10;
+                this.play(soundMap.get(toPlay.toString()), 700);
+
+                speedString = calories.toString();
+                indexOfDot = speedString.indexOf(".");
+                if (indexOfDot > 0) {
+                    speedString = truncateDoubleString(speedString, 2);
+
+                    // dot
+                    this.play(soundMap.get("dot"), 700);
+
+                    // 小數點後第一位
+                    this.play(soundMap.get(speedString.charAt(indexOfDot + 1) + ""), 700);
+
+                    // 小數點後第二位
+                    if ( speedString.length() > indexOfDot + 2) {
+                        this.play(soundMap.get(speedString.charAt(indexOfDot + 2) + ""), 700);
+                    }
+                }
+            }
+
+            this.play(soundMap.get("kcal"), 1500);
+        }
+
         /*
          * reportSpeed: report the current speed
          */
@@ -170,7 +214,7 @@ public class NotificationCenter {
                     speedString = truncateDoubleString(speedString, 2);
 
                     // dot
-                    this.play(soundMap.get("dot"), 1000);
+                    this.play(soundMap.get("dot"), 700);
 
                     // 小數點後第一位
                     this.play(soundMap.get(speedString.charAt(indexOfDot + 1) + ""), 700);

@@ -290,8 +290,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     speedString = truncateDoubleString(speedString, 2);
                     runningSpeedRatio.setText(speedString);
 
-                    if (actualSec % 65 == 0) {
-                        notificationCenter.notifyStatus(actualSec, actualSec, distance, running_speed);
+                    if (actualSec % Constant.ONE_MINUTE == 0) {
+                        notificationCenter.notifyStatus(actualMin, actualSec, distance, running_speed, calorie);
                     }
                     break;
             }
