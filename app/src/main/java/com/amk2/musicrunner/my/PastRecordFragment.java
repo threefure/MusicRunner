@@ -161,7 +161,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         switch(v.getId()){
             case R.id.past_record_entry_share_button:
                 // sharing running event should be put here
-                shareRecord();
+                shareRecord("need to pass date here", "need to pass distance here", "need to pass speed here");
                 break;
             case R.id.past_record:
                 TextView textViewId = (TextView) v.findViewById(R.id.past_record_id);
@@ -214,13 +214,12 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         uiHelper.onDestroy();
     }
 
-    public void shareRecord(){
+    public void shareRecord(String dateString, String distance, String speed){
         FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(getActivity())
-                .setLink("https://developers.facebook.com/android")
-                .setDescription("I used MusicRun to run ")
-                .setCaption("I am using MusicRun+")
-                .setApplicationName("Music Run+")
-                .setName("Using MusicRun is fun")
+                .setLink("https://developers.facebook.com/android") //need to change address to our website or google play store
+                .setCaption("Speed: " + speed + " Date: " + dateString)
+                .setApplicationName("Distance: " + distance)
+                .setName("Music Run+ Record")
                 .build();
         uiHelper.trackPendingDialogCall(shareDialog.present());
     }
