@@ -50,7 +50,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private static boolean mIsBindToService = false;
 
     public interface OnChangeSongListener {
-        void onChangeMusicSong(MusicSong currentMusicSong);
+        void onChangeMusicSong(MusicRecord previousRecord);
     }
     private OnChangeSongListener mOnChangeSongListener;
 
@@ -72,6 +72,9 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private Intent mPlayIntent;
     private int mCurrentMusicIndex = 0;
     private ArrayList<MusicSong> mMusicSongList;
+
+    // Record music information during running.
+    private MusicSong mPreviousSong;
 
     public void setOnChangeSongListener(OnChangeSongListener listener) {
         mOnChangeSongListener = listener;
@@ -107,17 +110,18 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
         mMusicService = binder.getService();
         mMusicService.setOnPlayingSongCompletionListener(new MusicService.OnPlayingSongCompletionListener() {
             @Override
-            public void onPlayingSongCompletion() {
+            public void onPlayingSongCompletion(int duration) {
                 setMusicText();
                 setMusicAlbumArt();
-                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
+                mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,duration));
+                //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
             }
         });
         if (!mMusicService.isMusicPlayerStartRunning()) {
             mMusicService.setMusicList(mMusicSongList);
             mMusicService.setSong(mCurrentMusicIndex);
             mMusicService.playSong();
-            mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
+            mPreviousSong = mMusicService.getPlayingSong();
         }
         mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
         setMusicText();
@@ -286,18 +290,22 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
                 setShuffleIcon();
                 break;
             case R.id.previous_button:
+                //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
+                mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,mMusicService.getMusicPositionWhenChangeSong()));
                 mMusicService.playPreviousSong();
                 setMusicText();
                 setMusicAlbumArt();
                 setPlayPauseIcon();
-                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
+                mPreviousSong = mMusicService.getPlayingSong();
                 break;
             case R.id.next_button:
+                //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
+                mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,mMusicService.getMusicPositionWhenChangeSong()));
                 mMusicService.playNextSong();
                 setMusicText();
                 setMusicAlbumArt();
                 setPlayPauseIcon();
-                mOnChangeSongListener.onChangeMusicSong(mMusicService.getPlayingSong());
+                mPreviousSong = mMusicService.getPlayingSong();
                 break;
             case R.id.play_pause_button:
                 if(mMusicService.isPlaying()) {

@@ -468,7 +468,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     }
 
     @Override
-    public void onChangeMusicSong(MusicSong currentMusicSong) {
-        Toast.makeText(this,currentMusicSong.mTitle,Toast.LENGTH_SHORT).show();
+    public void onChangeMusicSong(MusicRecord previousRecord) {
+        Log.d("danny","Previous music title = " + previousRecord.mMusicSong.mTitle);
+        Log.d("danny","Previous music playing duration = " + previousRecord.mPlayingDuration);
     }
 }

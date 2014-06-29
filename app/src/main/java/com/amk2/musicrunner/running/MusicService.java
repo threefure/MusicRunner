@@ -31,7 +31,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     // Interface to notify main activity that the current song has been end,
     // and list view needs to highlight next song.
     public interface OnPlayingSongCompletionListener {
-        void onPlayingSongCompletion();
+        void onPlayingSongCompletion(int duration);
     }
 
     private MediaPlayer mMusicPlayer;
@@ -217,6 +217,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mMusicPlayer.start();
     }
 
+    public int getMusicPositionWhenChangeSong() {
+        return mMusicPlayer.getCurrentPosition();
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
@@ -245,8 +249,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        int previousSongDuration = mp.getCurrentPosition();
         playNextSong();
-        mOnPlayingSongCompletionListener.onPlayingSongCompletion();
+        mOnPlayingSongCompletionListener.onPlayingSongCompletion(previousSongDuration);
     }
 
     @Override
