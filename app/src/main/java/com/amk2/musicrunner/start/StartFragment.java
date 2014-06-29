@@ -139,7 +139,7 @@ public class StartFragment extends Fragment implements View.OnClickListener {
 
             if (new Date().after(expirationDate)) {
                 Log.d("daz should update date", "date is expired");
-                //manuallyUpdateWeather();
+                manuallyUpdateWeather();
             }
             String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
             updateWeatherUI(JSONContent);
@@ -147,7 +147,7 @@ public class StartFragment extends Fragment implements View.OnClickListener {
             Log.d("daz", "ui got the weather json:" + JSONContent);
         } catch (CursorIndexOutOfBoundsException e){
             Log.d("daz", "ui cannot get the weather json, should start to update immediately");
-            //manuallyUpdateWeather();
+            manuallyUpdateWeather();
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -156,11 +156,12 @@ public class StartFragment extends Fragment implements View.OnClickListener {
 
     // should not call sync adapter for manually update?
     private void manuallyUpdateWeather () {
-        //Bundle bundle = new Bundle();
-        //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        //bundle.putString(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
-        //ContentResolver.requestSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
+        Log.d("StartFragment", "manually update");
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putString(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
+        ContentResolver.requestSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
     }
 
     private Handler UIUpdater = new Handler() {
