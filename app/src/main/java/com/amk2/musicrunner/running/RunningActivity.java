@@ -32,6 +32,7 @@ import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.StringLib;
 
 import java.io.File;
 import java.io.IOException;
@@ -277,7 +278,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     //distance += 0.01;
                     distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     distanceString = distance.toString();
-                    distanceString = truncateDoubleString(distanceString, 2);
+                    distanceString = StringLib.truncateDoubleString(distanceString, 2);
                     runningDistance.setText(distanceString);
 
                     //update calorie
@@ -285,7 +286,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     //mockDistance += 2.41;
                     calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
                     calorieString = calorie.toString();
-                    calorieString = truncateDoubleString(calorieString, 1);
+                    calorieString = StringLib.truncateDoubleString(calorieString, 1);
                     runningCalorie.setText(calorieString);
 
                     //update ratio
@@ -294,7 +295,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                         running_speed = ((double) totalSec / 60) / distance;//MapFragmentRun.getmSpeed();
                     }
                     speedString = running_speed.toString();
-                    speedString = truncateDoubleString(speedString, 2);
+                    speedString = StringLib.truncateDoubleString(speedString, 2);
                     runningSpeedRatio.setText(speedString);
 
                     if (actualSec % Constant.ONE_MINUTE == 0) {
@@ -303,19 +304,6 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     break;
             }
         }
-    };
-
-    /*
-     * truncateDoubleString: truncate double number to 小數點後兩位
-     * str: string of double number
-     * allowedDigits: 小數點後幾位
-     */
-    public static String truncateDoubleString (String str, int allowedDigits) {
-        int dot_position = str.indexOf(".");
-        if (str.length() - dot_position > (allowedDigits + 1)) { //小數點後數字大於兩位
-            str = str.substring(0, dot_position + allowedDigits + 1);
-        }
-        return str;
     };
 
     private void dispatchTakePictureIntent() {

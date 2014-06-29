@@ -49,6 +49,12 @@
             android:layout_toRightOf="@+id/finish_running_distance_title"
             android:layout_margin="5dp"/>
         <TextView
+            android:text="@string/km"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/finish_running_distance"
+            android:layout_margin="5dp"/>
+        <TextView
             android:text="calories:"
             android:id="@+id/finish_running_calories_title"
             android:layout_width="wrap_content"
@@ -64,6 +70,13 @@
             android:layout_toRightOf="@+id/finish_running_calories_title"
             android:layout_margin="5dp"/>
         <TextView
+            android:text="@string/kcal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/finish_running_distance"
+            android:layout_toRightOf="@+id/finish_running_calories"
+            android:layout_margin="5dp"/>
+        <TextView
             android:text="speed:"
             android:id="@+id/finish_running_speed_title"
             android:layout_width="wrap_content"
@@ -77,6 +90,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/finish_running_calories"
             android:layout_toRightOf="@+id/finish_running_speed_title"
+            android:layout_margin="5dp"/>
+        <TextView
+            android:text="@string/speed_ratio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/finish_running_calories"
+            android:layout_toRightOf="@+id/finish_running_speed"
             android:layout_margin="5dp"/>
     </RelativeLayout>
     <RelativeLayout

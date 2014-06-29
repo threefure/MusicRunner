@@ -6,10 +6,9 @@ import android.media.SoundPool;
 import android.util.Log;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.utilities.StringLib;
 
 import java.util.HashMap;
-
-import static com.amk2.musicrunner.running.RunningActivity.truncateDoubleString;
 
 /**
  * Created by ktlee on 5/11/14.
@@ -130,7 +129,7 @@ public class NotificationCenter {
                 distanceString = distance.toString();
                 indexOfDot = distanceString.indexOf(".");
                 if (indexOfDot > 0) {
-                    distanceString = truncateDoubleString(distanceString, 2);
+                    distanceString = StringLib.truncateDoubleString(distanceString, 2);
 
                     // dot
                     this.play(soundMap.get("dot"), 1000);
@@ -168,7 +167,7 @@ public class NotificationCenter {
                 speedString = calories.toString();
                 indexOfDot = speedString.indexOf(".");
                 if (indexOfDot > 0) {
-                    speedString = truncateDoubleString(speedString, 2);
+                    speedString = StringLib.truncateDoubleString(speedString, 2);
 
                     // dot
                     this.play(soundMap.get("dot"), 700);
@@ -211,7 +210,7 @@ public class NotificationCenter {
                 speedString = speed.toString();
                 indexOfDot = speedString.indexOf(".");
                 if (indexOfDot > 0) {
-                    speedString = truncateDoubleString(speedString, 2);
+                    speedString = StringLib.truncateDoubleString(speedString, 2);
 
                     // dot
                     this.play(soundMap.get("dot"), 700);

@@ -22,6 +22,7 @@ import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.start.DayMapping;
+import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -130,7 +131,8 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         Log.d("total statistic", "sessions: " +totalSessions + ", duration:" + totalDurationInSec + ", distance:" + Double.toString(totalDistance));
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(totalDurationInSec);
         String durationString = TimeConverter.getDurationString(readableTime);
-        textViewTotalDistance.setText(Double.toString(totalDistance));
+        String distanceString = StringLib.truncateDoubleString(Double.toString(totalDistance), 2);
+        textViewTotalDistance.setText(distanceString);
         textViewTotalDuration.setText(durationString);
         textViewTotalSessions.setText(Integer.toString(totalSessions));
     }
@@ -164,7 +166,6 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.past_record:
                 TextView textViewId = (TextView) v.findViewById(R.id.past_record_id);
-                Log.d("daz", "past record is pressed, id is " + textViewId.getText());
                 Intent pastRecordDetailsIntent = new Intent(getActivity(), PastRecordDetailsActivity.class);
                 pastRecordDetailsIntent.putExtra(PastRecordDetailsActivity.PAST_RECORD_ID, textViewId.getText());
                 startActivity(pastRecordDetailsIntent);

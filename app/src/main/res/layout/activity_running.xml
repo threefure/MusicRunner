@@ -70,6 +70,15 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/zero"
                 android:textColor="@color/white" />
+            <TextView
+                android:text="@string/kcal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/running_calorie"
+                android:textColor="@color/white" />
         </RelativeLayout>
 
         <RelativeLayout
