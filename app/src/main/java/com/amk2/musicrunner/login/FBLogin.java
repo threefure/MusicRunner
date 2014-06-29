@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -20,6 +21,7 @@ import com.facebook.model.GraphUser;
 public class FBLogin extends Activity {
     String facebookUserId = "";
     SharedPreferences preferences;
+    Activity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class FBLogin extends Activity {
                                 TextView welcome = (TextView) findViewById(R.id.facebook_login_status);
                                 facebookUserId = Constant.FACEBOOK_ACCOUNT_PREFIX + user.getId();
                                 SharedPreferencesUtility.storeAccount(preferences, facebookUserId);
+                                Intent intent = new Intent(thisActivity, MusicRunnerActivity.class);
+                                thisActivity.startActivity(intent);
                             }
                         }
                     }).executeAsync();
