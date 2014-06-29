@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,19 +14,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.finish.FinishRunningActivity;
-import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
-
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.amk2.musicrunner.start.DayMapping;
 import com.amk2.musicrunner.utilities.TimeConverter;
-import com.google.android.gms.maps.model.LatLng;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
 
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.TimerTask;
 
 /**
  * Created by daz on 2014/6/22.
@@ -45,6 +39,9 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
     private TextView textViewTotalSessions;
     private TextView textViewPastRecordDate;
 
+    /*** facebook share component ***/
+    private UiLifecycleHelper uiHelper;
+
     public void setMyTabFragmentListener(MyTabFragmentListener listener) {
         mMyTabFragmentListener = listener;
     }
@@ -56,6 +53,9 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //facebook share component
+        uiHelper = new UiLifecycleHelper(getActivity(), null);
+        uiHelper.onCreate(savedInstanceState);
     }
 
     @Override
@@ -84,10 +84,10 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         super.onStart();
     }
 
-    @Override
-    public void onPause () {
-        super.onPause();
-    }
+//    @Override
+//    public void onPause () {
+//        super.onPause();
+//    }
 
     private void getPastRecords() {
         int id;
@@ -161,6 +161,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         switch(v.getId()){
             case R.id.past_record_entry_share_button:
                 // sharing running event should be put here
+                shareRecord();
                 break;
             case R.id.past_record:
                 TextView textViewId = (TextView) v.findViewById(R.id.past_record_id);
@@ -170,5 +171,57 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
                 startActivity(pastRecordDetailsIntent);
                 break;
         }
+    }
+
+    /*** facebook share component ***/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+            @Override
+            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+                Log.e("Activity", String.format("Error: %s", error.toString()));
+            }
+
+            @Override
+            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+                Log.i("Activity", "Success!");
+            }
+        });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    public void shareRecord(){
+        FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(getActivity())
+                .setLink("https://developers.facebook.com/android")
+                .setDescription("I used MusicRun to run ")
+                .setCaption("I am using MusicRun+")
+                .setApplicationName("Music Run+")
+                .setName("Using MusicRun is fun")
+                .build();
+        uiHelper.trackPendingDialogCall(shareDialog.present());
     }
 }
