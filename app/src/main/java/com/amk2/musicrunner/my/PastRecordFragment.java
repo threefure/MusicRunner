@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,20 +14,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.finish.FinishRunningActivity;
-import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
-
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.amk2.musicrunner.start.DayMapping;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
-import com.google.android.gms.maps.model.LatLng;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
 
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.TimerTask;
 
 /**
  * Created by daz on 2014/6/22.
@@ -46,6 +40,9 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
     private TextView textViewTotalSessions;
     private TextView textViewPastRecordDate;
 
+    /*** facebook share component ***/
+    private UiLifecycleHelper uiHelper;
+
     public void setMyTabFragmentListener(MyTabFragmentListener listener) {
         mMyTabFragmentListener = listener;
     }
@@ -57,6 +54,9 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //facebook share component
+        uiHelper = new UiLifecycleHelper(getActivity(), null);
+        uiHelper.onCreate(savedInstanceState);
     }
 
     @Override
@@ -85,10 +85,10 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         super.onStart();
     }
 
-    @Override
-    public void onPause () {
-        super.onPause();
-    }
+//    @Override
+//    public void onPause () {
+//        super.onPause();
+//    }
 
     private void getPastRecords() {
         int id;
@@ -139,7 +139,6 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
 
     private void addPastRecord (int id, int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath) {
         View pastRecord = inflater.inflate(R.layout.past_record_template, null);
-        TextView textViewId          = (TextView) pastRecord.findViewById(R.id.past_record_id);
         TextView textViewDistance    = (TextView) pastRecord.findViewById(R.id.past_record_entry_distance);
         TextView textViewDate        = (TextView) pastRecord.findViewById(R.id.past_record_date);
         TextView textViewDuration    = (TextView) pastRecord.findViewById(R.id.past_record_entry_duration);
@@ -149,12 +148,14 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         String durationString = TimeConverter.getDurationString(readableTime);
         String dateString = TimeConverter.getDateString(timeInMillis);
 
-        textViewId.setText(Integer.toString(id));
         textViewDate.setText(dateString);
         textViewDistance.setText(distance);
         textViewDuration.setText(durationString);
         pastRecordRunningEventContainer.addView(pastRecord);
+
+        imageButtonShare.setTag(id);
         imageButtonShare.setOnClickListener(this);
+        pastRecord.setTag(id);
         pastRecord.setOnClickListener(this);
     }
 
@@ -163,13 +164,88 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         switch(v.getId()){
             case R.id.past_record_entry_share_button:
                 // sharing running event should be put here
+                Integer shareButtonId = (Integer) v.getTag();
+                String[] projection = {
+                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
+                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
+                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
+                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED//,
+                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH
+                };
+
+                String selection = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
+                String[] selectionArgs = { shareButtonId.toString() };
+                Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+                cursor.moveToFirst();
+                //durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
+                String timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+                String distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
+                //calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
+                String speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+                //photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+                long timeInMillis         = Long.parseLong(timeInMillisString);
+                String dateString         = TimeConverter.getDateString(timeInMillis);
+
+                shareRecord(dateString, distance, speed);
                 break;
             case R.id.past_record:
-                TextView textViewId = (TextView) v.findViewById(R.id.past_record_id);
+                Integer pastRecordId = (Integer) v.getTag();
                 Intent pastRecordDetailsIntent = new Intent(getActivity(), PastRecordDetailsActivity.class);
-                pastRecordDetailsIntent.putExtra(PastRecordDetailsActivity.PAST_RECORD_ID, textViewId.getText());
+                pastRecordDetailsIntent.putExtra(PastRecordDetailsActivity.PAST_RECORD_ID, pastRecordId.toString());
                 startActivity(pastRecordDetailsIntent);
                 break;
         }
+    }
+
+    /*** facebook share component ***/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+            @Override
+            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+                Log.e("Activity", String.format("Error: %s", error.toString()));
+            }
+
+            @Override
+            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+                Log.i("Activity", "Success!");
+            }
+        });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    public void shareRecord(String dateString, String distance, String speed){
+        FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(getActivity())
+                .setLink("https://developers.facebook.com/android") //need to change address to our website or google play store
+                .setCaption("Speed: " + speed + " Date: " + dateString)
+                .setApplicationName("Distance: " + distance)
+                .setName("Music Run+ Record")
+                .build();
+        uiHelper.trackPendingDialogCall(shareDialog.present());
     }
 }

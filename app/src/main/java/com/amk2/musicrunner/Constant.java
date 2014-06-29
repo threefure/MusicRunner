@@ -4,7 +4,7 @@ package com.amk2.musicrunner;
  * Created by ktlee on 5/25/14.
  */
 public class Constant {
-    public static final boolean isServerOn = false;
+    public static final boolean isServerOn = true;
 
     //main activity
     public static final long MILLISECONDS_PER_SECOND = 1L;
@@ -31,7 +31,7 @@ public class Constant {
     public static final String DB_KEY_YOUBIKE = "com.amk2.musicrunner.youbike";
 
     // Server API
-    public static final String HOST = "http://192.168.1.29";
+    public static final String HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com";
     public static final String PORT = ":8080";
     public static final String baseWeatherUrlString = HOST + PORT + "/weatherJSON";//TODO need to append city query behind
     public static final String baseWeatherWeekUrlString = HOST + PORT + "/weatherWeekJSON";//TODO need to append city query behind
