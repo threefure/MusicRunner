@@ -1,12 +1,15 @@
 package com.amk2.musicrunner.my;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 
@@ -42,6 +46,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     public interface MyTabFragmentListener {
         void onSwitchBetweenMyAndPastRecordFragment();
     }
+
+    private ContentResolver mContentResolver;
 
     private MyTabFragmentListener mMyTabFragmentListener;
 
@@ -78,6 +84,12 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         initializeTab();
 	}
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        setValueOfProgressBar();
+    }
+
     private void initializeTab(){
         TabHost tabHost = (TabHost) getView().findViewById(R.id.my_tab_host);
         tabHost.setup();
@@ -106,6 +118,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         //set tab background color depending on selected/unselected
         tabHost.setOnTabChangedListener(this);
 
+        mContentResolver = getActivity().getContentResolver();
+
         timesBar = (ProgressBar) getView().findViewById(R.id.time_bar);
         timesBar.setMax(100);
 
@@ -120,28 +134,6 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 
         pastRecordMutton = (ImageButton) getView().findViewById(R.id.my_past_record_button);
         pastRecordMutton.setOnClickListener(this);
-
-        String jsonString = getMyStatus();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            timesBarStatus = Integer.valueOf(jsonObject.getString("times"));
-            timesBar.setProgress(timesBarStatus);
-
-            speedsBarStatus = Integer.valueOf(jsonObject.getString("speeds"));
-            speedsBar.setProgress(speedsBarStatus);
-
-            caloriesBarStatus = Integer.valueOf(jsonObject.getString("calories"));
-            caloriesBar.setProgress(caloriesBarStatus);
-
-            distanceBarStatus = Integer.valueOf(jsonObject.getString("distance"));
-            distanceBar.setProgress(distanceBarStatus);
-
-        } catch (JSONException jsonException) {
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
 
         //showing user name
         String userName = SharedPreferencesUtility.getAccount(getActivity());
@@ -171,6 +163,43 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         }
         return RestfulUtility.getStatusCode(response);
     }
+
+    private void setValueOfProgressBar () {
+        int times      = 0;
+        Double highestSpeed = 0.0;
+        Double totalDistance   = 0.0;
+        Double totalCalories   = 0.0;
+        String distance, calories, speed;
+
+        String[] projection = {
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED
+        };
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
+        while(cursor.moveToNext()) {
+            distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
+            calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
+            speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+
+            times++;
+            highestSpeed = (Double.parseDouble(speed) > highestSpeed) ? Double.parseDouble(speed) : highestSpeed;
+            totalCalories += Double.parseDouble(calories);
+            totalDistance += Double.parseDouble(distance);
+        }
+        timesBarStatus = Integer.valueOf(times);
+        timesBar.setProgress(timesBarStatus);
+Log.d("daz", "highestspeed" + highestSpeed.intValue() + " totalcalories" + totalCalories.intValue() + " totaldistance" + totalDistance.intValue());
+        speedsBarStatus = Integer.valueOf(highestSpeed.intValue());
+        speedsBar.setProgress(speedsBarStatus);
+
+        caloriesBarStatus = Integer.valueOf(totalCalories.intValue());
+        caloriesBar.setProgress(caloriesBarStatus);
+
+        distanceBarStatus = Integer.valueOf(totalDistance.intValue());
+        distanceBar.setProgress(distanceBarStatus);
+    }
+
     @Override
     public void onTabChanged(String tabId) {
         TabHost tab = (TabHost) getView().findViewById(R.id.my_tab_host);
