@@ -1,6 +1,7 @@
 package com.amk2.musicrunner.utilities;
 
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.amk2.musicrunner.Constant;
 
@@ -10,7 +11,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,13 +51,19 @@ public class RestfulUtility {
     public static HttpResponse restfulPostRequest(String endpoint, List<NameValuePair> pairs) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        HttpClient client = new DefaultHttpClient();
+        final HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+        HttpConnectionParams.setSoTimeout(httpParams, 3000);
+        HttpClient client = new DefaultHttpClient(httpParams);
         HttpPost post = new HttpPost(Constant.AWS_HOST + endpoint);
+
         HttpResponse response = null;
         try {
             post.setEntity(new UrlEncodedFormEntity(pairs));
             response = client.execute(post);
 
+        } catch (ConnectTimeoutException cte) {
+            Log.e("connection timeout ", "time out !!!!");
         } catch (UnsupportedEncodingException uee) {
 
         } catch (ClientProtocolException cpe) {

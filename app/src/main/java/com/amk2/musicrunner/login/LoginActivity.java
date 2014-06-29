@@ -105,6 +105,8 @@ public class LoginActivity extends Activity {
     }
 
     public String getStatusCode(HttpResponse response){
+        if(response == null)
+            return StatusCode.NO_RESPONSE;
         StringBuilder sb = new StringBuilder();
         String line = "";
         try{
@@ -121,6 +123,8 @@ public class LoginActivity extends Activity {
     public String getStatusMessage(String statusCode) {
         if(StatusCode.NO_USER.equals(statusCode)){
             return "No Such User";
+        } else if (StatusCode.NO_RESPONSE.equals(statusCode)){
+            return "Cannot get information from Server, please check your internet connection and try again later.";
         } else if (StatusCode.WRONG_PASSWORD.equals(statusCode)){
             return "Password is not correct";
         } else if (StatusCode.REGISTER_SUCCESSFULLY.equals(statusCode)){
