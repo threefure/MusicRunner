@@ -62,9 +62,6 @@ public class MusicRunnerActivity extends Activity {
         super.onStart();
         if (Constant.isServerOn) {
             mLocationHelper.Connect();
-            Intent intent = new Intent(this, SyncService.class);
-            startService(intent);
-            Log.d("daz", "start sync service");
         }
     }
 
@@ -77,16 +74,7 @@ public class MusicRunnerActivity extends Activity {
         mContentResolver = getContentResolver();
         mContentResolver.setSyncAutomatically(MusicTrackMetaData.mAccount,
                 MusicTrackMetaData.AUTHORITY, true);
-        /*
-         * Bundle bundle1 = new Bundle();
-         * bundle1.putString(Constant.SYNC_UPDATE, Constant.UPDATE_WEATHER);
-         * ContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount,
-         * MusicTrackMetaData.AUTHORITY, bundle1, Constant.ONE_MINUTE); Bundle
-         * bundle2 = new Bundle(); bundle2.putString(Constant.SYNC_UPDATE,
-         * Constant.UPDATE_UBIKE);
-         * ContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount,
-         * MusicTrackMetaData.AUTHORITY, bundle2, Constant.ONE_MINUTE);
-         */}
+    }
 
     private void initializeLocation() {
         mLocationHelper = new LocationHelper(this.getApplicationContext());
@@ -114,18 +102,12 @@ public class MusicRunnerActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("daz", "activity pause");
         mUIController.onActivityPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d("daz", "activity stop");
         if (Constant.isServerOn) {
-            Log.d("daz", "call disconnect()");
-            Intent intent = new Intent(this, SyncService.class);
-            stopService(intent);
-            Log.d("daz", "stop sync service");
             mLocationHelper.unregisterPeriodicSyncs();
             mLocationHelper.Disconnect();
         }
@@ -140,9 +122,11 @@ public class MusicRunnerActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        Intent intent = new Intent(this, SyncService.class);
+        stopService(intent);
         mLocationHelper.Disconnect();
         mUIController.onActivityDestroy();
+        super.onDestroy();
     }
 
     @Override

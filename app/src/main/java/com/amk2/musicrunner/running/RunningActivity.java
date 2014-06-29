@@ -6,6 +6,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -97,7 +100,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     private String distanceString;
     private String calorieString;
-    private String speedString;
+    private String speedString = "0";
 
     private String photoPath;
 
@@ -287,7 +290,9 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
                     //update ratio
                     //running_speed += 0.01;
-                    running_speed = MapFragmentRun.getmSpeed();
+                    if (distance > 0) {
+                        running_speed = ((double) totalSec / 60) / distance;//MapFragmentRun.getmSpeed();
+                    }
                     speedString = running_speed.toString();
                     speedString = truncateDoubleString(speedString, 2);
                     runningSpeedRatio.setText(speedString);
@@ -436,6 +441,13 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 startActivity(finishRunningIntent);
                 break;
             case R.id.pause_running:
+                if (isRunning) {
+                    pauseButton.setText("Resume");
+                    pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_resume));
+                } else {
+                    pauseButton.setText("Pause");
+                    pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_pause));
+                }
                 isRunning = !isRunning;
                 break;
             case R.id.camera:

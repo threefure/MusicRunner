@@ -18,6 +18,9 @@
     <color name="running_tab_item_normal">#EBEBEB</color>
     <color name="running_tab_item_text_selected">#FFFFFF</color>
     <color name="running_tab_item_text_normal">#000000</color>
+    <color name="running_button_stop">#CC3639</color>
+    <color name="running_button_resume">#338526</color>
+    <color name="running_button_pause">#FBC31B</color>
 
     <!-- My Activity tab view-->
     <color name="my_text_tab_selected">#ffffff</color>
@@ -32,4 +35,9 @@
     <color name="light_yellow">#F3F781</color>
     <color name="green_blue">#81CDD2</color>
     <color name="dark_green_blue">#50AEC3</color>
+
+    <!-- Finish Running Activity -->
+    <color name="finish_button_save">#338526</color>
+    <color name="finish_button_discard">#AAAAAA</color>
+
 </resources>

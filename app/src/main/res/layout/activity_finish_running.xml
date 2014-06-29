@@ -86,15 +86,19 @@
         android:gravity="center">
         <Button
             android:text="@string/save"
+            android:textColor="@color/white"
             android:id="@+id/save_running_event"
-            android:layout_width="100dp"
+            android:layout_width="120dp"
             android:layout_height="50dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="30dp"
+            android:background="@color/finish_button_save"/>
         <Button
             android:text="@string/discard"
+            android:textColor="@color/white"
             android:id="@+id/discard_running_event"
-            android:layout_width="100dp"
+            android:layout_width="120dp"
             android:layout_height="50dp"
-            android:layout_toRightOf="@+id/save_running_event"/>
+            android:layout_toRightOf="@+id/save_running_event"
+            android:background="@color/finish_button_discard"/>
     </RelativeLayout>
 </LinearLayout>

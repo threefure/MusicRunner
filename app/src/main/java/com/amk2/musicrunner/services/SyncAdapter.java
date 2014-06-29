@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
@@ -54,54 +55,56 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
     @Override
     public void onPerformSync(Account account, Bundle bundle, String AUTHORITY, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d("Daz", "in syncAdapter, request!!!!!");
-        Log.d("daz", bundle.getString(Constant.SYNC_UPDATE));
-        if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEATHER)) {
-            // update daily weather
-            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
-            String urlString = Constant.baseWeatherUrlString + "?" + Constant.cityCodeQuery + cityCode;
-            dailyWeatherID = GetDataFromServerAndSetExpirationDate(
-                    urlString,
-                    Constant.DB_KEY_DAILY_WEATHER,
-                    Calendar.HOUR,
-                    Constant.EXPIRATION_DATE_DURATION_DAILY,
-                    dailyWeatherID);
-            Log.d("daz", "updated db for daily, observer should know this change, new provider, with id=" + dailyWeatherID);
+        try {
+            if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEATHER)) {
+                // update daily weather
+                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String urlString = Constant.baseWeatherUrlString + "?" + Constant.cityCodeQuery + cityCode;
+                dailyWeatherID = GetDataFromServerAndSetExpirationDate(
+                        urlString,
+                        Constant.DB_KEY_DAILY_WEATHER,
+                        Calendar.HOUR,
+                        Constant.EXPIRATION_DATE_DURATION_DAILY,
+                        dailyWeatherID);
+                Log.d("daz", "updated db for daily, observer should know this change, new provider, with id=" + dailyWeatherID);
 
-        } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_24HRS_WEATHER)) {
-            // update 24 hours weather
-            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
-            String urlString = Constant.baseWeather24HoursUrlString + "?" + Constant.cityCodeQuery + cityCode + "&currentHour=" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-            t24HrsWeatherID = GetDataFromServerAndSetExpirationDate(
-                    urlString,
-                    Constant.DB_KEY_24HRS_WEATHER,
-                    Calendar.HOUR,
-                    Constant.EXPIRATION_DATE_DURATION_24HRS,
-                    t24HrsWeatherID);
-            Log.d("daz", "updated db for 24hours, observer should know this change, new provider, with id=" + t24HrsWeatherID);
+            } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_24HRS_WEATHER)) {
+                // update 24 hours weather
+                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String urlString = Constant.baseWeather24HoursUrlString + "?" + Constant.cityCodeQuery + cityCode + "&currentHour=" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+                t24HrsWeatherID = GetDataFromServerAndSetExpirationDate(
+                        urlString,
+                        Constant.DB_KEY_24HRS_WEATHER,
+                        Calendar.HOUR,
+                        Constant.EXPIRATION_DATE_DURATION_24HRS,
+                        t24HrsWeatherID);
+                Log.d("daz", "updated db for 24hours, observer should know this change, new provider, with id=" + t24HrsWeatherID);
 
-        } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEEKLY_WEATHER)) {
-            // update weekly weather
-            String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
-            String urlString = Constant.baseWeatherWeekUrlString + "?" + Constant.cityCodeQuery + cityCode;
-            weeklyWeatherID = GetDataFromServerAndSetExpirationDate(
-                    urlString,
-                    Constant.DB_KEY_WEEKLY_WEATHER,
-                    Calendar.HOUR,
-                    Constant.EXPIRATION_DATE_DURATION_WEEKLY,
-                    weeklyWeatherID);
-            Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
+            } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEEKLY_WEATHER)) {
+                // update weekly weather
+                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String urlString = Constant.baseWeatherWeekUrlString + "?" + Constant.cityCodeQuery + cityCode;
+                weeklyWeatherID = GetDataFromServerAndSetExpirationDate(
+                        urlString,
+                        Constant.DB_KEY_WEEKLY_WEATHER,
+                        Calendar.HOUR,
+                        Constant.EXPIRATION_DATE_DURATION_WEEKLY,
+                        weeklyWeatherID);
+                Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
 
-        } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_UBIKE)) {
-            Log.d("daz", "calling ubike api");
-            String urlString = Constant.baseYoubikeUrlString;
-            youbikeID = GetDataFromServerAndSetExpirationDate(
-                    urlString,
-                    Constant.DB_KEY_YOUBIKE,
-                    Calendar.MINUTE,
-                    Constant.EXPIRATION_DATE_DURATION_YOUBIKE,
-                    youbikeID);
-            Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
-
+            } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_UBIKE)) {
+                Log.d("daz", "calling ubike api");
+                String urlString = Constant.baseYoubikeUrlString;
+                youbikeID = GetDataFromServerAndSetExpirationDate(
+                        urlString,
+                        Constant.DB_KEY_YOUBIKE,
+                        Calendar.MINUTE,
+                        Constant.EXPIRATION_DATE_DURATION_YOUBIKE,
+                        youbikeID);
+                Log.d("daz", "updated db for weekly, observer should know this change, new provider, with id=" + weeklyWeatherID);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -117,8 +120,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
             String JSONString = getStringFromInputStream(stream);
             Calendar expirationDate = Calendar.getInstance();
             expirationDate.add(ExpirationDateDelayType, ExpirationDateDelayAmount);
-            //Log.d("new data content weatherJSONString", weatherJSONString);
-            //Log.d("expirationDate.getTime().toString()", expirationDate.getTime().toString());
             Log.d("daz", "updating db id=" + _ID + " type=" + DBKeyType + " content: " + JSONString);
             returnID = InsertCommonData(
                     _ID,
