@@ -9,4 +9,5 @@ public class StatusCode {
     public static final String REGISTER_FAIL = "280";
     public static final String WRONG_PASSWORD = "290";
     public static final String NO_USER = "299";
+    public static final String NO_RESPONSE = "510";
 }
