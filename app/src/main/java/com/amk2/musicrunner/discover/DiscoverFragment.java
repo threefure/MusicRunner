@@ -2,6 +2,7 @@ package com.amk2.musicrunner.discover;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -129,7 +130,6 @@ public class DiscoverFragment extends Fragment
     }
 
     private void updateWithNewLocation(Location location) {
-        String where = "";
         if (location != null) {
             double lng = location.getLongitude();
             double lat = location.getLatitude();
@@ -137,8 +137,6 @@ public class DiscoverFragment extends Fragment
             long time = location.getTime();
             Resources res = getResources();
             String timeString = getTimeString(time);
-
-            where = lng + lat + speed + timeString + provider;
 
             SharedPreferences prefs = mContext.getSharedPreferences(res.getString(R.string.cur_location), Context.MODE_WORLD_READABLE);
             SharedPreferences.Editor editor = prefs.edit();
@@ -148,38 +146,7 @@ public class DiscoverFragment extends Fragment
             editor.commit();
 
             showMarkerMe(lat, lng);
-            //cameraFocusOnMe(lat, lng);
-            trackToMe(lat, lng);
-
-        } else {
-            where = "No location found.";
         }
-    }
-
-    private void trackToMe(double lat, double lng){
-        if (mTrackList == null) {
-            mTrackList = new ArrayList<LatLng>();
-        }
-        mTrackList.add(new LatLng(lat, lng));
-
-        PolylineOptions polylineOpt = new PolylineOptions();
-        for (LatLng latlng : mTrackList) {
-            polylineOpt.add(latlng);
-        }
-
-        polylineOpt.color(Color.RED);
-
-        Polyline line = mMap.addPolyline(polylineOpt);
-        line.setWidth(10);
-    }
-
-    private void cameraFocusOnMe(double lat, double lng){
-        CameraPosition camPosition = new CameraPosition.Builder()
-                .target(new LatLng(lat, lng))
-                .zoom(16)
-                .build();
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
     }
 
     private void showMarkerMe(double lat, double lng){
@@ -187,9 +154,15 @@ public class DiscoverFragment extends Fragment
             mMarker.remove();
         }
 
-        MarkerOptions markerOpt = new MarkerOptions();
-        markerOpt.position(new LatLng(lat, lng));
-        mMarker = mMap.addMarker(markerOpt);
+        LatLng current_location = new LatLng(lat, lng);
+        mMap.setMyLocationEnabled(true);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, LocationUtils.CAMERA_PAD));
+
+        mMarker =
+                mMap.addMarker(new MarkerOptions()
+                        .position(current_location));
+
+
     }
 
     private String getTimeString(long timeInMilliseconds){

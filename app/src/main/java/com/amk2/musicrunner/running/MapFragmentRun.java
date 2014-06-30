@@ -228,10 +228,6 @@ public class MapFragmentRun extends Fragment implements
             } else {
                 mSpeed = 0;
             }
-
-            Toast.makeText(this.getView().getContext(), "mDistance = " + mTotalDistance + ", mSpeed = " + mSpeed,
-                    Toast.LENGTH_SHORT).show();
-
         }
     }
 
