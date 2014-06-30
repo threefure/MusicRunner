@@ -10,4 +10,6 @@ public class StatusCode {
     public static final String WRONG_PASSWORD = "290";
     public static final String NO_USER = "299";
     public static final String NO_RESPONSE = "510";
+    public static final String FAIL_TO_LOGIN = "fail to login";
+    public static final String DUPLICATE_ACCOUNT = "601";
 }

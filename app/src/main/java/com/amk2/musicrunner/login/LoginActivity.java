@@ -131,6 +131,10 @@ public class LoginActivity extends Activity {
             return "Register Successfully";
         } else if (StatusCode.REGISTER_FAIL.equals(statusCode)) {
             return "Register fails";
+        } else if (StatusCode.FAIL_TO_LOGIN.equals(statusCode)){
+            return "Fail to Login";
+        } else if (StatusCode.DUPLICATE_ACCOUNT.equals(statusCode)){
+            return "Account has already been used, please choose another account name";
         } else {
             return "Login Successfully";
         }
