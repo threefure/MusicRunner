@@ -58,7 +58,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
         try {
             if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEATHER)) {
                 // update daily weather
-                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String cityCode = "0";
+                if (bundle.getString(Constant.SYNC_CITYCODE) != null) {
+                    cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                }
                 String urlString = Constant.baseWeatherUrlString + "?" + Constant.cityCodeQuery + cityCode;
                 dailyWeatherID = GetDataFromServerAndSetExpirationDate(
                         urlString,
@@ -70,7 +73,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
 
             } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_24HRS_WEATHER)) {
                 // update 24 hours weather
-                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String cityCode = "0";
+                if (bundle.getString(Constant.SYNC_CITYCODE) != null) {
+                    cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                }
                 String urlString = Constant.baseWeather24HoursUrlString + "?" + Constant.cityCodeQuery + cityCode + "&currentHour=" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
                 t24HrsWeatherID = GetDataFromServerAndSetExpirationDate(
                         urlString,
@@ -82,7 +88,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
 
             } else if (bundle.getString(Constant.SYNC_UPDATE).equals(Constant.UPDATE_WEEKLY_WEATHER)) {
                 // update weekly weather
-                String cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                String cityCode = "0";
+                if (bundle.getString(Constant.SYNC_CITYCODE) != null) {
+                    cityCode = bundle.getString(Constant.SYNC_CITYCODE);
+                }
                 String urlString = Constant.baseWeatherWeekUrlString + "?" + Constant.cityCodeQuery + cityCode;
                 weeklyWeatherID = GetDataFromServerAndSetExpirationDate(
                         urlString,
