@@ -49,6 +49,8 @@ public class MapFragmentRun extends Fragment implements
     private static double mTotalDistance;
 
     private static ArrayList<LatLng> mTrackList;
+
+    private static ArrayList<Integer> mColorList;
     private static int mColor = 0;
 
     // A request to connect to Location Services
@@ -187,9 +189,13 @@ public class MapFragmentRun extends Fragment implements
         if (mTrackList == null) {
             mTrackList = new ArrayList<LatLng>();
         }
+        if(mColorList == null) {
+            mColorList = new ArrayList<Integer>();
+        }
         if (mlastLoc == null) {
             mlastLoc = curr;
             mTrackList.add(new LatLng(curr.latitude, curr.longitude));
+            mColorList.add(mColor);
         } else {
             distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
 
@@ -198,6 +204,7 @@ public class MapFragmentRun extends Fragment implements
                 mTotalDistance += distance;
                 mSpeed = distance / LocationUtils.UPDATE_INTERVAL_IN_SECONDS;
                 mTrackList.add(curr);
+                mColorList.add(mColor);
                 PolylineOptions polylineOpt = new PolylineOptions();
                 polylineOpt.add(mlastLoc).add(curr);
                 polylineOpt.color(ColorGenerator.generateColor(mColor));
@@ -205,7 +212,9 @@ public class MapFragmentRun extends Fragment implements
                 Polyline line = mMap.addPolyline(polylineOpt);
                 line.setWidth(LocationUtils.LINE_WIDTH);
 
-                String locString = LocationUtils.getLatLng(this.getView().getContext(), curr);
+                String locString = LocationUtils.getLatLng(curr, mColor);
+                makeText(this.getView().getContext(), locString,
+                        Toast.LENGTH_SHORT).show();
 
                 mlastLoc = curr;
             } else {
@@ -376,9 +385,12 @@ public class MapFragmentRun extends Fragment implements
 
     public static ArrayList<LatLng> getmTrackList() { return mTrackList; }
 
+    public static ArrayList<Integer> getmColorList() { return mColorList; }
+
     public static void resetAllParam() {
         MapFragmentRun.mTotalDistance = 0;
         MapFragmentRun.mSpeed = 0;
         MapFragmentRun.mTrackList.clear();
+        MapFragmentRun.mColorList.clear();
     }
 }

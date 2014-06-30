@@ -21,6 +21,7 @@ import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
+import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -173,9 +174,24 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
     private void mDrawRoute() {
         ArrayList<LatLng> polylines = MapFragmentRun.getmTrackList();
+        ArrayList<Integer> mColorList = MapFragmentRun.getmColorList();
         if(polylines.size() > 0) {
+            LatLng lastPosition = null;
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polylines.get(0), LocationUtils.CAMERA_PAD));
-            mMap.addPolyline(new PolylineOptions().geodesic(true).color(Color.BLUE).addAll(polylines));
+
+            for (int i = 0; i < polylines.size(); i++) {
+                if(lastPosition != null) {
+                    mMap.addPolyline(
+                            new PolylineOptions()
+                                    .geodesic(true)
+                                    .color(ColorGenerator
+                                    .generateColor(mColorList.get(i)))
+                                    .add(lastPosition)
+                                    .add(polylines.get(i))
+                    );
+                }
+                lastPosition = polylines.get(i);
+            }
         }
     }
 }

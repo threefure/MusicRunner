@@ -85,17 +85,11 @@ public final class LocationUtils {
      * @return The latitude and longitude of the current location, or null if no
      * location is available.
      */
-    public static String getLatLng(Context context, LatLng currentLocation) {
+    public static String getLatLng(LatLng currentLocation, int color) {
         // If the location is valid
         if (currentLocation != null) {
-
-            // Return the latitude and longitude as strings
-            return context.getString(
-                    R.string.latitude_longitude,
-                    currentLocation.latitude,
-                    currentLocation.longitude);
+            return String.valueOf(currentLocation.longitude) + "," + String.valueOf(currentLocation.latitude) + color + "@";
         } else {
-
             // Otherwise, return the empty string
             return EMPTY_STRING;
         }
