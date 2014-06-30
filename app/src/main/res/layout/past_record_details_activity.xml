@@ -32,11 +32,16 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"/>
     </RelativeLayout>
-
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/past_record_map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="3"
         android:gravity="center">
         <TextView
             android:text="distance:"
