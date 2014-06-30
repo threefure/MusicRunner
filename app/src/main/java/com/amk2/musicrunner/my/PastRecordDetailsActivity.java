@@ -12,11 +12,20 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.LocationUtils;
+import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.services.SyncService;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,6 +38,11 @@ public class PastRecordDetailsActivity extends Activity {
     private String id;
 
     private ContentResolver mContentResolver;
+
+    private ArrayList<LatLng> mLocationList = null;
+    private ArrayList<Integer> mColorList = null;
+
+    private GoogleMap mMap;
 
     private TextView distanceTextView;
     private TextView caloriesTextView;
@@ -53,6 +67,9 @@ public class PastRecordDetailsActivity extends Activity {
         photoImageView   = (ImageView) findViewById(R.id.past_record_details_photo);
         finishTimeTextView = (TextView) findViewById(R.id.finish_time);
         pastRecordDateTextView = (TextView) findViewById(R.id.past_record_date);
+
+        mMap = ((MapFragment) getFragmentManager()
+                .findFragmentById(R.id.past_record_map)).getMap();
     }
 
     private void setViews () {
@@ -61,7 +78,7 @@ public class PastRecordDetailsActivity extends Activity {
         int durationInSec;
         long timeInMillis;
         String timeInMillisString;
-        String distance, calories, speed, photoPath;
+        String distance, calories, speed, photoPath, route;
 
         String[] projection = {
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
@@ -69,7 +86,8 @@ public class PastRecordDetailsActivity extends Activity {
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE
         };
         String selection = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
         id  = intent.getStringExtra(PAST_RECORD_ID);
@@ -83,6 +101,7 @@ public class PastRecordDetailsActivity extends Activity {
         calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
         speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
         photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+        route              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE));
         timeInMillis       = Long.parseLong(timeInMillisString);
 
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(durationInSec);
@@ -92,6 +111,11 @@ public class PastRecordDetailsActivity extends Activity {
         distanceTextView.setText(distance);
         caloriesTextView.setText(calories);
         speedTextView.setText(speed);
+
+        mLocationList = LocationUtils.parseRouteToLocation(route);
+        mColorList = LocationUtils.parseRouteColor(route);
+        mDrawRoute();
+
         finishTimeTextView.setText(durationString);
         pastRecordDateTextView.setText(pastRecordDate);
         if (photoPath != null) {
@@ -127,4 +151,26 @@ public class PastRecordDetailsActivity extends Activity {
     protected void onStop() {
         super.onStop();
     }
+
+    private void mDrawRoute() {
+        if(mLocationList.size() > 0) {
+            LatLng lastPosition = null;
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocationList.get(0), LocationUtils.CAMERA_PAD));
+
+            for (int i = 0; i < mLocationList.size(); i++) {
+                if(lastPosition != null) {
+                    mMap.addPolyline(
+                            new PolylineOptions()
+                                    .geodesic(true)
+                                    .color(ColorGenerator
+                                            .generateColor(mColorList.get(i)))
+                                    .add(lastPosition)
+                                    .add(mLocationList.get(i))
+                    );
+                }
+                lastPosition = mLocationList.get(i);
+            }
+        }
+    }
+
 }

@@ -18,9 +18,14 @@ package com.amk2.musicrunner.running;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import com.amk2.musicrunner.R;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Defines app-wide constants and utilities
@@ -74,6 +79,10 @@ public final class LocationUtils {
     public static final long FAST_INTERVAL_CEILING_IN_MILLISECONDS =
             MILLISECONDS_PER_SECOND * FAST_CEILING_IN_SECONDS;
 
+    public static final String LONGITUTE_PATTERN = "@long(.*?)gnol@";
+    public static final String LATITUTE_PATTERN = "@lat(.*?)tal@";
+    public static final String COLOR_PATTERN = "#(.*?)#";
+
     // Create an empty string for initializing strings
     public static final String EMPTY_STRING = new String();
 
@@ -88,10 +97,56 @@ public final class LocationUtils {
     public static String getLatLng(LatLng currentLocation, int color) {
         // If the location is valid
         if (currentLocation != null) {
-            return String.valueOf(currentLocation.longitude) + "," + String.valueOf(currentLocation.latitude) + "#" + color + "@";
+            return  "@long" +
+                    String.valueOf(currentLocation.longitude) +
+                    "gnol@" +
+                    "@lat" +
+                    String.valueOf(currentLocation.latitude) +
+                    "tal@" +
+                    "#" + color + "#";
         } else {
             // Otherwise, return the empty string
             return EMPTY_STRING;
         }
     }
+
+    public static ArrayList<LatLng> parseRouteToLocation(String route) {
+        ArrayList<LatLng> locationList = new ArrayList<LatLng>();
+        ArrayList<Double> mLongituteList = LocationUtils.findChunk(LocationUtils.LONGITUTE_PATTERN, route);
+        ArrayList<Double> mLatituteList = LocationUtils.findChunk(LocationUtils.LATITUTE_PATTERN, route);
+
+        if(mLongituteList.size() != mLatituteList.size()) {
+            Log.e("Record error:", "Location Longitute and latitute doesn't match");
+            return null;
+        }
+
+        for (int i = 0; i < mLongituteList.size(); i++) {
+            locationList.add(new LatLng(mLatituteList.get(i),mLongituteList.get(i)));
+        }
+
+        return locationList;
+    }
+
+    public static ArrayList<Integer> parseRouteColor(String route) {
+        ArrayList<Integer> colorList = new ArrayList<Integer>();
+        ArrayList<Double> mColorList = LocationUtils.findChunk(LocationUtils.COLOR_PATTERN, route);
+        for (int i = 0; i < mColorList.size(); i++) {
+            colorList.add(mColorList.get(i).intValue());
+        }
+        return colorList;
+    }
+
+    private static ArrayList<Double> findChunk(String strPattern, String str) {
+        ArrayList<Double> dou = new ArrayList<Double>();
+        Pattern pattern = Pattern.compile(strPattern);
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()) {
+            String tStr = matcher.group(1);
+            Double rec = Double.parseDouble(tStr);
+            dou.add(rec);
+        }
+        return dou;
+    }
+
+
 }
