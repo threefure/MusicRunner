@@ -2,6 +2,7 @@ package com.amk2.musicrunner.running;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -64,6 +65,7 @@ public class MapFragmentRun extends Fragment implements
     private static double mTotalDistance;
 
     private static ArrayList<LatLng> mTrackList;
+    private static int mColor = 0;
 
     private double mTolerance = 0.5;
 
@@ -218,7 +220,8 @@ public class MapFragmentRun extends Fragment implements
                 mTrackList.add(curr);
                 PolylineOptions polylineOpt = new PolylineOptions();
                 polylineOpt.add(mlastLoc).add(curr);
-                polylineOpt.color(Color.RED);
+                polylineOpt.color(ColorGenerator.generateColor(mColor));
+
                 Polyline line = mMap.addPolyline(polylineOpt);
                 line.setWidth(LocationUtils.LINE_WIDTH);
 
@@ -385,6 +388,12 @@ public class MapFragmentRun extends Fragment implements
             mMap = ((MapFragment) getFragmentManager()
                     .findFragmentById(R.id.running_map)).getMap();
         }
+    }
+
+    public void musicChangeCallback(MusicRecord previousRecord) {
+        mColor = mColor + 1;
+        Log.d("Yo: ", previousRecord.mMusicSong.mTitle);
+        Log.d("Yo: ", String.valueOf(previousRecord.mPlayingDuration));
     }
 
     public static double getmTotalDistance() {
