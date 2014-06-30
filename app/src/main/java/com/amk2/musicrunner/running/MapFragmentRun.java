@@ -1,61 +1,45 @@
 package com.amk2.musicrunner.running;
 
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.location.GpsStatus;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import static android.widget.Toast.makeText;
 
 public class MapFragmentRun extends Fragment implements
         com.google.android.gms.location.LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
-    private final static int
-            CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
     private Marker mMarker = null;
 
@@ -66,8 +50,6 @@ public class MapFragmentRun extends Fragment implements
 
     private static ArrayList<LatLng> mTrackList;
     private static int mColor = 0;
-
-    private double mTolerance = 0.5;
 
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
@@ -168,15 +150,14 @@ public class MapFragmentRun extends Fragment implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Toast.makeText(this.getView().getContext(), "Connected", Toast.LENGTH_SHORT).show();
+        makeText(this.getView().getContext(), "Connected", Toast.LENGTH_SHORT).show();
 
-        getLocation(this.getView());
-        startUpdates(this.getView());
+        startUpdates();
     }
 
     @Override
     public void onDisconnected() {
-        Toast.makeText(this.getView().getContext(), "Disconnected. Please re-connect.",
+        makeText(this.getView().getContext(), "Disconnected. Please re-connect.",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -202,7 +183,7 @@ public class MapFragmentRun extends Fragment implements
     }
 
     private void drawLine(LatLng curr) {
-        double distance = 0;
+        double distance;
         if (mTrackList == null) {
             mTrackList = new ArrayList<LatLng>();
         }
@@ -214,7 +195,6 @@ public class MapFragmentRun extends Fragment implements
 
             // draw the line, and save it.
             if (distance > LocationUtils.MIN_DISTANCE) {
-                mTolerance = distance;
                 mTotalDistance += distance;
                 mSpeed = distance / LocationUtils.UPDATE_INTERVAL_IN_SECONDS;
                 mTrackList.add(curr);
@@ -266,16 +246,7 @@ public class MapFragmentRun extends Fragment implements
         return false;
     }
 
-    public void getLocation(View v) {
-
-        // If Google Play Services is available
-        if (servicesConnected()) {
-            // Get the current location
-            Location currentLocation = mLocationClient.getLastLocation();
-        }
-    }
-
-    public void startUpdates(View v) {
+    public void startUpdates() {
         mUpdatesRequested = true;
 
         if (servicesConnected()) {
@@ -299,6 +270,7 @@ public class MapFragmentRun extends Fragment implements
          * start a Google Play services activity that can resolve
          * error.
          */
+        // If no resolution is available, display a dialog to the user with the error.
         if (connectionResult.hasResolution()) {
             try {
 
@@ -318,9 +290,7 @@ public class MapFragmentRun extends Fragment implements
                 e.printStackTrace();
             }
         } else {
-
-            // If no resolution is available, display a dialog to the user with the error.
-            Toast.makeText(this.getView().getContext(), "onConnectionFailed Error code : " + connectionResult.getErrorCode(),
+            makeText(this.getView().getContext(), "onConnectionFailed Error code : " + connectionResult.getErrorCode(),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -374,17 +344,17 @@ public class MapFragmentRun extends Fragment implements
 
 
     private void stopPeriodicUpdates() {
-        mLocationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
+        mLocationClient.removeLocationUpdates(this);
     }
 
     private void startPeriodicUpdates() {
-        mLocationClient.requestLocationUpdates(mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+        mLocationClient.requestLocationUpdates(mLocationRequest, this);
     }
 
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
+        // Try to obtain the map from the SupportMapFragment.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
             mMap = ((MapFragment) getFragmentManager()
                     .findFragmentById(R.id.running_map)).getMap();
         }
