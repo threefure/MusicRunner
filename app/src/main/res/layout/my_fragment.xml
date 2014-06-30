@@ -161,11 +161,21 @@
 
             </LinearLayout>
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/my_music_tab"
-                android:paddingTop="100dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></LinearLayout>
+                android:layout_height="wrap_content"
+                android:paddingTop="100dp">
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:id="@+id/my_music_container"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </ScrollView>
+            </LinearLayout>
         </FrameLayout>
     </TabHost>
 

@@ -40,4 +40,7 @@
     <color name="finish_button_save">#338526</color>
     <color name="finish_button_discard">#AAAAAA</color>
 
+    <!-- Weather Fragment- -->
+    <color name="weather_lightblue">#A9F5F2</color>
+
 </resources>

@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -51,6 +53,9 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 
     private MyTabFragmentListener mMyTabFragmentListener;
 
+    private LayoutInflater inflater;
+    private LinearLayout myMusicContainer;
+
     private ProgressBar timesBar;
     private ProgressBar speedsBar;
     private ProgressBar caloriesBar;
@@ -81,6 +86,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         String account = preferences.getString(Constant.ACCOUNT_PARAMS, null);
 //        TextView textView = (TextView) getView().findViewById(R.id.my_view);
 //        textView.setText(account,TextView.BufferType.EDITABLE);
+        inflater = (LayoutInflater) getView().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         initializeTab();
 	}
 
@@ -135,6 +141,8 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         pastRecordMutton = (ImageButton) getView().findViewById(R.id.my_past_record_button);
         pastRecordMutton.setOnClickListener(this);
 
+        myMusicContainer = (LinearLayout) getView().findViewById(R.id.my_music_container);
+
         //showing user name
         String userName = SharedPreferencesUtility.getAccount(getActivity());
         TextView userNameTextView = (TextView) getView().findViewById(R.id.my_user_name);
@@ -169,27 +177,31 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         Double highestSpeed = 0.0;
         Double totalDistance   = 0.0;
         Double totalCalories   = 0.0;
-        String distance, calories, speed;
+        String distance, calories, speed, songNames;
 
         String[] projection = {
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
         };
         Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
         while(cursor.moveToNext()) {
             distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
             calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
             speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+            songNames          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
 
             times++;
             highestSpeed = (Double.parseDouble(speed) > highestSpeed) ? Double.parseDouble(speed) : highestSpeed;
             totalCalories += Double.parseDouble(calories);
             totalDistance += Double.parseDouble(distance);
+
+            addMusicSongs(songNames);
         }
         timesBarStatus = Integer.valueOf(times);
         timesBar.setProgress(timesBarStatus);
-Log.d("daz", "highestspeed" + highestSpeed.intValue() + " totalcalories" + totalCalories.intValue() + " totaldistance" + totalDistance.intValue());
+
         speedsBarStatus = Integer.valueOf(highestSpeed.intValue());
         speedsBar.setProgress(speedsBarStatus);
 
@@ -220,6 +232,18 @@ Log.d("daz", "highestspeed" + highestSpeed.intValue() + " totalcalories" + total
                 mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();
                 break;
         }
+    }
+
+    public void addMusicSongs (String songNames) {
+        String songName = getMostEfficientSongs(songNames);
+        if (songName.length() > 0) {
+            View myMusicTemplate = inflater.inflate(R.layout.my_music_template, null);
+            TextView textViewSongName = (TextView) myMusicTemplate.findViewById(R.id.song_name);
+            textViewSongName.setText(songName);
+
+            myMusicContainer.addView(myMusicTemplate);
+        }
+
     }
 
     public static String getMostEfficientSongs (String songNames) {
