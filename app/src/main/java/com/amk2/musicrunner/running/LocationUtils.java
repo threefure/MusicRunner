@@ -88,7 +88,7 @@ public final class LocationUtils {
     public static String getLatLng(LatLng currentLocation, int color) {
         // If the location is valid
         if (currentLocation != null) {
-            return String.valueOf(currentLocation.longitude) + "," + String.valueOf(currentLocation.latitude) + color + "@";
+            return String.valueOf(currentLocation.longitude) + "," + String.valueOf(currentLocation.latitude) + "#" + color + "@";
         } else {
             // Otherwise, return the empty string
             return EMPTY_STRING;

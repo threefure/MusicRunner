@@ -49,7 +49,6 @@ public class MapFragmentRun extends Fragment implements
     private static double mTotalDistance;
 
     private static ArrayList<LatLng> mTrackList;
-
     private static ArrayList<Integer> mColorList;
     private static int mColor = 0;
 
@@ -211,10 +210,6 @@ public class MapFragmentRun extends Fragment implements
 
                 Polyline line = mMap.addPolyline(polylineOpt);
                 line.setWidth(LocationUtils.LINE_WIDTH);
-
-                String locString = LocationUtils.getLatLng(curr, mColor);
-                makeText(this.getView().getContext(), locString,
-                        Toast.LENGTH_SHORT).show();
 
                 mlastLoc = curr;
             } else {
@@ -390,6 +385,7 @@ public class MapFragmentRun extends Fragment implements
     public static void resetAllParam() {
         MapFragmentRun.mTotalDistance = 0;
         MapFragmentRun.mSpeed = 0;
+        MapFragmentRun.mColor = 0;
         MapFragmentRun.mTrackList.clear();
         MapFragmentRun.mColorList.clear();
     }

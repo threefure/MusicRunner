@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import static android.widget.Toast.makeText;
 
 /**
  * Created by daz on 2014/6/15.
@@ -161,6 +162,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
 
                 Log.d("Save running event, uri=", uri.toString());
+                Log.e("Save route path:", route);
 
                 finish();
                 break;
@@ -189,6 +191,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                                     .add(lastPosition)
                                     .add(polylines.get(i))
                     );
+                    route = (route == null) ?
+                            (LocationUtils.getLatLng(lastPosition, mColorList.get(i))) :
+                            (route + LocationUtils.getLatLng(lastPosition, mColorList.get(i)));
                 }
                 lastPosition = polylines.get(i);
             }
