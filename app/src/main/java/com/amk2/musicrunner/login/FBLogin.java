@@ -11,12 +11,20 @@ import android.widget.TextView;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
+import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FBLogin extends Activity {
     String facebookUserId = "";
@@ -47,6 +55,12 @@ public class FBLogin extends Activity {
                                 TextView welcome = (TextView) findViewById(R.id.facebook_login_status);
                                 facebookUserId = Constant.FACEBOOK_ACCOUNT_PREFIX + user.getId();
                                 SharedPreferencesUtility.storeAccount(preferences, facebookUserId);
+
+                                List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+                                pairs.add(new BasicNameValuePair("userAccount", facebookUserId));
+
+                                HttpResponse httpResponse = RestfulUtility.restfulPostRequest(RestfulUtility.FACEBOOK_LOGIN, pairs);
+
                                 Intent intent = new Intent(thisActivity, MusicRunnerActivity.class);
                                 thisActivity.startActivity(intent);
                             }

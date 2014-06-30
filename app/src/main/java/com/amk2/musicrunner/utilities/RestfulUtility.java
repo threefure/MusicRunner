@@ -32,6 +32,7 @@ public class RestfulUtility {
     public static final String REGISTER_ENDPOINT = "/register";
     public static final String GET_SETTING_INFO = "/getSettingInfo";
     public static final String UPDATE_SETTINGS = "/updateSettings";
+    public static final String FACEBOOK_LOGIN = "/facebookLogin";
 
     //extract response content
     public static String getStatusCode(HttpResponse response){
