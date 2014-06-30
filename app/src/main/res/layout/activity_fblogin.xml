@@ -10,6 +10,7 @@
 
     <TextView
         android:id="@+id/facebook_login_status"
+        android:text="Loading...Please wait....."
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
