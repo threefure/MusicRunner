@@ -30,6 +30,8 @@ public class RestfulUtility {
 
     public static final String LOGIN_ENDPOINT = "/login";
     public static final String REGISTER_ENDPOINT = "/register";
+    public static final String GET_SETTING_INFO = "/getSettingInfo";
+    public static final String UPDATE_SETTINGS = "/updateSettings";
 
     //extract response content
     public static String getStatusCode(HttpResponse response){
