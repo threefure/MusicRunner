@@ -40,12 +40,17 @@
         android:id="@+id/my_tab_host"
         android:layout_below="@+id/user_profile_picture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/tab_view_padding_left_right"
+        android:paddingLeft="@dimen/tab_view_padding_left_right"
+        android:paddingBottom="@dimen/tab_view_padding_bottom" >
         <TabWidget
             android:id="@android:id/tabs"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></TabWidget>
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_height"
+            android:showDividers="none"
+            android:background="@drawable/running_tab_widget_background">
+        </TabWidget>
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="match_parent"
@@ -53,7 +58,7 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:id="@+id/my_running_tab"
-                android:paddingTop="100dp"
+                android:paddingTop="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
@@ -164,7 +169,7 @@
                 android:id="@+id/my_music_tab"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="100dp">
+                android:paddingTop="50dp">
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
