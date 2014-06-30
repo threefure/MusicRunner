@@ -45,7 +45,7 @@ public final class LocationUtils {
 
     public static final float EARTH_RADIOUS = 6371;
 
-    public static final int CAMERA_PAD = 15;
+    public static final float CAMERA_PAD = 19;
 
     /*
      * Define a request code to send to Google Play services
@@ -111,6 +111,8 @@ public final class LocationUtils {
     }
 
     public static ArrayList<LatLng> parseRouteToLocation(String route) {
+        if (route == null)
+            return null;
         ArrayList<LatLng> locationList = new ArrayList<LatLng>();
         ArrayList<Double> mLongituteList = LocationUtils.findChunk(LocationUtils.LONGITUTE_PATTERN, route);
         ArrayList<Double> mLatituteList = LocationUtils.findChunk(LocationUtils.LATITUTE_PATTERN, route);
@@ -128,6 +130,8 @@ public final class LocationUtils {
     }
 
     public static ArrayList<Integer> parseRouteColor(String route) {
+        if (route == null)
+            return null;
         ArrayList<Integer> colorList = new ArrayList<Integer>();
         ArrayList<Double> mColorList = LocationUtils.findChunk(LocationUtils.COLOR_PATTERN, route);
         for (int i = 0; i < mColorList.size(); i++) {

@@ -162,7 +162,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
 
                 Log.d("Save running event, uri=", uri.toString());
-                Log.e("Save route path:", route);
 
                 finish();
                 break;

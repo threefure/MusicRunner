@@ -153,12 +153,15 @@ public class PastRecordDetailsActivity extends Activity {
     }
 
     private void mDrawRoute() {
+        if(mLocationList == null)
+            return;
+        
         if(mLocationList.size() > 0) {
             LatLng lastPosition = null;
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocationList.get(0), LocationUtils.CAMERA_PAD));
 
             for (int i = 0; i < mLocationList.size(); i++) {
                 if(lastPosition != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, LocationUtils.CAMERA_PAD));
                     mMap.addPolyline(
                             new PolylineOptions()
                                     .geodesic(true)
