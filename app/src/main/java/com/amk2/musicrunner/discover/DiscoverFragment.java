@@ -4,9 +4,11 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -75,6 +77,7 @@ public class DiscoverFragment extends Fragment
         View v = inflater.inflate(R.layout.discover_fragment, container, false);
         mapView = (MapView) v.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
         return v;
 	}
 
@@ -96,11 +99,14 @@ public class DiscoverFragment extends Fragment
         mUBikeButton.setOnClickListener(this);
 
         mContentResolver = getActivity().getContentResolver();
-	}
+
+        MapsInitializer.initialize(mContext);
+    }
 
     @Override
     public void onStart() {
         super.onStart();
+
         if (initLocationProvider()) {
             currentLocation();
         }
@@ -133,36 +139,24 @@ public class DiscoverFragment extends Fragment
         if (location != null) {
             double lng = location.getLongitude();
             double lat = location.getLatitude();
-            float speed = location.getSpeed();
-            long time = location.getTime();
-            Resources res = getResources();
-            String timeString = getTimeString(time);
-
-            SharedPreferences prefs = mContext.getSharedPreferences(res.getString(R.string.cur_location), Context.MODE_WORLD_READABLE);
-            SharedPreferences.Editor editor = prefs.edit();
-            //Save it as a float since SharedPreferences can't deal with doubles
-            editor.putFloat(res.getString(R.string.cur_location_lat), (float) lat);
-            editor.putFloat(res.getString(R.string.cur_location_lng), (float) lng);
-            editor.commit();
 
             showMarkerMe(lat, lng);
         }
     }
 
     private void showMarkerMe(double lat, double lng){
-        if (mMarker != null) {
-            mMarker.remove();
-        }
-
         LatLng current_location = new LatLng(lat, lng);
+
+        if (mMarker != null)
+            mMarker.remove();
+        else
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, LocationUtils.CAMERA_PAD));
+
         mMap.setMyLocationEnabled(true);
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, LocationUtils.CAMERA_PAD));
-
-        mMarker =
-                mMap.addMarker(new MarkerOptions()
-                        .position(current_location));
-
-
+        mMarker = mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
+                .position(current_location)
+                .title("Yo"));
     }
 
     private String getTimeString(long timeInMilliseconds){
