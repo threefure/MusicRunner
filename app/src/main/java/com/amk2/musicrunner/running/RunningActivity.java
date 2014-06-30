@@ -92,6 +92,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private int actualSec  = 0;
     private int actualMin  = 0;
     private int actualHour = 0;
+    private Integer previousSongStartTime    = 0;
+    private Double previousSongStartCalories = 0.0;
 
     private Double mockDistance = 0.0;
 
@@ -102,6 +104,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private String distanceString;
     private String calorieString;
     private String speedString = "0";
+    private String songNames = "";
 
     private String photoPath;
 
@@ -426,6 +429,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, speedString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
+                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, songNames);
                 startActivity(finishRunningIntent);
                 break;
             case R.id.pause_running:
@@ -469,6 +473,18 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
     @Override
     public void onChangeMusicSong(MusicRecord previousRecord) {
+        String songName = previousRecord.mMusicSong.mTitle;
+        String performanceString;
+        Double timeDiff = ((double)totalSec - previousSongStartTime.doubleValue()) / 60;
+        Double caloriesDiff = distance - previousSongStartCalories;
+        Double performance = 0.0;
+        if (timeDiff != 0) {
+            performance = caloriesDiff/timeDiff;
+        }
+        performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
+        songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
+        Log.d("daz", "songs " + songNames);
+
         mMapFragment.musicChangeCallback(previousRecord);
         //Log.d("danny","Previous music title = " + previousRecord.mMusicSong.mTitle);
         //Log.d("danny","Previous music playing duration = " + previousRecord.mPlayingDuration);

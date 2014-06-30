@@ -221,4 +221,26 @@ Log.d("daz", "highestspeed" + highestSpeed.intValue() + " totalcalories" + total
                 break;
         }
     }
+
+    public static String getMostEfficientSongs (String songNames) {
+        String mostEfficientSong = "";
+        String result = "";
+        Double mostEfficientPerformance = 0.0;
+        for (String song : songNames.split(Constant.SONG_SEPARATOR)) {
+            if (song.length() > 0) {
+                String[] songXperf = song.split(Constant.PERF_SEPARATOR);
+                Double perf = Double.parseDouble(songXperf[1]);
+                if (perf > mostEfficientPerformance) {
+                    mostEfficientSong = songXperf[0];
+                    mostEfficientPerformance = perf;
+                }
+            }
+        }
+        if (mostEfficientSong.length() > 0) {
+            result = mostEfficientSong + "   " + mostEfficientPerformance.toString() + " kcal/min";
+        }
+
+        Log.d("getMostEfficientSongs", result);
+        return result;
+    }
 }

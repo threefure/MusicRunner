@@ -45,6 +45,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public static String FINISH_RUNNING_CALORIES = "com.amk2.calories";
     public static String FINISH_RUNNING_SPEED    = "com.amk2.speed";
     public static String FINISH_RUNNING_PHOTO    = "com.amk2.photo";
+    public static String FINISH_RUNNING_SONGS    = "com.amk2.songs";
 
     private TextView distanceTextView;
     private TextView caloriesTextView;
@@ -60,6 +61,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private String speed     = null;
     private String photoPath = null;
     private String route     = null;
+    private String songNames = null;
 
     private Button saveButton;
     private Button discardButton;
@@ -92,6 +94,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         calories  = intent.getStringExtra(FINISH_RUNNING_CALORIES);
         speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
+        songNames = intent.getStringExtra(FINISH_RUNNING_SONGS);
 
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
@@ -159,6 +162,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
                 values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, route);
+                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS, songNames);
                 Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
 
                 Log.d("Save running event, uri=", uri.toString());

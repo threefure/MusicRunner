@@ -28,12 +28,13 @@ public class MusicTrackDBHelper extends SQLiteOpenHelper {
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE            + TEXT_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED               + TEXT_TYPE + COMMA_SEP +
                     MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE               + TEXT_TYPE + COMMA_SEP +
-                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH          + TEXT_TYPE +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH          + TEXT_TYPE + COMMA_SEP +
+                    MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS               + TEXT_TYPE +
                     " )";
     private static final String SQL_DELETE_COMMON_DATA_TABLE = "DROP TABLE IF EXISTS " + MusicTrackMetaData.MusicTrackCommonDataDB.TABLE_NAME;
     private static final String SQL_DELETE_RUNNING_EVENT_DATA_TABLE = "DROP TABLE IF EXISTS " + MusicTrackMetaData.MusicTrackRunningEventDataDB.TABLE_NAME;
 
-    public static final int DATA_VERSION = 5;
+    public static final int DATA_VERSION = 6;
     public static final String DATABASE_NAME = "MusicTrackRunner.db";
 
     public MusicTrackDBHelper(Context context) {

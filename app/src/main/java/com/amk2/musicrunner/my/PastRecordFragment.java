@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
@@ -98,7 +99,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         double totalDistance   = 0;
         long timeInMillis;
         String timeInMillisString;
-        String distance, calories, speed, photoPath;
+        String distance, calories, speed, photoPath, songNames;
 
 
         String[] projection = {
@@ -108,7 +109,8 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
+                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
         };
         Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
         while(cursor.moveToNext()) {
@@ -119,10 +121,11 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
             calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
             speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
             photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+            songNames          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
             timeInMillis       = Long.parseLong(timeInMillisString);
 
             Log.d("past records", "duration:" + durationInSec + ", distance:" + distance + ", calories:" + calories + ", speed:" + speed + ", photoPath:" + photoPath);
-            addPastRecord(id, durationInSec, timeInMillis, distance, calories, speed, photoPath);
+            addPastRecord(id, durationInSec, timeInMillis, distance, calories, speed, photoPath, songNames);
 
             totalSessions++;
             totalDurationInSec += durationInSec;
@@ -137,20 +140,23 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         textViewTotalSessions.setText(Integer.toString(totalSessions));
     }
 
-    private void addPastRecord (int id, int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath) {
+    private void addPastRecord (int id, int durationInSec, long timeInMillis, String distance, String calories, String speed, String photoPath, String songNames) {
         View pastRecord = inflater.inflate(R.layout.past_record_template, null);
         TextView textViewDistance    = (TextView) pastRecord.findViewById(R.id.past_record_entry_distance);
         TextView textViewDate        = (TextView) pastRecord.findViewById(R.id.past_record_date);
         TextView textViewDuration    = (TextView) pastRecord.findViewById(R.id.past_record_entry_duration);
         TextView textViewElevation   = (TextView) pastRecord.findViewById(R.id.past_record_entry_elevation);
+        TextView textViewSongName    = (TextView) pastRecord.findViewById(R.id.past_record_entry_song_name);
         ImageButton imageButtonShare = (ImageButton) pastRecord.findViewById(R.id.past_record_entry_share_button);
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(durationInSec);
         String durationString = TimeConverter.getDurationString(readableTime);
         String dateString = TimeConverter.getDateString(timeInMillis);
+        String mostEfficientSong = MyFragment.getMostEfficientSongs(songNames);
 
         textViewDate.setText(dateString);
         textViewDistance.setText(distance);
         textViewDuration.setText(durationString);
+        textViewSongName.setText(mostEfficientSong);
         pastRecordRunningEventContainer.addView(pastRecord);
 
         imageButtonShare.setTag(id);

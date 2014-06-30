@@ -55,4 +55,8 @@ public class Constant {
     // Album name
     public static final String Album = "MusicRunner";
 
+    // Running Activity
+    public static final String PERF_SEPARATOR = ":>:";
+    public static final String SONG_SEPARATOR = ":<:";
+
 }
