@@ -24,8 +24,8 @@ public class LocationMetaData{
         map = new HashMap<String, String>();
         map.put("台北市", "0");
         map.put("新北市", "1");
-        map.put("臺中市", "2");
-        map.put("臺南市", "3");
+        map.put("台中市", "2");
+        map.put("台南市", "3");
         map.put("高雄市", "4");
         map.put("基隆市", "5");
         map.put("桃園縣", "6");

@@ -33,8 +33,8 @@ public class Constant {
     // Server API
     public static final String HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com";
     public static final String PORT = ":8080";
-    public static final String baseWeatherUrlString = HOST + PORT + "/weatherJSON";//TODO need to append city query behind
-    public static final String baseWeatherWeekUrlString = HOST + PORT + "/weatherWeekJSON";//TODO need to append city query behind
+    public static final String baseWeatherUrlString = HOST + PORT + "/weatherDailyJSON";//TODO need to append city query behind
+    public static final String baseWeatherWeekUrlString = HOST + PORT + "/weatherWeeklyJSON";//TODO need to append city query behind
     public static final String baseWeather24HoursUrlString = HOST + PORT + "/weather24HoursJSON";//TODO need to append city query behind
     public static final String baseYoubikeUrlString = HOST + PORT + "/youBikeJSON";//TODO need to append city query behind
     public static final String storeRunningEventUrlString = HOST + PORT + "store?type=event";//TODO need to append city query behind

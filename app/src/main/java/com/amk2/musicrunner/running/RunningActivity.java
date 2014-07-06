@@ -295,7 +295,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     //update ratio
                     //running_speed += 0.01;
                     if (distance > 0) {
-                        running_speed = distance / ((double) totalSec / 60);//MapFragmentRun.getmSpeed();
+                        running_speed = ((double) totalSec / 60) / distance;//MapFragmentRun.getmSpeed();
                     }
                     speedString = running_speed.toString();
                     speedString = StringLib.truncateDoubleString(speedString, 2);
