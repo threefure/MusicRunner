@@ -247,7 +247,7 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
 
     public void shareRecord(String dateString, String distance, String speed){
         FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(getActivity())
-                .setLink("https://developers.facebook.com/android") //need to change address to our website or google play store
+                .setLink("http://mrpaulou.com/2014/06/30/musicrun/") //need to change address to our website or google play store
                 .setCaption("Speed: " + speed + " Date: " + dateString)
                 .setApplicationName("Distance: " + distance)
                 .setName("Music Run+ Record")
