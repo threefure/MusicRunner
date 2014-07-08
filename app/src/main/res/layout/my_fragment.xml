@@ -79,6 +79,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/my_times_text"
+                        android:gravity="right"
                         android:layout_weight="7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
@@ -99,6 +101,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/my_speeds_text"
+                        android:gravity="right"
                         android:layout_weight="7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
@@ -119,6 +123,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/my_calories_text"
+                        android:gravity="right"
                         android:layout_weight="7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
@@ -139,6 +145,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/my_distance_text"
+                        android:gravity="right"
                         android:layout_weight="7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />

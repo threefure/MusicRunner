@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -17,14 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
@@ -37,8 +33,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -250,15 +244,23 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         }
         timesBarStatus = Integer.valueOf(times);
         timesBar.setProgress(timesBarStatus);
+        TextView timesTextView = (TextView) getView().findViewById(R.id.my_times_text);
+        timesTextView.setText(timesBarStatus.toString());
 
         speedsBarStatus = Integer.valueOf(highestSpeed.intValue());
         speedsBar.setProgress(speedsBarStatus);
+        TextView speedsTextView = (TextView) getView().findViewById(R.id.my_speeds_text);
+        speedsTextView.setText(speedsBarStatus.toString());
 
         caloriesBarStatus = Integer.valueOf(totalCalories.intValue());
         caloriesBar.setProgress(caloriesBarStatus);
+        TextView caloriesTextView = (TextView) getView().findViewById(R.id.my_calories_text);
+        caloriesTextView.setText(caloriesBarStatus.toString());
 
         distanceBarStatus = Integer.valueOf(totalDistance.intValue());
         distanceBar.setProgress(distanceBarStatus);
+        TextView distanceTextView = (TextView) getView().findViewById(R.id.my_distance_text);
+        distanceTextView.setText(distanceBarStatus.toString());
     }
 
     @Override
