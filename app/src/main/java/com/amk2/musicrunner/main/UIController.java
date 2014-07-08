@@ -91,6 +91,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         initFragments();
         initViewPager();
         initTabs();
+        mViewPager.setCurrentItem(TabState.START);
     }
 
     private void initTabs() {
