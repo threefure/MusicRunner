@@ -94,6 +94,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.setting_logout:
+                SharedPreferencesUtility.clearSharedPreference(getActivity());
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
                 break;

@@ -33,4 +33,9 @@ public class SharedPreferencesUtility {
     public static String getAccount(SharedPreferences preferences){
         return preferences.getString(Constant.ACCOUNT_PARAMS, null);
     }
+
+    public static void clearSharedPreference(Activity activity){
+        SharedPreferences preferences = activity.getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        preferences.edit().clear().commit();
+    }
 }
