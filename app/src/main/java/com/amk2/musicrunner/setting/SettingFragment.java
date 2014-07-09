@@ -1,6 +1,7 @@
 package com.amk2.musicrunner.setting;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 
@@ -45,6 +47,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
         Button updateButton = (Button)getView().findViewById(R.id.setting_update);
         updateButton.setOnClickListener(this);
+
+        Button logoutButton = (Button) getView().findViewById(R.id.setting_logout);
+        logoutButton.setOnClickListener(this);
 
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         pairs.add(new BasicNameValuePair("userAccount", account));
@@ -86,6 +91,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
                 TextView updateStatusTV = (TextView) getView().findViewById(R.id.setting_status);
                 updateStatusTV.setText("update!");
+                break;
+
+            case R.id.setting_logout:
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
                 break;
         }
     }

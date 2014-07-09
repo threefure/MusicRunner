@@ -133,6 +133,12 @@
                 android:text="Update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <Button
+                android:layout_weight="1"
+                android:id="@+id/setting_logout"
+                android:text="Log Out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
     <TextView
