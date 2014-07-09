@@ -16,4 +16,13 @@ public class StringLib {
         }
         return str;
     };
+
+    /***
+     * Check if String is null or empty
+     * @param str
+     * @return true if string is not null and length > 0
+     */
+    public static boolean hasValue(String str){
+        return str != null && str.length() > 0;
+    }
 }

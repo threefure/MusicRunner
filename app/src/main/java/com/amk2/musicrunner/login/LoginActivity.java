@@ -15,6 +15,8 @@ import com.amk2.musicrunner.constants.StatusCode;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.utilities.RegisterValidator;
 import com.amk2.musicrunner.utilities.RestfulUtility;
+import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
+import com.amk2.musicrunner.utilities.StringLib;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,6 +33,13 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        //if sharedpreference has value, then login automatically
+        String userAccount = SharedPreferencesUtility.getAccount(this);
+        if(StringLib.hasValue(userAccount)){
+            Intent redirectIntent = new Intent(this,MusicRunnerActivity.class);
+            startActivity(redirectIntent);
+        }
     }
 
     public void facebookLogin(View view){
