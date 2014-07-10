@@ -145,6 +145,9 @@ public class NotificationCenter {
                     }
                 }
             }
+            if (distance == 0) {
+                this.play(soundMap.get("0"), 700);
+            }
 
             this.play(soundMap.get("unit"), 1200);
         }
@@ -201,6 +204,9 @@ public class NotificationCenter {
                         this.play(soundMap.get(reportString.charAt(indexOfDot + 2) + ""), 700);
                     }
                 }
+            }
+            if (calories == 0) {
+                this.play(soundMap.get("0"), 700);
             }
 
             this.play(soundMap.get("kcal"), 1500);
@@ -264,6 +270,10 @@ public class NotificationCenter {
                         this.play(soundMap.get(reportString.charAt(indexOfDot + 2) + ""), 700);
                     }
                 }
+            }
+
+            if (speed == 0) {
+                this.play(soundMap.get("0"), 700);
             }
 
             this.play(soundMap.get("min"), 1000);
