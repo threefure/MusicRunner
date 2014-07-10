@@ -289,13 +289,13 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                     //mockDistance += 2.41;
                     calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
                     calorieString = calorie.toString();
-                    calorieString = StringLib.truncateDoubleString(calorieString, 1);
+                    calorieString = StringLib.truncateDoubleString(calorieString, 2);
                     runningCalorie.setText(calorieString);
 
                     //update ratio
                     //running_speed += 0.01;
                     if (distance > 0) {
-                        running_speed = ((double) totalSec / 60) / distance;//MapFragmentRun.getmSpeed();
+                        running_speed = distance/ ((double) totalSec / 60);//MapFragmentRun.getmSpeed();
                     }
                     speedString = running_speed.toString();
                     speedString = StringLib.truncateDoubleString(speedString, 2);
@@ -476,16 +476,19 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         String songName = previousRecord.mMusicSong.mTitle;
         String performanceString;
         Double timeDiff = ((double)totalSec - previousSongStartTime.doubleValue()) / 60;
-        Double caloriesDiff = distance - previousSongStartCalories;
+        Double caloriesDiff = calorie - previousSongStartCalories;
         Double performance = 0.0;
         if (timeDiff != 0) {
             performance = caloriesDiff/timeDiff;
         }
         performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
         songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
-        Log.d("daz", "songs " + songNames);
+        Log.d("song", songName + ", " + performanceString);
+        previousSongStartCalories = calorie;
+        previousSongStartTime     = totalSec;
 
         mMapFragment.musicChangeCallback(previousRecord);
+
         //Log.d("danny","Previous music title = " + previousRecord.mMusicSong.mTitle);
         //Log.d("danny","Previous music playing duration = " + previousRecord.mPlayingDuration);
     }

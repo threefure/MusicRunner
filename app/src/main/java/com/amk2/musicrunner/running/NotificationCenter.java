@@ -150,18 +150,21 @@ public class NotificationCenter {
         }
 
         public void reportCalories () {
+            boolean isLTTen = false; //is larger than 10
             this.play(soundMap.get("consumeCalories"), 2000);
             if (calories >= 1000) {
                 toPlay = calories.intValue() / 1000;
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("thousand"), 700);
                 calories -= (toPlay.doubleValue() * 1000);
+                isLTTen = true;
             }
             if (calories >= 100) {
                 toPlay = calories.intValue() / 100;
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("hundred"), 700);
                 calories -= (toPlay.doubleValue() * 100);
+                isLTTen = true;
             }
             if (calories >= 10) {
                 // second digit
@@ -169,12 +172,17 @@ public class NotificationCenter {
                 this.play(soundMap.get(toPlay.toString()), 700);
                 // ten
                 this.play(soundMap.get("10"), 700);
+                isLTTen = true;
             }
             if (calories > 0) {
                 // first digit
                 toPlay = calories.intValue() % 10;
                 if (toPlay > 0) {
                     this.play(soundMap.get(toPlay.toString()), 700);
+                } else {
+                    if (!isLTTen) {
+                        this.play(soundMap.get(toPlay.toString()), 700);
+                    }
                 }
 
                 reportString = calories.toString();
@@ -202,6 +210,7 @@ public class NotificationCenter {
          * reportSpeed: report the current speed
          */
         public void reportSpeed () {
+            boolean isLTTen = false; //is larger than 10
             this.play(soundMap.get("avgSpeed"), 1200);
             this.play(soundMap.get("every"), 700);
             this.play(soundMap.get("unit"), 1000);
@@ -210,12 +219,14 @@ public class NotificationCenter {
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("thousand"), 700);
                 speed -= (toPlay.doubleValue() * 1000);
+                isLTTen = true;
             }
             if (speed >= 100) {
                 toPlay = speed.intValue() / 100;
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("hundred"), 700);
                 speed -= (toPlay.doubleValue() * 100);
+                isLTTen = true;
             }
             if (speed >= 10) {
                 // second digit
@@ -224,12 +235,17 @@ public class NotificationCenter {
 
                 // ten
                 this.play(soundMap.get("10"), 700);
+                isLTTen = true;
             }
             if (speed > 0) {
                 // first digit
                 toPlay = speed.intValue() % 10;
                 if (toPlay > 0) {
                     this.play(soundMap.get(toPlay.toString()), 700);
+                } else {
+                    if (!isLTTen) {
+                        this.play(soundMap.get(toPlay.toString()), 700);
+                    }
                 }
 
                 reportString = speed.toString();

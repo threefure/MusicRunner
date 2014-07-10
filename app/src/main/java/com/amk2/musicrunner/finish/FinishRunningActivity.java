@@ -3,15 +3,18 @@ package com.amk2.musicrunner.finish;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
@@ -21,7 +24,9 @@ import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.ColorGenerator;
+import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,10 +36,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.zip.Inflater;
 
 import static android.widget.Toast.makeText;
+import static com.amk2.musicrunner.utilities.Comparators.*;
 
 /**
  * Created by daz on 2014/6/15.
@@ -47,11 +55,14 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public static String FINISH_RUNNING_PHOTO    = "com.amk2.photo";
     public static String FINISH_RUNNING_SONGS    = "com.amk2.songs";
 
+    private LayoutInflater inflater;
+
     private TextView distanceTextView;
     private TextView caloriesTextView;
     private TextView speedTextView;
     private TextView finishTimeTextView;
     private ImageView photoImageView;
+    private LinearLayout musicListLinearLayout;
 
     private GoogleMap mMap;
 
@@ -83,11 +94,14 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         saveButton.setOnClickListener(this);
         discardButton.setOnClickListener(this);
 
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
         caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
         speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
         photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
         finishTimeTextView = (TextView) findViewById(R.id.finish_time);
+        musicListLinearLayout = (LinearLayout) findViewById(R.id.music_result_holder);
 
         totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);
         distance  = intent.getStringExtra(FINISH_RUNNING_DISTANCE);
@@ -113,6 +127,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         if (photoPath != null) {
             Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
             photoImageView.setImageBitmap(resizedPhoto);
+        }
+        if (songNames != null) {
+            addSongNames();
         }
 
         // Get a handle to the Map Fragment
@@ -199,6 +216,34 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                             (route + LocationUtils.getLatLng(lastPosition, mColorList.get(i)));
                 }
                 lastPosition = polylines.get(i);
+            }
+        }
+    }
+
+    private void addSongNames() {
+        ArrayList<SongPerformance> songPerformanceArrayList = new ArrayList<SongPerformance>();
+        for (String song : songNames.split(Constant.SONG_SEPARATOR)) {
+            if (song.length() > 0) {
+                String[] songXperf = song.split(Constant.PERF_SEPARATOR);
+                Double perf = Double.parseDouble(songXperf[1]);
+                songPerformanceArrayList.add(new SongPerformance(songXperf[0], perf));
+            }
+        }
+        songNames = "";
+        if (songPerformanceArrayList.size() > 0) {
+            Collections.sort(songPerformanceArrayList, new Comparators.SongPerformanceComparators());
+            int max = 3;
+            for (int i = 0; i < songPerformanceArrayList.size() && i < max; i++) {
+                String songName = songPerformanceArrayList.get(i).getSong();
+                String performanceString = songPerformanceArrayList.get(i).getPerformance().toString();
+                Log.d("sorted song", performanceString + "," + songName);
+
+                View finishMusic = inflater.inflate(R.layout.finish_music_template, null);
+                TextView songNameTextView = (TextView) finishMusic.findViewById(R.id.song_name);
+                songNameTextView.setText((i+1) + ". " + songPerformanceArrayList.get(i).getSong());
+                musicListLinearLayout.addView(finishMusic);
+
+                songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
             }
         }
     }

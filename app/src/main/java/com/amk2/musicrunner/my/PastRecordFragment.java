@@ -112,7 +112,8 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
         };
-        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
+        String sortOrder = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " DESC";
+        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, sortOrder);
         while(cursor.moveToNext()) {
             id                 = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID));
             durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));

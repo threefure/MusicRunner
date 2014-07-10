@@ -7,10 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_marginLeft="10dp"
+
             android:id="@+id/past_record_date"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/gray"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="20dp"
             android:text=""/>
     </LinearLayout>
     <RelativeLayout
@@ -38,53 +43,89 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"/>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:gravity="center">
-        <TextView
-            android:text="distance:"
-            android:id="@+id/past_record_details_distance_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:text="0"
-            android:id="@+id/past_record_details_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/past_record_details_distance_title"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:text="calories:"
-            android:id="@+id/past_record_details_calories_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/past_record_details_distance_title"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:text="0"
-            android:id="@+id/past_record_details_calories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/past_record_details_distance"
-            android:layout_toRightOf="@+id/past_record_details_calories_title"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:text="speed:"
-            android:id="@+id/past_record_details_speed_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/past_record_details_calories_title"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:text="0"
-            android:id="@+id/past_record_details_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/past_record_details_calories"
-            android:layout_toRightOf="@+id/past_record_details_speed_title"
-            android:layout_margin="5dp"/>
-    </RelativeLayout>
+        android:paddingTop="10dp">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+            <TextView
+                android:text="Running Stats:"
+                android:id="@+id/past_record_numbers_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"/>
+            <TextView
+                android:text="distance:"
+                android:id="@+id/past_record_details_distance_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/past_record_numbers_title"
+                android:layout_margin="2dp"/>
+            <TextView
+                android:text="0"
+                android:id="@+id/past_record_details_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/past_record_details_distance_title"
+                android:layout_below="@+id/past_record_numbers_title"
+                android:layout_margin="2dp"/>
+            <TextView
+                android:text="calories:"
+                android:id="@+id/past_record_details_calories_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/past_record_details_distance_title"
+                android:layout_margin="2dp"/>
+            <TextView
+                android:text="0"
+                android:id="@+id/past_record_details_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/past_record_details_distance"
+                android:layout_toRightOf="@+id/past_record_details_calories_title"
+                android:layout_margin="2dp"/>
+            <TextView
+                android:text="speed:"
+                android:id="@+id/past_record_details_speed_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/past_record_details_calories_title"
+                android:layout_margin="2dp"/>
+            <TextView
+                android:text="0"
+                android:id="@+id/past_record_details_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/past_record_details_calories"
+                android:layout_toRightOf="@+id/past_record_details_speed_title"
+                android:layout_margin="2dp"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/top3"
+                android:text="Top3 Songs:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/top3">
+                <LinearLayout
+                    android:id="@+id/music_result_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"></LinearLayout>
+            </ScrollView>
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

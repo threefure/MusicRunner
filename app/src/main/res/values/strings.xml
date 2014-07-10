@@ -26,7 +26,7 @@
     <string name="kcal">kcal</string>
     <string name="zero">0</string>
     <string name="speed">Speed</string>
-    <string name="speed_ratio">min/km</string>
+    <string name="speed_ratio">km/min</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
     <string name="resume">Resume</string>
