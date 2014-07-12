@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends Activity {
+
+    public static final int MUSIC_RUNNER_MAIN_REQUEST = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,13 +41,13 @@ public class LoginActivity extends Activity {
         String userAccount = SharedPreferencesUtility.getAccount(this);
         if(StringLib.hasValue(userAccount)){
             Intent redirectIntent = new Intent(this,MusicRunnerActivity.class);
-            startActivity(redirectIntent);
+            startActivityForResult(redirectIntent,MUSIC_RUNNER_MAIN_REQUEST);
         }
     }
 
     public void facebookLogin(View view){
         Intent intent = new Intent(this, FBLogin.class);
-        startActivity(intent);
+        startActivityForResult(intent,MUSIC_RUNNER_MAIN_REQUEST);
     }
 
     public void registerAccount(View view) {
@@ -88,7 +91,7 @@ public class LoginActivity extends Activity {
             SharedPreferences preferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
             preferences.edit().putString(Constant.ACCOUNT_PARAMS, account).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent,MUSIC_RUNNER_MAIN_REQUEST);
         }
 
     }
@@ -160,5 +163,13 @@ public class LoginActivity extends Activity {
             isSuccessful = true;
         }
         return isSuccessful;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(MUSIC_RUNNER_MAIN_REQUEST == requestCode && RESULT_OK == resultCode) {
+            finish();
+        }
     }
 }

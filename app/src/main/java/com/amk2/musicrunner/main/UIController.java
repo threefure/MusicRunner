@@ -14,6 +14,7 @@ import com.amk2.musicrunner.start.WeatherFragment;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -255,6 +256,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
                     ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
                 } else {
+                    mMainActivity.setResult(Activity.RESULT_OK);
                     mMainActivity.finish();
                 }
                 break;
