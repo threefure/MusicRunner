@@ -423,6 +423,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.stop_running:
+                onChangeMusicSong(mMusicFragment.getLastMusicRecord());  // Handle the last song
                 stopService(new Intent(this,MusicService.class));
                 finish();
 

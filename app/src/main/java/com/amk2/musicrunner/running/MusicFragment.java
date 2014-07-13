@@ -375,4 +375,13 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     public MusicSong getCurrentMusic() {
         return mMusicService.getPlayingSong();
     }
+
+    /**
+     * This function will send the record of the last song when user stops running.
+     *
+     * @return The record of the last playing song
+     */
+    public MusicRecord getLastMusicRecord() {
+        return new MusicRecord(mPreviousSong,mMusicService.getMusicPositionWhenChangeSong());
+    }
 }
