@@ -150,7 +150,7 @@ public class DiscoverFragment extends Fragment
         if (mMarker != null)
             mMarker.remove();
         else
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, LocationUtils.CAMERA_PAD));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, LocationUtils.DISCOVERY_CAMERA_PAD));
 
         mMap.setMyLocationEnabled(true);
         mMarker = mMap.addMarker(new MarkerOptions()

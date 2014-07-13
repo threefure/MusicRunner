@@ -46,6 +46,7 @@ public final class LocationUtils {
     public static final float EARTH_RADIOUS = 6371;
 
     public static final float CAMERA_PAD = 19;
+    public static final float DISCOVERY_CAMERA_PAD = 15;
 
     /*
      * Define a request code to send to Google Play services
