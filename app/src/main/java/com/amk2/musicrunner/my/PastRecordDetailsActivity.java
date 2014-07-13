@@ -201,7 +201,7 @@ public class PastRecordDetailsActivity extends Activity {
                 String[] songXperf = song.split(Constant.PERF_SEPARATOR);
                 View finishMusic = inflater.inflate(R.layout.finish_music_template, null);
                 TextView songNameTextView = (TextView) finishMusic.findViewById(R.id.song_name);
-                songNameTextView.setText(i + ". " + songXperf[0]);
+                songNameTextView.setText(i + ". " + songXperf[0] + ", " + songXperf[1] + " kcal/min");
                 musicListLinearLayout.addView(finishMusic);
                 i ++;
             }

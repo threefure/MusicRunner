@@ -129,6 +129,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     @Override
     public void onStart() {
         super.onStart();
+        myMusicContainer.removeAllViews();
         setValueOfProgressBar();
     }
 

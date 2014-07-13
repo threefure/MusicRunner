@@ -240,7 +240,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
                 View finishMusic = inflater.inflate(R.layout.finish_music_template, null);
                 TextView songNameTextView = (TextView) finishMusic.findViewById(R.id.song_name);
-                songNameTextView.setText((i+1) + ". " + songPerformanceArrayList.get(i).getSong());
+                songNameTextView.setText((i+1) + ". " + songPerformanceArrayList.get(i).getSong() + ", " + songPerformanceArrayList.get(i).getPerformance().toString() + " kcal/min");
                 musicListLinearLayout.addView(finishMusic);
 
                 songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
