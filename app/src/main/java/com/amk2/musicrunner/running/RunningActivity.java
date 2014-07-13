@@ -32,6 +32,7 @@ import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.StringLib;
 
 import java.io.File;
@@ -228,6 +229,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
 
         musicRunnerDir = getAlbumStorageDir(Constant.Album);
+
+        picPreview.setOnClickListener(this);
     }
 
     private TimerTask runningTask = new TimerTask() {
@@ -444,6 +447,13 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
                 break;
             case R.id.camera:
                 dispatchTakePictureIntent();
+                break;
+            case R.id.pic_preview:
+                if (photoPath != null) {
+                    Intent intent = new Intent(this, ShowImageActivity.class);
+                    intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
+                    startActivity(intent);
+                }
                 break;
         }
     }

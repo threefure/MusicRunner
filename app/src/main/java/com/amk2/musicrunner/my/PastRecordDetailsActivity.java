@@ -3,6 +3,7 @@ package com.amk2.musicrunner.my;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,11 +40,12 @@ import java.util.HashMap;
 /**
  * Created by daz on 2014/6/28.
  */
-public class PastRecordDetailsActivity extends Activity {
+public class PastRecordDetailsActivity extends Activity implements View.OnClickListener{
 
     public static String PAST_RECORD_ID = "com.amk2.id";
 
     private String id;
+    private String photoPath;
 
     private ContentResolver mContentResolver;
 
@@ -83,6 +86,8 @@ public class PastRecordDetailsActivity extends Activity {
 
         mMap = ((MapFragment) getFragmentManager()
                 .findFragmentById(R.id.past_record_map)).getMap();
+
+        photoImageView.setOnClickListener(this);
     }
 
     private void setViews () {
@@ -91,7 +96,7 @@ public class PastRecordDetailsActivity extends Activity {
         int durationInSec;
         long timeInMillis;
         String timeInMillisString;
-        String distance, calories, speed, photoPath, route, songNames;
+        String distance, calories, speed, route, songNames;
 
         String[] projection = {
                 MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
@@ -168,6 +173,19 @@ public class PastRecordDetailsActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.past_record_details_photo:
+                if (photoPath != null) {
+                    Intent intent = new Intent(this, ShowImageActivity.class);
+                    intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
+                    startActivity(intent);
+                }
+                break;
+        }
     }
 
     private void mDrawRoute() {

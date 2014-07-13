@@ -26,6 +26,7 @@ import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDa
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -110,6 +111,8 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
         songNames = intent.getStringExtra(FINISH_RUNNING_SONGS);
 
+        photoImageView.setOnClickListener(this);
+
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
             String duration = TimeConverter.getDurationString(time);
@@ -189,6 +192,13 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             case R.id.discard_running_event:
                 Log.d("daz", "discard running event");
                 finish();
+                break;
+            case R.id.finish_running_photo:
+                if (photoPath != null) {
+                    Intent intent = new Intent(this, ShowImageActivity.class);
+                    intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
+                    startActivity(intent);
+                }
                 break;
         }
         MapFragmentRun.resetAllParam();
