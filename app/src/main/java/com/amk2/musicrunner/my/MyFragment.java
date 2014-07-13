@@ -300,7 +300,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     public static String getMostEfficientSongs (String songNames) {
         String mostEfficientSong = "";
         String result = "";
-        Double mostEfficientPerformance = 0.0;
+        Double mostEfficientPerformance = -1.0;
         for (String song : songNames.split(Constant.SONG_SEPARATOR)) {
             if (song.length() > 0) {
                 String[] songXperf = song.split(Constant.PERF_SEPARATOR);
