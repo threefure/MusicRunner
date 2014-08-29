@@ -6,3 +6,4 @@ MusicRunner.iml
 .gradle/
 .DS_Store
 build/
+gradle/
