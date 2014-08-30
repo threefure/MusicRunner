@@ -15,7 +15,7 @@
     <string name="chance_of_rain">Chance of Rain</string>
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
-    <string name="go_running_button_text">GO RUNNING</string>
+    <string name="go_running_button_text">Go Running</string>
 
     <!-- Running Activity -->
     <string name="initial_timer_hour">00</string>

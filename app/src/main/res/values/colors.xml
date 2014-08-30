@@ -10,6 +10,10 @@
     <color name="yellow">#FFD700</color>
     <color name="darkblue">#104E8B</color>
 
+    <!-- Start Fragment -->
+    <color name="start_go_running">#00A174</color>
+    <color name="start_go_running_is_clicked">#AA00A174</color>
+
     <!-- Main Activity tab view -->
     <color name="main_tab_item_text_selected">#706E06</color>
     <color name="main_tab_item_text_normal">#FFFFFF</color>
