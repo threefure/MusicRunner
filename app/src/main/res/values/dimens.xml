@@ -4,6 +4,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Action bar -->
+    <dimen name="action_bar_title_text_size">28dp</dimen>
+
     <!-- Main Activity tab view -->
     <dimen name="tab_widget_height">58dp</dimen>
     <dimen name="tab_icon_width_height">35dp</dimen>
