@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/running_tab_view_background" >
 
+    <Button
+        android:id="@+id/back_to_distance_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+
     <TextView
         android:id="@+id/empty_music_text"
         android:layout_width="wrap_content"
@@ -81,6 +88,7 @@
             android:layout_weight="1"
             android:paddingLeft="@dimen/music_control_container_padding_left_right"
             android:paddingRight="@dimen/music_control_container_padding_left_right"
+            android:layout_marginBottom="70dp"
             android:visibility="invisible" >
 
             <ImageView

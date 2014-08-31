@@ -2,6 +2,8 @@ package com.amk2.musicrunner.running;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.utilities.ColorGenerator;
+import com.amk2.musicrunner.running.DistanceFragment.OnBackToDistanceListener;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -29,6 +31,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,7 +41,8 @@ import static android.widget.Toast.makeText;
 public class MapFragmentRun extends Fragment implements
         com.google.android.gms.location.LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GooglePlayServicesClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
     private Marker mMarker = null;
@@ -56,6 +60,12 @@ public class MapFragmentRun extends Fragment implements
     private LocationRequest mLocationRequest;
     private LocationClient mLocationClient;
 
+    private Activity mActivity;
+    private View mFragmentView;
+    private Button mBackToDistanceButton;
+
+    private OnBackToDistanceListener mOnBackToDistanceListener;
+
     // Handle to SharedPreferences for this app
     SharedPreferences mPrefs;
 
@@ -63,6 +73,10 @@ public class MapFragmentRun extends Fragment implements
     SharedPreferences.Editor mEditor;
 
     boolean mUpdatesRequested = false;
+
+    public void setOnBackToDistanceListener(OnBackToDistanceListener listener) {
+        mOnBackToDistanceListener = listener;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,6 +115,27 @@ public class MapFragmentRun extends Fragment implements
         return v;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initialize();
+    }
+
+    private void initialize() {
+        mActivity = getActivity();
+        mFragmentView = getView();
+        findViews();
+        initButtons();
+    }
+
+    private void initButtons() {
+        mBackToDistanceButton.bringToFront();
+        mBackToDistanceButton.setOnClickListener(this);
+    }
+
+    private void findViews() {
+        mBackToDistanceButton = (Button)mFragmentView.findViewById(R.id.back_to_distance_button);
+    }
 
     @Override
     public void onStop() {
@@ -388,5 +423,14 @@ public class MapFragmentRun extends Fragment implements
         MapFragmentRun.mColor = 0;
         MapFragmentRun.mTrackList.clear();
         MapFragmentRun.mColorList.clear();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.back_to_distance_button:
+                mOnBackToDistanceListener.onBackToDistance();
+                break;
+        }
     }
 }

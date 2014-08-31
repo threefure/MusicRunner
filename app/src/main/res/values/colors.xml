@@ -32,6 +32,7 @@
     <color name="running_button_stop">#CC3639</color>
     <color name="running_button_resume">#338526</color>
     <color name="running_button_pause">#FBC31B</color>
+    <color name="running_info_background_color">#00A174</color>
 
     <!-- My Activity tab view-->
     <color name="my_text_tab_selected">#ffffff</color>

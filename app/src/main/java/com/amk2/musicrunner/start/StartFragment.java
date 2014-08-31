@@ -1,12 +1,17 @@
 package com.amk2.musicrunner.start;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.RunningActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -21,6 +26,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class StartFragment extends Fragment implements View.OnClickListener, GoogleMap.CancelableCallback{
 
     private GoogleMap googleMap;
+
+    private Activity mActivity;
+    private View mFragmentView;
+    private Button mGoRunningButton;
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -52,6 +61,12 @@ public class StartFragment extends Fragment implements View.OnClickListener, Goo
     }
 
     public void initialize() {
+        mActivity = getActivity();
+        mFragmentView = getView();
+
+        findViews();
+        initButtons();
+
         //initialize the map, should coordinate with location service
         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.fox);
         MarkerOptions markerOptions = new MarkerOptions();
@@ -63,10 +78,23 @@ public class StartFragment extends Fragment implements View.OnClickListener, Goo
         googleMap.getUiSettings().setZoomControlsEnabled(false);
     }
 
+    private void initButtons() {
+        mGoRunningButton.setOnClickListener(this);
+    }
+
+    private void findViews() {
+        mGoRunningButton = (Button)mFragmentView.findViewById(R.id.start_go_running);
+    }
+
     @Override
     public void onClick(View view) {
-
+        switch(view.getId()) {
+            case R.id.start_go_running:
+                startActivity(new Intent(mActivity, RunningActivity.class));
+                break;
+        }
     }
+
     @Override
     public void onFinish() {
         Log.d("DAZ", "map is there");

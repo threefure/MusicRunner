@@ -23,11 +23,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService.MusicBinder;
+import com.amk2.musicrunner.running.DistanceFragment.OnBackToDistanceListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +54,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         void onChangeMusicSong(MusicRecord previousRecord);
     }
     private OnChangeSongListener mOnChangeSongListener;
+    private OnBackToDistanceListener mOnBackToDistanceListener;
 
     private View mMusicController;
     private View mMusicInfoContainer;
@@ -64,6 +67,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     private ImageView mNextButton;
     private ImageView mPlayPauseButton;
     private ImageView mShuffleButton;
+    private Button mBackToDistanceButton;
 
     private Activity mActivity;
     private View mFragmentView;
@@ -77,6 +81,10 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
 
     public void setOnChangeSongListener(OnChangeSongListener listener) {
         mOnChangeSongListener = listener;
+    }
+
+    public void setOnBackToDistanceListener(OnBackToDistanceListener listener) {
+        mOnBackToDistanceListener = listener;
     }
 
     private ServiceConnection mMusicConnection = new ServiceConnection() {
@@ -195,6 +203,10 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         mPreviousButton.setOnClickListener(this);
         mNextButton.setOnClickListener(this);
         mPlayPauseButton.setOnClickListener(this);
+
+        mBackToDistanceButton = (Button)mFragmentView.findViewById(R.id.back_to_distance_button);
+        mBackToDistanceButton.bringToFront();
+        mBackToDistanceButton.setOnClickListener(this);
     }
 
     private void bindToMusicService() {
@@ -313,6 +325,9 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                     mMusicService.playPlayer();
                 }
                 setPlayPauseIcon();
+                break;
+            case R.id.back_to_distance_button:
+                mOnBackToDistanceListener.onBackToDistance();
                 break;
         }
     }

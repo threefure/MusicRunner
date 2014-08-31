@@ -14,18 +14,15 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 import com.amk2.musicrunner.utilities.PhotoLib;
@@ -42,32 +39,31 @@ import java.util.TimerTask;
 /**
  * Created by ktlee on 5/10/14.
  */
-public class RunningActivity extends Activity implements TabHost.OnTabChangeListener,
-        ViewPager.OnPageChangeListener, View.OnClickListener, MusicControllerFragment.OnChangeSongListener {
+public class RunningActivity extends Activity implements ViewPager.OnPageChangeListener, View.OnClickListener, MusicControllerFragment.OnChangeSongListener, DistanceFragment.OnBackToDistanceListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
-
     public static final int STATE_RUNNING = 1;
-    public static final int TAB_SIZE = 2;
-    public static final String MAP_TAB_TAG = "map_tab_tag";
-    public static final String MUSIC_TAB_TAG = "music_tab_tag";
 
     public static class RunningFragmentTag {
         public static final String MAP_FRAGMENT_TAG = "map_fragment_tag";
+        public static final String DISTANCE_FRAGMENT_TAG = "distance_fragment_tag";
         public static final String MUSIC_FRAGMENT_TAG = "music_fragment_tag";
     }
 
-    public static class RunningTabState {
+    public static class RunningPageState {
         public static final int MAP = 0;
-        public static final int MUSIC = 1;
+        public static final int DISTANCE = 1;
+        public static final int MUSIC = 2;
     }
+
+    private static final int RUNNING_PAGE_SIZE = 3;
 
     private FragmentManager mFragmentManager;
 
-    private TabHost mTabHost;
     private ViewPager mRunningViewPager;
     private RunningTabViewPagerAdapter mRunningTabViewPagerAdapter;
     private MapFragmentRun mMapFragment;
+    private DistanceFragment mDistanceFragment;
     private MusicControllerFragment mMusicControllerFragment;
 
     private TextView runningDistance;
@@ -117,9 +113,11 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         @Override
         protected Fragment getFragment(int position) {
             switch(position) {
-            case RunningTabState.MAP:
+            case RunningPageState.MAP:
                 return mMapFragment;
-            case RunningTabState.MUSIC:
+            case RunningPageState.DISTANCE:
+                    return mDistanceFragment;
+            case RunningPageState.MUSIC:
                 return mMusicControllerFragment;
             }
             return null;
@@ -130,13 +128,13 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_running);
+        setContentView(R.layout.running_activity);
         initialize();
     }
 
     private void initialize() {
         findViews();
-        initTabs();
+        initActionBar();
         initFragments();
         initViewPager();
         Timer timer = new Timer();
@@ -144,36 +142,15 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         notificationCenter = new NotificationCenter(this);
     }
 
+    private void initActionBar() {
+        getActionBar().hide();
+    }
+
     private void initViewPager() {
-        mRunningTabViewPagerAdapter = new RunningTabViewPagerAdapter(mFragmentManager,TAB_SIZE);
+        mRunningTabViewPagerAdapter = new RunningTabViewPagerAdapter(mFragmentManager,RUNNING_PAGE_SIZE);
         mRunningViewPager.setAdapter(mRunningTabViewPagerAdapter);
         mRunningViewPager.setOnPageChangeListener(this);
-    }
-
-    private void initTabs() {
-        mTabHost.setup();
-        addTab(MAP_TAB_TAG, getString(R.string.map_tab_text));
-        addTab(MUSIC_TAB_TAG, getString(R.string.music_tab_text));
-        mTabHost.setOnTabChangedListener(this);
-    }
-
-    private void addTab(String tag, String labelText) {
-        View tabView = getTabView(tag);
-        TextView tabText = (TextView)tabView.findViewById(R.id.tab_text);
-        tabText.setText(labelText);
-        mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
-                .setContent(new RunningTabContentFactory(this)));
-    }
-
-    private View getTabView(String tag) {
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View tabView = new View(this);
-        if(MAP_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.running_map_tab, null);
-        } else if(MUSIC_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.running_music_tab, null);
-        }
-        return tabView;
+        mRunningViewPager.setCurrentItem(RunningPageState.DISTANCE);
     }
 
     private void initFragments() {
@@ -186,6 +163,14 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             mMapFragment = new MapFragmentRun();
             transaction.add(R.id.running_view_pager, mMapFragment, RunningFragmentTag.MAP_FRAGMENT_TAG);
         }
+        mMapFragment.setOnBackToDistanceListener(this);
+
+        // Init DistanceFragment
+        mDistanceFragment = (DistanceFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.DISTANCE_FRAGMENT_TAG);
+        if(mDistanceFragment == null) {
+            mDistanceFragment = new DistanceFragment();
+            transaction.add(R.id.running_view_pager, mDistanceFragment, RunningFragmentTag.DISTANCE_FRAGMENT_TAG);
+        }
 
         // Init MusicControllerFragment
         mMusicControllerFragment = (MusicControllerFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MUSIC_FRAGMENT_TAG);
@@ -194,8 +179,10 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             transaction.add(R.id.running_view_pager, mMusicControllerFragment, RunningFragmentTag.MUSIC_FRAGMENT_TAG);
         }
         mMusicControllerFragment.setOnChangeSongListener(this);
+        mMusicControllerFragment.setOnBackToDistanceListener(this);
 
         transaction.hide(mMapFragment);
+        transaction.hide(mDistanceFragment);
         transaction.hide(mMusicControllerFragment);
 
         transaction.commit();
@@ -220,7 +207,6 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
         camera = (ImageButton) findViewById(R.id.camera);
         camera.setOnClickListener(this);
 
-        mTabHost = (TabHost)findViewById(android.R.id.tabhost);
         mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
 
         musicRunnerDir = getAlbumStorageDir(Constant.Album);
@@ -400,13 +386,8 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     }
 
     @Override
-    public void onPageSelected(int pos) {
-        mTabHost.setCurrentTab(pos);
-    }
+    public void onPageSelected(int position) {
 
-    @Override
-    public void onTabChanged(String tabId) {
-        mRunningViewPager.setCurrentItem(mTabHost.getCurrentTab());
     }
 
     @Override
@@ -497,5 +478,10 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
 
         //Log.d("danny","Previous music title = " + previousRecord.mMusicSong.mTitle);
         //Log.d("danny","Previous music playing duration = " + previousRecord.mPlayingDuration);
+    }
+
+    @Override
+    public void onBackToDistance() {
+        mRunningViewPager.setCurrentItem(RunningPageState.DISTANCE);
     }
 }

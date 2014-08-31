@@ -78,9 +78,9 @@ public class WeatherFragment extends Fragment {
 
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        updateWeatherCondition();
-        updateWeatherHourly();
-        updateWeather5Days();
+//        updateWeatherCondition();
+//        updateWeatherHourly();
+//        updateWeather5Days();
     }
 
     @Override
