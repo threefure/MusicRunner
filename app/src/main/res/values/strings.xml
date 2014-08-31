@@ -5,11 +5,10 @@
     <string name="action_settings">Settings</string>
 
     <!-- Tab -->
-    <string name="my_tab">My</string>
     <string name="start_tab">Start</string>
-    <string name="discover_tab">Discover</string>
+    <string name="my_tab">My</string>
+    <string name="music_tab">Music</string>
     <string name="weather_tab">Weather</string>
-    <string name="setting_tab">Setting</string>
 
     <!-- Start Fragment -->
     <string name="chance_of_rain">Chance of Rain</string>

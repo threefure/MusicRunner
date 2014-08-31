@@ -3,18 +3,13 @@ package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
-import com.amk2.musicrunner.discover.DiscoverFragment;
+import com.amk2.musicrunner.music.MusicFragment;
 import com.amk2.musicrunner.my.MyFragment;
 import com.amk2.musicrunner.my.PastRecordFragment;
-import com.amk2.musicrunner.setting.SettingFragment;
 import com.amk2.musicrunner.start.StartFragment;
-import com.amk2.musicrunner.start.StartFragment.StartTabFragmentListener;
-//import com.amk2.musicrunner.start.WeatherFragment;
 import com.amk2.musicrunner.weather.WeatherFragment;
 
 import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.ActionBar.TabListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,8 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Manipulate most of UI controls in this app. Note: Operate the UI as far as
@@ -49,34 +42,35 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private MainTabViewPagerAdapter mMainPagerAdapter;
 
     // Fragments for each tab
+    private StartFragment mStartFragment;
     private MyFragment mMyFragment;
     private PastRecordFragment mPastRecordFragment;
-    private StartFragment mStartFragment;
+    private MusicFragment mMusicFragment;
     private WeatherFragment mWeatherFragment;
     //private DiscoverFragment mDiscoverFragment;
-    private SettingFragment mSettingFragment;
+    //private SettingFragment mSettingFragment;
 
     public static class TabState {
         public static final int START = 0;
         public static final int MY = 1;
-        public static final int WEATHER = 2;
-        public static final int SETTING = 3;
+        public static final int MUSIC = 2;
+        public static final int WEATHER = 3;
     }
 
     public static class TabTag {
         public static final String START_TAB_TAG = "start_tab_tag";
         public static final String MY_TAB_TAG = "my_tab_tag";
-        public static final String WEATHER_TAB_TAG = "weather_tab_tag";
-        public static final String SETTING_TAB_TAG = "setting_tab_tag";
+        public static final String MUSIC_TAB_TAG = "setting_tab_tag";
+        public static final String WEATHER_TAB_TAG = "music_tab_tag";
     }
 
     public static class FragmentTag {
         public static final String START_FRAGMENT_TAG = "start_fragment";
-        public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
         public static final String MY_FRAGMENT_TAG = "my_fragment";
         public static final String PAST_RECORD_FRAGMENT_TAG = "past_record_fragment";
+        public static final String MUSIC_FRAGMENT_TAG = "music_fragment";
+        public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
         //public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
-        public static final String SETTING_FRAGMENT_TAG = "setting_fragment";
     }
 
     public UIController(MusicRunnerActivity activity) {
@@ -99,10 +93,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private void initTabs() {
         mTabHost = (TabHost)mMainActivity.findViewById(android.R.id.tabhost);
         mTabHost.setup();
-        addTab(TabTag.START_TAB_TAG,mMainActivity.getString(R.string.start_tab));
-        addTab(TabTag.MY_TAB_TAG,mMainActivity.getString(R.string.my_tab));
-        addTab(TabTag.WEATHER_TAB_TAG,mMainActivity.getString(R.string.weather_tab));
-        addTab(TabTag.SETTING_TAB_TAG,mMainActivity.getString(R.string.setting_tab));
+        addTab(TabTag.START_TAB_TAG);
+        addTab(TabTag.MY_TAB_TAG);
+        addTab(TabTag.MUSIC_TAB_TAG);
+        addTab(TabTag.WEATHER_TAB_TAG);
         mTabHost.setOnTabChangedListener(this);
         setTabClickListener();
     }
@@ -114,9 +108,6 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 @Override
                 public void onClick(View v) {
                     mViewPager.setCurrentItem(TabState.START);
-                    //if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
-                        //((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
-                    //}
                     Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
                 }
             });
@@ -133,7 +124,16 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 }
             });
 
-            // Discover
+            // Music
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.MUSIC).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(TabState.MUSIC);
+                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
+                }
+            });
+
+            // Weather
             mTabHost.getTabWidget().getChildTabViewAt(TabState.WEATHER).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -141,20 +141,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                     Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
                 }
             });
-
-            // Setting
-            mTabHost.getTabWidget().getChildTabViewAt(TabState.SETTING).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mViewPager.setCurrentItem(TabState.SETTING);
-                    Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
-                }
-            });
-
         }
     }
 
-    private void addTab(String tag, String labelText) {
+    private void addTab(String tag) {
         View tabView = getTabView(tag);
         mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
                 .setContent(new RunningTabContentFactory(mMainActivity)));
@@ -167,10 +157,12 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             tabView = layoutInflater.inflate(R.layout.start_tab, null);
         } else if(TabTag.MY_TAB_TAG.equals(tag)) {
             tabView = layoutInflater.inflate(R.layout.my_tab, null);
+
+        } else if(TabTag.MUSIC_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.music_tab, null);
+
         } else if(TabTag.WEATHER_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.discover_tab, null);
-        } else if(TabTag.SETTING_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.setting_tab, null);
+            tabView = layoutInflater.inflate(R.layout.weather_tab, null);
         }
         return tabView;
     }
@@ -200,15 +192,15 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             transaction.add(R.id.tab_pager, mMyFragment, FragmentTag.MY_FRAGMENT_TAG);
         }
 
-        // Init SettingFragment
-        mSettingFragment = (SettingFragment) mFragmentManager
-                .findFragmentByTag(FragmentTag.SETTING_FRAGMENT_TAG);
-        if (mSettingFragment == null) {
-            mSettingFragment = new SettingFragment();
-            transaction.add(R.id.tab_pager, mSettingFragment, FragmentTag.SETTING_FRAGMENT_TAG);
+        // Init MusicFragment
+        mMusicFragment = (MusicFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.MUSIC_FRAGMENT_TAG);
+        if (mMusicFragment == null) {
+            mMusicFragment = new MusicFragment();
+            transaction.add(R.id.tab_pager, mMusicFragment, FragmentTag.MUSIC_FRAGMENT_TAG);
         }
 
-        // Init DiscoverFragment
+        // Init WeatherFragment
         mWeatherFragment = (WeatherFragment) mFragmentManager
                 .findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
         if (mWeatherFragment == null) {
@@ -218,7 +210,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
         transaction.hide(mStartFragment);
         transaction.hide(mMyFragment);
-        transaction.hide(mSettingFragment);
+        transaction.hide(mMusicFragment);
         transaction.hide(mWeatherFragment);
         transaction.commit();
     }
@@ -254,12 +246,8 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     public void onActivityBackPressed() {
         switch(mViewPager.getCurrentItem()) {
             case TabState.START:
-                //if(mMainPagerAdapter.getFragment(TabState.START) instanceof WeatherFragment) {
-                //    ((WeatherFragment) mMainPagerAdapter.getFragment(TabState.START)).onBackPressed();
-                //} else {
-                    mMainActivity.setResult(Activity.RESULT_OK);
-                    mMainActivity.finish();
-                //}
+                mMainActivity.setResult(Activity.RESULT_OK);
+                mMainActivity.finish();
                 break;
             case TabState.MY:
                 if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
@@ -271,7 +259,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             case TabState.WEATHER:
                 mViewPager.setCurrentItem(TabState.START);
                 break;
-            case TabState.SETTING:
+            case TabState.MUSIC:
                 mViewPager.setCurrentItem(TabState.START);
                 break;
         }
@@ -286,7 +274,6 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             MyFragment.MyTabFragmentListener {
 
         private Fragment mFragmentAtMyTab;
-        private Fragment mFragmentAtStartTab;
 
         public MainTabViewPagerAdapter(FragmentManager fm, int size) {
             super(fm, size);
@@ -302,10 +289,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         protected Fragment getFragment(int position) {
             switch (position) {
                 case TabState.START:
-                    if (mFragmentAtStartTab == null) {
-                        mFragmentAtStartTab = mStartFragment;
-                    }
-                    return mFragmentAtStartTab;
+                    return mStartFragment;
                 case TabState.MY:
                     if (mFragmentAtMyTab == null) {
                         mFragmentAtMyTab = mMyFragment;
@@ -313,20 +297,14 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                     return mFragmentAtMyTab;
                 case TabState.WEATHER:
                     return mWeatherFragment;
-                case TabState.SETTING:
-                    return mSettingFragment;
+                case TabState.MUSIC:
+                    return mMusicFragment;
             }
             return null;
         }
 
         @Override
         public int getItemPosition(Object object) {
-            if (object instanceof StartFragment && mFragmentAtStartTab instanceof WeatherFragment) {
-                return POSITION_NONE;
-            }
-            if (object instanceof WeatherFragment && mFragmentAtStartTab instanceof StartFragment) {
-                return POSITION_NONE;
-            }
             if (object instanceof MyFragment && mFragmentAtMyTab instanceof PastRecordFragment) {
                 return POSITION_NONE;
             }
@@ -335,32 +313,6 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             }
             return POSITION_UNCHANGED;
         }
-
-        /*@Override
-        public void onSwitchBetweenStartAndWeatherFragment() {
-            if (mCurTransaction == null) {
-                mCurTransaction = mFragmentManager.beginTransaction();
-            }
-            if (mFragmentAtStartTab instanceof StartFragment) {
-                addWeatherFragment();
-                mFragmentAtStartTab = mWeatherFragment;
-                ((WeatherFragment) mFragmentAtStartTab).setStartTabFragmentListener(this);
-            } else { // Instance of WeatherFragment
-                mCurTransaction.remove(mFragmentAtStartTab);
-                mFragmentAtStartTab = mStartFragment;
-            }
-            notifyDataSetChanged();
-        }
-
-        private void addWeatherFragment() {
-            mWeatherFragment = (WeatherFragment) mFragmentManager
-                    .findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
-            if (mWeatherFragment == null) {
-                mWeatherFragment = new WeatherFragment();
-                mCurTransaction.add(R.id.tab_pager, mWeatherFragment,
-                        FragmentTag.WEATHER_FRAGMENT_TAG);
-            }
-        }*/
 
         @Override
         public void onSwitchBetweenMyAndPastRecordFragment() {

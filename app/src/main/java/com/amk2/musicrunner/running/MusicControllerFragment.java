@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService.MusicBinder;
@@ -34,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class MusicFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class MusicControllerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final int MUSIC_LOADER_ID = 1;
 
@@ -104,7 +103,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
     private void startPlayMusic(IBinder service) {
         mMusicController.setVisibility(View.VISIBLE);
         mEmptyMusicText.setVisibility(View.GONE);
-        //Log.d("danny", "Service connection in MusicFragment");
+        //Log.d("danny", "Service connection in MusicControllerFragment");
         mIsBindToService = true;
         MusicBinder binder = (MusicBinder) service;
         mMusicService = binder.getService();
@@ -152,7 +151,7 @@ public class MusicFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.music_fragment, container, false);
+        return inflater.inflate(R.layout.music_controller_fragment, container, false);
     }
 
     @Override

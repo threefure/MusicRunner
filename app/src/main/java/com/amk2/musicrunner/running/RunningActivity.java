@@ -6,8 +6,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
@@ -38,9 +35,7 @@ import com.amk2.musicrunner.utilities.StringLib;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,7 +43,7 @@ import java.util.TimerTask;
  * Created by ktlee on 5/10/14.
  */
 public class RunningActivity extends Activity implements TabHost.OnTabChangeListener,
-        ViewPager.OnPageChangeListener, View.OnClickListener, MusicFragment.OnChangeSongListener {
+        ViewPager.OnPageChangeListener, View.OnClickListener, MusicControllerFragment.OnChangeSongListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -73,7 +68,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     private ViewPager mRunningViewPager;
     private RunningTabViewPagerAdapter mRunningTabViewPagerAdapter;
     private MapFragmentRun mMapFragment;
-    private MusicFragment mMusicFragment;
+    private MusicControllerFragment mMusicControllerFragment;
 
     private TextView runningDistance;
     private TextView runningCalorie;
@@ -125,7 +120,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             case RunningTabState.MAP:
                 return mMapFragment;
             case RunningTabState.MUSIC:
-                return mMusicFragment;
+                return mMusicControllerFragment;
             }
             return null;
         }
@@ -192,16 +187,16 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
             transaction.add(R.id.running_view_pager, mMapFragment, RunningFragmentTag.MAP_FRAGMENT_TAG);
         }
 
-        // Init MusicFragment
-        mMusicFragment = (MusicFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MUSIC_FRAGMENT_TAG);
-        if(mMusicFragment == null) {
-            mMusicFragment = new MusicFragment();
-            transaction.add(R.id.running_view_pager, mMusicFragment, RunningFragmentTag.MUSIC_FRAGMENT_TAG);
+        // Init MusicControllerFragment
+        mMusicControllerFragment = (MusicControllerFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MUSIC_FRAGMENT_TAG);
+        if(mMusicControllerFragment == null) {
+            mMusicControllerFragment = new MusicControllerFragment();
+            transaction.add(R.id.running_view_pager, mMusicControllerFragment, RunningFragmentTag.MUSIC_FRAGMENT_TAG);
         }
-        mMusicFragment.setOnChangeSongListener(this);
+        mMusicControllerFragment.setOnChangeSongListener(this);
 
         transaction.hide(mMapFragment);
-        transaction.hide(mMusicFragment);
+        transaction.hide(mMusicControllerFragment);
 
         transaction.commit();
     }
@@ -423,7 +418,7 @@ public class RunningActivity extends Activity implements TabHost.OnTabChangeList
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.stop_running:
-                onChangeMusicSong(mMusicFragment.getLastMusicRecord());  // Handle the last song
+                onChangeMusicSong(mMusicControllerFragment.getLastMusicRecord());  // Handle the last song
                 stopService(new Intent(this,MusicService.class));
                 finish();
 

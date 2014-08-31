@@ -19,9 +19,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Created by daz on 2014/4/22.
  */
 public class StartFragment extends Fragment implements View.OnClickListener, GoogleMap.CancelableCallback{
-    public interface StartTabFragmentListener {
-    	void onSwitchBetweenStartAndWeatherFragment();
-    }
 
     private GoogleMap googleMap;
 
