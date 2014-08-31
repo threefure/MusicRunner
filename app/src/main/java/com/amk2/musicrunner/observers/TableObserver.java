@@ -11,7 +11,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackCommonDataDB;
 
 /**
  * Created by ktlee on 5/25/14.

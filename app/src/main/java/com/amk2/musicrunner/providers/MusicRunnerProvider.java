@@ -10,33 +10,33 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.amk2.musicrunner.sqliteDB.MusicTrackDBHelper;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBHelper;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackRunningEventDataDB;
 
 /**
  * Created by ktlee on 5/24/14.
  */
-public class MusicTrackProvider extends ContentProvider {
+public class MusicRunnerProvider extends ContentProvider {
     private static final int COMMON_DATA_DIR_INDICATOR  = 1;
     private static final int COMMON_DATA_ITEM_INDICATOR = 2;
     private static final int RUNNING_EVENT_DATA_DIR_INDICATOR  = 3;
     private static final int RUNNING_EVENT_DATA_ITEM_INDICATOR = 4;
 
-    private MusicTrackDBHelper musicTrackDBHelper;
+    private MusicRunnerDBHelper musicTrackDBHelper;
     private static final UriMatcher uriMatcher;
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(MusicTrackMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME, COMMON_DATA_DIR_INDICATOR);
-        uriMatcher.addURI(MusicTrackMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME + "/#", COMMON_DATA_ITEM_INDICATOR);
-        uriMatcher.addURI(MusicTrackMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME, RUNNING_EVENT_DATA_DIR_INDICATOR);
-        uriMatcher.addURI(MusicTrackMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME + "/#", RUNNING_EVENT_DATA_ITEM_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME, COMMON_DATA_DIR_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME + "/#", COMMON_DATA_ITEM_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME, RUNNING_EVENT_DATA_DIR_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME + "/#", RUNNING_EVENT_DATA_ITEM_INDICATOR);
     }
 
     @Override
     public boolean onCreate() {
-        musicTrackDBHelper = new MusicTrackDBHelper(getContext());
+        musicTrackDBHelper = new MusicRunnerDBHelper(getContext());
         return true;
     }
 
@@ -127,7 +127,7 @@ public class MusicTrackProvider extends ContentProvider {
         Uri updatedUri = null;
         switch (uriMatcher.match(uri)) {
             case COMMON_DATA_DIR_INDICATOR:
-                cnt = writableDB.update(MusicTrackMetaData.MusicTrackCommonDataDB.TABLE_NAME, contentValues, selection, selectionArgs);
+                cnt = writableDB.update(MusicRunnerDBMetaData.MusicTrackCommonDataDB.TABLE_NAME, contentValues, selection, selectionArgs);
                 updatedUri = ContentUris.withAppendedId(MusicTrackCommonDataDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
                 //this.getContext().getContentResolver().notifyChange(updatedUri, null);
                 break;

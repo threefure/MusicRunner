@@ -3,12 +3,10 @@ package com.amk2.musicrunner.my;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,14 +16,10 @@ import android.widget.TextView;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
-import com.amk2.musicrunner.running.MapFragmentRun;
-import com.amk2.musicrunner.services.SyncService;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.utilities.ColorGenerator;
-import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
-import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -99,29 +92,29 @@ public class PastRecordDetailsActivity extends Activity implements View.OnClickL
         String distance, calories, speed, route, songNames;
 
         String[] projection = {
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
         };
-        String selection = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
+        String selection = MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
         id  = intent.getStringExtra(PAST_RECORD_ID);
         String[] selectionArgs = { id };
 
-        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
         cursor.moveToFirst();
-        durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
-        timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-        distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
-        calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
-        speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
-        photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
-        route              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE));
-        songNames          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
+        durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
+        timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+        distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
+        calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
+        speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+        photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+        route              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE));
+        songNames          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
         timeInMillis       = Long.parseLong(timeInMillisString);
 
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(durationInSec);

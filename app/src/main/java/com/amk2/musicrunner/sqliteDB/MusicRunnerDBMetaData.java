@@ -9,13 +9,13 @@ import android.provider.BaseColumns;
 /**
  * Created by daz on 2014/5/29.
  */
-public class MusicTrackMetaData {
+public class MusicRunnerDBMetaData {
     public static final String AUTHORITY = "com.amk2.musicrunner.provider";
     public static final String ACCOUNT = "dummyaccount";
     public static final String ACCOUNT_TYPE = "com.amk2";
     public static Account mAccount;
 
-    public MusicTrackMetaData(){}
+    public MusicRunnerDBMetaData() {}
 
     public static void InitialAccount (Context context) {
         mAccount = CreateSyncAccount(context);
@@ -28,7 +28,7 @@ public class MusicTrackMetaData {
         if (accountManager.addAccountExplicitly(newAccount, null, null)) {
             /*
              * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
+             * in your <provider> element in the manife st,
              * then call context.setIsSyncable(account, AUTHORITY, 1)
              * here.
              */

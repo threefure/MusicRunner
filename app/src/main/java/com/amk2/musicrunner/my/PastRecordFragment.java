@@ -14,10 +14,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.my.MyFragment.MyTabFragmentListener;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.facebook.UiLifecycleHelper;
@@ -103,26 +102,26 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
 
 
         String[] projection = {
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
-                MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH,
+                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
         };
-        String sortOrder = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " DESC";
-        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, sortOrder);
+        String sortOrder = MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " DESC";
+        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, sortOrder);
         while(cursor.moveToNext()) {
-            id                 = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID));
-            durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
-            timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-            distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
-            calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
-            speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
-            photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
-            songNames          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
+            id                 = cursor.getInt(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID));
+            durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
+            timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
+            calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
+            speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+            photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+            songNames          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
             timeInMillis       = Long.parseLong(timeInMillisString);
 
             Log.d("past records", "duration:" + durationInSec + ", distance:" + distance + ", calories:" + calories + ", speed:" + speed + ", photoPath:" + photoPath);
@@ -173,24 +172,24 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
                 // sharing running event should be put here
                 Integer shareButtonId = (Integer) v.getTag();
                 String[] projection = {
-                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
-                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
-                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
-                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
-                        MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED//,
-                        //MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH
+                        //MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION,
+                        MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                        MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
+                        //MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
+                        MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED//,
+                        //MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH
                 };
 
-                String selection = MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
+                String selection = MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " LIKE ?";
                 String[] selectionArgs = { shareButtonId.toString() };
-                Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+                Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
                 cursor.moveToFirst();
-                //durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
-                String timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-                String distance           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
-                //calories           = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
-                String speed              = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
-                //photoPath          = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
+                //durationInSec      = cursor.getInt(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION));
+                String timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+                String distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
+                //calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
+                String speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
+                //photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH));
                 long timeInMillis         = Long.parseLong(timeInMillisString);
                 String dateString         = TimeConverter.getDateString(timeInMillis);
 

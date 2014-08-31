@@ -54,6 +54,12 @@
 
         </activity>
 
+        <provider
+            android:name=".providers.MusicRunnerProvider"
+            android:authorities="com.amk2.musicrunner.provider"
+            android:exported="false"
+            android:syncable="true" />
+
         <!--service android:name="com.amk2.musicrunner.services.AuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -65,7 +71,7 @@
         </service>
 
         <provider
-            android:name="com.amk2.musicrunner.providers.MusicTrackProvider"
+            android:name="com.amk2.musicrunner.providers.MusicRunnerProviderr"
             android:authorities="com.amk2.musicrunner.provider"
             android:exported="false"
             android:syncable="true" />

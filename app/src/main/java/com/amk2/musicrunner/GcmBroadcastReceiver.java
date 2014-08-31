@@ -6,7 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
@@ -18,7 +18,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
     public static final String ACCOUNT_TYPE = "com.amk2";
     public static final String ACCOUNT = "dummyaccount";
     public static final String KEY_SYNC_REQUEST = "com.amk2.musicrunner.KEY_SYNC_REQUEST";
-    private Account mAccount = MusicTrackMetaData.mAccount;
+    private Account mAccount = MusicRunnerDBMetaData.mAccount;
 
     @Override
     public void onReceive(Context context, Intent intent) {

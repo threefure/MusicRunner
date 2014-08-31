@@ -3,26 +3,19 @@ package com.amk2.musicrunner.discover;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.content.ContentResolver;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.graphics.Color;
 import android.location.LocationListener;
 import android.app.Fragment;
 import android.content.Context;
@@ -264,16 +257,16 @@ public class DiscoverFragment extends Fragment
 
     private void updateYoubike () {
         String[] projection = {
-                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
-                MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
+                MusicRunnerDBMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT,
+                MusicRunnerDBMetaData.MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE
         };
-        String selection = MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
+        String selection = MusicRunnerDBMetaData.MusicTrackCommonDataDB.COLUMN_NAME_DATA_TYPE + " LIKE ?";
         String[] selectionArgs = { String.valueOf(Constant.DB_KEY_YOUBIKE) };
 
-        Cursor cursor = mContentResolver.query(MusicTrackMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicTrackCommonDataDB.CONTENT_URI, projection, selection, selectionArgs, null);
         cursor.moveToFirst();
         try {
-            String JSONContent = cursor.getString(cursor.getColumnIndex(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
+            String JSONContent = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT));
             updateYoubike(JSONContent);
         } catch (CursorIndexOutOfBoundsException e) {
             e.printStackTrace();

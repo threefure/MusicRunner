@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,8 +20,7 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackRunningEventDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackRunningEventDataDB;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
@@ -39,11 +37,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.zip.Inflater;
 
 import static android.widget.Toast.makeText;
-import static com.amk2.musicrunner.utilities.Comparators.*;
 
 /**
  * Created by daz on 2014/6/15.

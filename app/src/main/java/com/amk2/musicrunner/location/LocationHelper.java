@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -140,7 +140,7 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
         }
         try {
             Log.d("daz", "add period sync");
-            mContentResolver.addPeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle, period);
+            mContentResolver.addPeriodicSync(MusicRunnerDBMetaData.mAccount, MusicRunnerDBMetaData.AUTHORITY, bundle, period);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -153,7 +153,7 @@ public class LocationHelper implements GooglePlayServicesClient.ConnectionCallba
         }
         try {
             Log.d("daz", "remove period sync");
-            mContentResolver.removePeriodicSync(MusicTrackMetaData.mAccount, MusicTrackMetaData.AUTHORITY, bundle);
+            mContentResolver.removePeriodicSync(MusicRunnerDBMetaData.mAccount, MusicRunnerDBMetaData.AUTHORITY, bundle);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

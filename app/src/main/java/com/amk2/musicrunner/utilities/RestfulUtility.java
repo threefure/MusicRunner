@@ -1,5 +1,7 @@
 package com.amk2.musicrunner.utilities;
 
+import android.inputmethodservice.InputMethodService;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -38,6 +40,40 @@ public class RestfulUtility {
     public static final String GET_SETTING_INFO = "/getSettingInfo";
     public static final String UPDATE_SETTINGS = "/updateSettings";
     public static final String FACEBOOK_LOGIN = "/facebookLogin";
+
+    public static class GetRequest extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... urlStrings) {
+            InputStream inputStream = null;
+            String result = null;
+            if (urlStrings[0] != null) {
+                try {
+                    URL url = new URL(urlStrings[0]);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(3000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("GET");
+                    conn.setDoInput(true);
+
+                    conn.connect();
+                    int responseCode = conn.getResponseCode();
+                    Log.d("Restful api", "Response Code is : " + responseCode);
+                    inputStream = conn.getInputStream();
+
+                    result = getStringFromInputStream(inputStream);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+    }
+
 
     //extract response content
     public static String getStatusCode(HttpResponse response){

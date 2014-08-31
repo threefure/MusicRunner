@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by ktlee on 8/10/14.
@@ -78,9 +79,9 @@ public class WeatherFragment extends Fragment {
 
         inflater = (LayoutInflater) thisView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-//        updateWeatherCondition();
-//        updateWeatherHourly();
-//        updateWeather5Days();
+        updateWeatherCondition();
+        updateWeatherHourly();
+        updateWeather5Days();
     }
 
     @Override
@@ -94,10 +95,10 @@ public class WeatherFragment extends Fragment {
     }
 
     public void updateWeatherCondition() {
-        InputStream inputStream = RestfulUtility.restfulGetRequest(Constant.WEATHER_CONDITION_API_URL + "?city=taipei&country=tw");
-        String weatherJSONString = RestfulUtility.getStringFromInputStream(inputStream);
         try {
             int iconId;
+
+            String weatherJSONString = new RestfulUtility.GetRequest().execute(Constant.WEATHER_CONDITION_API_URL + "?city=taipei&country=tw").get();
             JSONObject weatherJSONObject = new JSONObject(weatherJSONString);
             mTemperatureTextView.setText(weatherJSONObject.getString("feelslike_c") + " c");
             mWeatherIconDescTextView.setText(weatherJSONObject.getString("condition"));
@@ -113,21 +114,28 @@ public class WeatherFragment extends Fragment {
 
             Bitmap icon = BitmapFactory.decodeResource(getResources(), iconId);
             mWeatherIconImageView.setImageBitmap(Bitmap.createScaledBitmap(icon, 100, 100, false));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void updateWeatherHourly () {
-        InputStream inputStream = RestfulUtility.restfulGetRequest(Constant.WEATHER_HOURLY_API_URL + "?city=taipei&country=tw");
-        String weatherJSONString = RestfulUtility.getStringFromInputStream(inputStream);
         try {
+            String weatherJSONString = new RestfulUtility.GetRequest().execute(Constant.WEATHER_HOURLY_API_URL + "?city=taipei&country=tw").get();//RestfulUtility.getStringFromInputStream(inputStream);
             JSONArray weatherJSONArray = new JSONArray(weatherJSONString);
             int length = weatherJSONArray.length();
             for (int i = 0; i < length; i ++) {
                 updateWeatherHourlyUI(weatherJSONArray.getJSONObject(i));
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -165,15 +173,18 @@ public class WeatherFragment extends Fragment {
     }
 
     public void updateWeather5Days () {
-        InputStream inputStream = RestfulUtility.restfulGetRequest(Constant.WEATHER_5DAYS_API_URL + "?city=taipei&country=tw");
-        String weatherJSONString = RestfulUtility.getStringFromInputStream(inputStream);
         try {
+            String weatherJSONString = new RestfulUtility.GetRequest().execute(Constant.WEATHER_5DAYS_API_URL + "?city=taipei&country=tw").get();//RestfulUtility.getStringFromInputStream(inputStream);
             JSONArray weatherJSONArray = new JSONArray(weatherJSONString);
             int length = weatherJSONArray.length();
             for (int i = 0; i < length; i ++) {
                 updateWeather5DaysUI(weatherJSONArray.getJSONObject(i));
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }

@@ -12,11 +12,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.amk2.musicrunner.Constant;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData.MusicTrackCommonDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackCommonDataDB;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -176,7 +175,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter{
             Log.d("daz", "update!");
             ContentValues values = new ContentValues();
             values.put(MusicTrackCommonDataDB.COLUMN_NAME_EXPIRATION_DATE, expirationDate);
-            values.put(MusicTrackMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT, jsonContent);
+            values.put(MusicRunnerDBMetaData.MusicTrackCommonDataDB.COLUMN_NAME_JSON_CONTENT, jsonContent);
 
             String selection = MusicTrackCommonDataDB.COLUMN_NAME_ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(index) };

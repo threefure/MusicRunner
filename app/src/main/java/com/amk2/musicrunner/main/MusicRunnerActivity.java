@@ -3,7 +3,7 @@ package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.services.SyncService;
-import com.amk2.musicrunner.sqliteDB.MusicTrackMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService;
 import com.amk2.musicrunner.running.RunningActivity;
@@ -16,7 +16,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 
 /**
@@ -70,10 +69,10 @@ public class MusicRunnerActivity extends Activity {
     }
 
     private void initializeSyncJobs() {
-        MusicTrackMetaData.InitialAccount(this);
+        MusicRunnerDBMetaData.InitialAccount(this);
         mContentResolver = getContentResolver();
-        mContentResolver.setSyncAutomatically(MusicTrackMetaData.mAccount,
-                MusicTrackMetaData.AUTHORITY, true);
+        mContentResolver.setSyncAutomatically(MusicRunnerDBMetaData.mAccount,
+                MusicRunnerDBMetaData.AUTHORITY, true);
     }
 
     private void initializeLocation() {
