@@ -51,9 +51,9 @@ public class MusicRunnerDBMetaData {
         public static final String COLUMN_NAME_JSON_CONTENT    = "jsonContent";
     }
 
-    public static abstract class MusicTrackRunningEventDataDB implements BaseColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/RunningEventData");
-        public static final String TABLE_NAME           = "RunningEventData";
+    public static abstract class MusicRunnerRunningEventDB implements BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/RunningEvent");
+        public static final String TABLE_NAME           = "RunningEvent";
         public static final String COLUMN_NAME_ID       = "id";
         public static final String COLUMN_NAME_DURATION = "duration";
         public static final String COLUMN_NAME_DATE_IN_MILLISECOND = "date_in_milli";
@@ -62,6 +62,25 @@ public class MusicRunnerDBMetaData {
         public static final String COLUMN_NAME_SPEED    = "speed";
         public static final String COLUMN_NAME_PHOTO_PATH  = "pic";
         public static final String COLUMN_NAME_ROUTE    = "route";
-        public static final String COLUMN_NAME_SONGS    = "songs";
+    }
+
+    public static abstract class MusicRunnerSongPerformanceDB implements BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/SongPerformance");
+        public static final String TABLE_NAME           = "SongPerformance";
+        public static final String COLUMN_NAME_ID       = "id";
+        public static final String COLUMN_NAME_SONG_ID  = "song_id";
+        public static final String COLUMN_NAME_EVENT_ID = "event_id";
+        public static final String COLUMN_NAME_DURATION = "duration";
+        public static final String COLUMN_NAME_DATE_IN_MILLISECOND = "date_in_milli";
+        public static final String COLUMN_NAME_CALORIES = "calories";
+        public static final String COLUMN_NAME_DISTANCE = "distance";
+        public static final String COLUMN_NAME_SPEED    = "speed";
+    }
+
+    public static abstract class MusicRunnerSongNameDB implements BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/SongName");
+        public static final String TABLE_NAME           = "SongName";
+        public static final String COLUMN_NAME_ID       = "id";
+        public static final String COLUMN_NAME_SONG_NAME= "song_name";
     }
 }

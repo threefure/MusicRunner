@@ -13,7 +13,7 @@ import android.util.Log;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBHelper;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackCommonDataDB;
-import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackRunningEventDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 
 /**
  * Created by ktlee on 5/24/14.
@@ -30,8 +30,8 @@ public class MusicRunnerProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME, COMMON_DATA_DIR_INDICATOR);
         uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackCommonDataDB.TABLE_NAME + "/#", COMMON_DATA_ITEM_INDICATOR);
-        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME, RUNNING_EVENT_DATA_DIR_INDICATOR);
-        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicTrackRunningEventDataDB.TABLE_NAME + "/#", RUNNING_EVENT_DATA_ITEM_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerRunningEventDB.TABLE_NAME, RUNNING_EVENT_DATA_DIR_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerRunningEventDB.TABLE_NAME + "/#", RUNNING_EVENT_DATA_ITEM_INDICATOR);
     }
 
     @Override
@@ -54,11 +54,11 @@ public class MusicRunnerProvider extends ContentProvider {
                 sqLiteQueryBuilder.appendWhere(MusicTrackCommonDataDB.COLUMN_NAME_ID + " = " + uri.getPathSegments().get(1));
                 break;
             case RUNNING_EVENT_DATA_DIR_INDICATOR:
-                sqLiteQueryBuilder.setTables(MusicTrackRunningEventDataDB.TABLE_NAME);
+                sqLiteQueryBuilder.setTables(MusicRunnerRunningEventDB.TABLE_NAME);
                 break;
             case RUNNING_EVENT_DATA_ITEM_INDICATOR:
-                sqLiteQueryBuilder.setTables(MusicTrackRunningEventDataDB.TABLE_NAME);
-                sqLiteQueryBuilder.appendWhere(MusicTrackRunningEventDataDB.COLUMN_NAME_ID + " = " + uri.getPathSegments().get(1));
+                sqLiteQueryBuilder.setTables(MusicRunnerRunningEventDB.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(MusicRunnerRunningEventDB.COLUMN_NAME_ID + " = " + uri.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri.toString());
@@ -98,8 +98,8 @@ public class MusicRunnerProvider extends ContentProvider {
                 } else {
                     cv = new ContentValues(contentValues);
                 }
-                TableName = MusicTrackRunningEventDataDB.TABLE_NAME;
-                ContentUri = MusicTrackRunningEventDataDB.CONTENT_URI;
+                TableName = MusicRunnerRunningEventDB.TABLE_NAME;
+                ContentUri = MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri);
@@ -132,8 +132,8 @@ public class MusicRunnerProvider extends ContentProvider {
                 //this.getContext().getContentResolver().notifyChange(updatedUri, null);
                 break;
             case RUNNING_EVENT_DATA_DIR_INDICATOR:
-                cnt = writableDB.update(MusicTrackRunningEventDataDB.TABLE_NAME, contentValues, selection, selectionArgs);
-                updatedUri = ContentUris.withAppendedId(MusicTrackRunningEventDataDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
+                cnt = writableDB.update(MusicRunnerRunningEventDB.TABLE_NAME, contentValues, selection, selectionArgs);
+                updatedUri = ContentUris.withAppendedId(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri);

@@ -224,24 +224,24 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         String distance, calories, speed, songNames;
 
         String[] projection = {
-                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE,
-                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES,
-                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED,
-                MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS
+                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
+                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED
+                //MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SONGS
         };
-        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.CONTENT_URI, projection, null, null, null);
+        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
         while(cursor.moveToNext()) {
-            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE));
-            calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES));
-            speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED));
-            songNames          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS));
+            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+            calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
+            speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
+            //songNames          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SONGS));
 
             times++;
             highestSpeed = (Double.parseDouble(speed) > highestSpeed) ? Double.parseDouble(speed) : highestSpeed;
             totalCalories += Double.parseDouble(calories);
             totalDistance += Double.parseDouble(distance);
 
-            addMusicSongs(songNames);
+            //addMusicSongs(songNames);
         }
         timesBarStatus = Integer.valueOf(times);
         timesBar.setProgress(timesBarStatus);

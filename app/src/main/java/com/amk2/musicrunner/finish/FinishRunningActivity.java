@@ -20,7 +20,8 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
-import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackRunningEventDataDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
@@ -170,15 +171,15 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 Calendar calendar = Calendar.getInstance();
                 long timeInMillis = calendar.getTimeInMillis();
                 ContentValues values = new ContentValues();
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DURATION, totalSec);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_CALORIES, calories);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_DISTANCE, distance);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SPEED, speed);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_PHOTO_PATH, photoPath);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_ROUTE, route);
-                values.put(MusicTrackRunningEventDataDB.COLUMN_NAME_SONGS, songNames);
-                Uri uri = mContentResolver.insert(MusicTrackRunningEventDataDB.CONTENT_URI, values);
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION, totalSec);
+                values.put(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES, calories);
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE, distance);
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED, speed);
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH, photoPath);
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE, route);
+                //values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SONGS, songNames);
+                Uri uri = mContentResolver.insert(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, values);
 
                 Log.d("Save running event, uri=", uri.toString());
 
