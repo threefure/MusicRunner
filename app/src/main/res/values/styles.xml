@@ -60,4 +60,19 @@
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_marginBottom">50dp</item>
     </style>
+    <style name="Running"></style>
+    <style name="Running.StatisticNumber" parent="Running">
+        <item name="android:textSize">30dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="Running.StatisticUnits" parent="Running">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/running_info_statistic_units</item>
+    </style>
+    <style name="Running.StatisticUnitBackground" parent="Running">
+        <item name="android:layout_marginRight">1dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:background">@color/running_info_background_color</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

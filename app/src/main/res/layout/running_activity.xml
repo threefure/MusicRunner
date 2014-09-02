@@ -1,24 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:android1="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/running_info_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/running_info_background_color">
-
-    </RelativeLayout>
+        android:layout_height="150dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                style="@style/Running.StatisticUnitBackground">
+                <ImageView
+                    android:src="@drawable/camera"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="00 : 00 : 00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticNumber"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="Distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="km"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="Calories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:text="0"
+                    android:textSize="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="kcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="Speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:text="0"
+                    android:textSize="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="min/km"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/running_content_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4">
+        android:layout_height="match_parent">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/running_view_pager"
@@ -53,7 +148,6 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
     <LinearLayout
         android:id="@+id/running_info_bar"
         android:layout_width="match_parent"
@@ -249,5 +343,6 @@
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
     </LinearLayout>
-
 </LinearLayout>
+
+
