@@ -17,6 +17,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
@@ -84,10 +85,17 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     }
 
     private void initialize() {
+        initActionBar();
         initFragments();
         initViewPager();
         initTabs();
         mViewPager.setCurrentItem(TabState.START);
+    }
+
+    private void initActionBar() {
+        View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        mActionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(Gravity.CENTER));
     }
 
     private void initTabs() {

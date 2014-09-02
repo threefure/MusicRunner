@@ -19,8 +19,7 @@
 
     <style name="MainActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/action_bar_background_color</item>
-        <item name="android:displayOptions">showCustom</item>
-        <item name="android:customNavigationLayout">@layout/customized_action_bar</item>
+        <item name="android:displayOptions">none</item>
     </style>
 
     <style name="MainTabItem">
