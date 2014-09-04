@@ -87,7 +87,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private HashMap<String, Integer> readableTime;
     private String durationString;
 
-    private boolean isRunning = false;
+    private boolean isRunning = true;
     private int totalSec   = 0;
     private int actualSec  = 0;
     private Integer previousSongStartTime    = 0;
@@ -348,7 +348,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     @Override
     protected void onStart () {
         super.onStart();
-        isRunning = true;
     }
 
     @Override
@@ -419,21 +418,14 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                 startActivity(finishRunningIntent);
                 break;
             case R.id.running_pause:
-                /*if (isRunning) {
-                    pauseButton.setText("Resume");
-                    pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_resume));
-                } else {
-                    pauseButton.setText("Pause");
-                    pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_pause));
-                }*/
                 pauseContainerRelativeLayout.setVisibility(View.GONE);
                 doneResumeContainerRelativeLayout.setVisibility(View.VISIBLE);
-                isRunning = !isRunning;
+                isRunning = false;
                 break;
             case R.id.running_resume:
                 pauseContainerRelativeLayout.setVisibility(View.VISIBLE);
                 doneResumeContainerRelativeLayout.setVisibility(View.GONE);
-                isRunning = !isRunning;
+                isRunning = true;
                 break;
             case R.id.running_camera:
                 dispatchTakePictureIntent();
