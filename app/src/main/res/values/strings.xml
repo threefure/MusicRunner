@@ -17,19 +17,17 @@
     <string name="go_running_button_text">Go Running</string>
 
     <!-- Running Activity -->
-    <string name="initial_timer_hour">00</string>
-    <string name="initial_timer_minute">00</string>
-    <string name="initial_timer_second">00</string>
+    <string name="initial_duration">00 : 00 : 00</string>
     <string name="distance">Distance</string>
     <string name="km">km</string>
     <string name="calorie">Calorie</string>
     <string name="kcal">kcal</string>
     <string name="zero">0</string>
     <string name="speed">Speed</string>
-    <string name="speed_ratio">km/min</string>
-    <string name="pause">Pause</string>
-    <string name="stop">Stop</string>
-    <string name="resume">Resume</string>
+    <string name="speed_ratio">min/km</string>
+    <string name="pause">PAUSE</string>
+    <string name="done">DONE</string>
+    <string name="resume">RESUME</string>
     <string name="map_tab_text">MAP</string>
     <string name="music_tab_text">MUSIC</string>
 
@@ -82,5 +80,4 @@
     <!-- Facebook Setting -->
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">445576178911956</string>
-
 </resources>

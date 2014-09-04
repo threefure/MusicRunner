@@ -37,11 +37,11 @@ public class TimeConverter {
         if(hour < 10) {
             durationString += "0";
         }
-        durationString += (hour + ":");
+        durationString += (hour + " : ");
         if(min < 10) {
             durationString += "0";
         }
-        durationString += (min + ":");
+        durationString += (min + " : ");
         if(sec < 10) {
             durationString += "0";
         }

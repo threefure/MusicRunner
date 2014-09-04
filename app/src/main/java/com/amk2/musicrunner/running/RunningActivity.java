@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
@@ -28,13 +28,17 @@ import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.StringLib;
+import com.amk2.musicrunner.utilities.TimeConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
 
 /**
  * Created by ktlee on 5/10/14.
@@ -66,32 +70,32 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private DistanceFragment mDistanceFragment;
     private MusicControllerFragment mMusicControllerFragment;
 
-    private TextView runningDistance;
-    private TextView runningCalorie;
-    private TextView runningSpeedRatio;
-    private TextView hour;
-    private TextView min;
-    private TextView sec;
+    private TextView distanceTextView;
+    private TextView calorieTextView;
+    private TextView speedTextView;
+    private TextView durationTextView;
 
+    private RelativeLayout pauseContainerRelativeLayout;
+    private RelativeLayout doneResumeContainerRelativeLayout;
     private Button pauseButton;
-    private Button mStopButton;
+    private Button doneButton;
+    private Button resumeButton;
 
-    private ImageView picPreview;
-    private ImageButton camera;
+    private ImageView picPreviewImageView;
+    private ImageButton cameraImageButton;
+
+    private HashMap<String, Integer> readableTime;
+    private String durationString;
 
     private boolean isRunning = false;
     private int totalSec   = 0;
     private int actualSec  = 0;
-    private int actualMin  = 0;
-    private int actualHour = 0;
     private Integer previousSongStartTime    = 0;
     private Double previousSongStartCalories = 0.0;
 
-    private Double mockDistance = 0.0;
-
     private Double distance = 0.0;
     private Double calorie = 0.0;
-    private Double running_speed = 0.0;
+    private Double speed = 0.0;
 
     private String distanceString;
     private String calorieString;
@@ -133,7 +137,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     }
 
     private void initialize() {
-        findViews();
+        initViews();
         initActionBar();
         initFragments();
         initViewPager();
@@ -189,29 +193,32 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     }
 
 
-    private void findViews() {
-        hour = (TextView) findViewById(R.id.timer_hour);
-        min = (TextView) findViewById(R.id.timer_minute);
-        sec = (TextView) findViewById(R.id.timer_second);
+    private void initViews() {
+        durationTextView = (TextView) findViewById(R.id.running_duration);
 
-        runningDistance = (TextView) findViewById(R.id.running_distance);
-        runningCalorie = (TextView) findViewById(R.id.running_calorie);
-        runningSpeedRatio = (TextView) findViewById(R.id.running_speed_ratio);
+        distanceTextView = (TextView) findViewById(R.id.running_distance);
+        calorieTextView  = (TextView) findViewById(R.id.running_calorie);
+        speedTextView    = (TextView) findViewById(R.id.running_speed);
 
-        pauseButton = (Button) findViewById(R.id.pause_running);
+        pauseButton   = (Button) findViewById(R.id.running_pause);
+        doneButton    = (Button) findViewById(R.id.running_done);
+        resumeButton  = (Button) findViewById(R.id.running_resume);
+
+        pauseContainerRelativeLayout      = (RelativeLayout) findViewById(R.id.pause_container);
+        doneResumeContainerRelativeLayout = (RelativeLayout) findViewById(R.id.done_resume_container);
+
+        //picPreviewImageView = (ImageView) findViewById(R.id.pic_preview);
+        cameraImageButton   = (ImageButton) findViewById(R.id.running_camera);
+        mRunningViewPager   = (ViewPager)findViewById(R.id.running_view_pager);
+
+        musicRunnerDir      = getAlbumStorageDir(Constant.Album);
+
         pauseButton.setOnClickListener(this);
-        mStopButton = (Button)findViewById(R.id.stop_running);
-        mStopButton.setOnClickListener(this);
+        doneButton.setOnClickListener(this);
+        resumeButton.setOnClickListener(this);
+        //picPreviewImageView.setOnClickListener(this);
+        cameraImageButton.setOnClickListener(this);
 
-        picPreview = (ImageView) findViewById(R.id.pic_preview);
-        camera = (ImageButton) findViewById(R.id.camera);
-        camera.setOnClickListener(this);
-
-        mRunningViewPager = (ViewPager)findViewById(R.id.running_view_pager);
-
-        musicRunnerDir = getAlbumStorageDir(Constant.Album);
-
-        picPreview.setOnClickListener(this);
     }
 
     private TimerTask runningTask = new TimerTask() {
@@ -233,60 +240,37 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                 case STATE_RUNNING:
 
                     // update time
-                    actualSec  = totalSec%60;
-
-                    if (actualSec < 10) {
-                        sec.setText("0" + actualSec);
-                    } else {
-                        sec.setText("" + actualSec);
-                    }
-
-                    if (actualSec == 0) {
-                        actualMin = (actualMin + 1) % 60;
-
-                        if (actualMin < 10) {
-                            min.setText("0" + actualMin);
-                        } else {
-                            min.setText("" + actualMin);
-                        }
-
-                        if (actualMin == 0) {
-                            actualHour += 1;
-
-                            if (actualHour < 10) {
-                                hour.setText("0" + actualHour);
-                            } else {
-                                hour.setText("" + actualHour);
-                            }
-                        }
-                    }
+                    readableTime = TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
+                    durationString = TimeConverter.getDurationString(readableTime);
+                    durationTextView.setText(durationString);
 
                     //update distance
-                    //distance += 0.01;
-                    distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    distance += 0.01;
+                    //distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     distanceString = distance.toString();
                     distanceString = StringLib.truncateDoubleString(distanceString, 2);
-                    runningDistance.setText(distanceString);
+                    distanceTextView.setText(distanceString);
 
                     //update calorie
                     //calorie += 0.1;
-                    //mockDistance += 2.41;
-                    calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
+                    //calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
+                    calorie = calculateCalories(totalSec, distance);
                     calorieString = calorie.toString();
                     calorieString = StringLib.truncateDoubleString(calorieString, 2);
-                    runningCalorie.setText(calorieString);
+                    calorieTextView.setText(calorieString);
 
                     //update ratio
                     //running_speed += 0.01;
                     if (distance > 0) {
-                        running_speed = distance/ ((double) totalSec / 60);//MapFragmentRun.getmSpeed();
+                        speed = ((double) totalSec / 60)/distance;//MapFragmentRun.getmSpeed();
                     }
-                    speedString = running_speed.toString();
+                    speedString = speed.toString();
                     speedString = StringLib.truncateDoubleString(speedString, 2);
-                    runningSpeedRatio.setText(speedString);
+                    speedTextView.setText(speedString);
 
+                    actualSec = totalSec % 60;
                     if (actualSec % Constant.ONE_MINUTE == 0) {
-                        notificationCenter.notifyStatus(actualMin, actualSec, distance, running_speed, calorie);
+                        //notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;
             }
@@ -324,15 +308,37 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         return calories;
     }
 
+    private void galleryAddPic() {
+        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.parse("file://" + photoPath)));
+    }
+
+    public File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs() || file.isDirectory()) {
+            Log.e("Album", "Directory not created");
+        }
+        return file;
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File image = File.createTempFile(imageFileName, ".jpg", musicRunnerDir);
+        photoPath = image.getAbsolutePath();
+        return image;
+    }
+
     @Override
     protected void onActivityResult(int reqCode, int resCode, Intent data) {
         if (reqCode == REQUEST_IMAGE_CAPTURE && resCode == RESULT_OK) {
             galleryAddPic();
-            Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreview.getLayoutParams().width, picPreview.getLayoutParams().height);
-            picPreview.setImageBitmap(resizedPhoto);
+            //Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
+            //picPreviewImageView.setImageBitmap(resizedPhoto);
         }
     }
-
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -398,7 +404,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.stop_running:
+            case R.id.running_done:
                 onChangeMusicSong(mMusicControllerFragment.getLastMusicRecord());  // Handle the last song
                 stopService(new Intent(this,MusicService.class));
                 finish();
@@ -412,50 +418,34 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, songNames);
                 startActivity(finishRunningIntent);
                 break;
-            case R.id.pause_running:
-                if (isRunning) {
+            case R.id.running_pause:
+                /*if (isRunning) {
                     pauseButton.setText("Resume");
                     pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_resume));
                 } else {
                     pauseButton.setText("Pause");
                     pauseButton.setBackgroundColor(getResources().getColor(R.color.running_button_pause));
-                }
+                }*/
+                pauseContainerRelativeLayout.setVisibility(View.GONE);
+                doneResumeContainerRelativeLayout.setVisibility(View.VISIBLE);
                 isRunning = !isRunning;
                 break;
-            case R.id.camera:
+            case R.id.running_resume:
+                pauseContainerRelativeLayout.setVisibility(View.VISIBLE);
+                doneResumeContainerRelativeLayout.setVisibility(View.GONE);
+                isRunning = !isRunning;
+                break;
+            case R.id.running_camera:
                 dispatchTakePictureIntent();
                 break;
-            case R.id.pic_preview:
+            /*case R.id.pic_preview:
                 if (photoPath != null) {
                     Intent intent = new Intent(this, ShowImageActivity.class);
                     intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
                     startActivity(intent);
                 }
-                break;
+                break;*/
         }
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File image = File.createTempFile(imageFileName, ".jpg", musicRunnerDir);
-        photoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void galleryAddPic() {
-        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.parse("file://" + photoPath)));
-    }
-
-    public File getAlbumStorageDir(String albumName) {
-        // Get the directory for the user's public pictures directory.
-        File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), albumName);
-        if (!file.mkdirs() || file.isDirectory()) {
-            Log.e("Album", "Directory not created");
-        }
-        return file;
     }
 
     @Override
@@ -470,18 +460,16 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         }
         performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
         songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
-        Log.d("song", songName + ", " + performanceString);
         previousSongStartCalories = calorie;
         previousSongStartTime     = totalSec;
 
         mMapFragment.musicChangeCallback(previousRecord);
 
-        //Log.d("danny","Previous music title = " + previousRecord.mMusicSong.mTitle);
-        //Log.d("danny","Previous music playing duration = " + previousRecord.mPlayingDuration);
     }
 
     @Override
     public void onBackToDistance() {
         mRunningViewPager.setCurrentItem(RunningPageState.DISTANCE);
     }
+
 }
