@@ -12,4 +12,8 @@
         <attr name="circularImageViewStyle" format="reference"></attr>
     </declare-styleable>
 
+    <declare-styleable name="MusicRunnerLineMapView">
+        <attr name="mtext" format="string"></attr>
+    </declare-styleable>
+
 </resources>

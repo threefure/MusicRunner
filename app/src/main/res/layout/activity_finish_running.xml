@@ -1,162 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mrunner="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_height="56dp"
+        android:background="@color/running_info_background_color">
+        <TextView
+            android:id="@+id/finish_discard"
+            android:text="Discard"
+            android:padding="10dp"
+            android:background="@drawable/music_runner_green_button"
+            style="@style/Finish.TopBar"/>
+        <TextView
+            android:id="@+id/finish_date"
+            android:text="July 25"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:layout_centerHorizontal="true"
+            style="@style/Finish.TopBar"/>
         <TextView
             android:id="@+id/finish_time"
-            android:layout_width="wrap_content"
+            android:text="Friday Afternoon"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="00:00:00"
-            android:textSize="@dimen/timer" />
-        <ImageView
-            android:id="@+id/finish_running_photo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_below="@+id/finish_date"
+            android:layout_centerHorizontal="true"
+            style="@style/Finish.TopBar"/>
+        <TextView
+            android:id="@+id/finish_save"
+            android:text="Save"
+            android:padding="10dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"/>
+            android:background="@drawable/music_runner_green_button"
+            style="@style/Finish.TopBar"/>
     </RelativeLayout>
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/finish_running_map"
+        android:id="@+id/finish_map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"/>
-
-
+        android:layout_height="150dp"/>
     <LinearLayout
+        android:id="@+id/finish_info_container"
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:paddingTop="10dp">
-        <RelativeLayout
-            android:id="@+id/event_result_holder"
-            android:gravity="center_horizontal"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-            <TextView
-                android:text="Running Stats:"
-                android:id="@+id/finish_running_numbers_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:text="distance:"
-                android:id="@+id/finish_running_distance_title"
-                android:layout_below="@+id/finish_running_numbers_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="0"
-                android:id="@+id/finish_running_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_numbers_title"
-                android:layout_toRightOf="@+id/finish_running_distance_title"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="@string/km"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_numbers_title"
-                android:layout_toRightOf="@+id/finish_running_distance"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="calories:"
-                android:id="@+id/finish_running_calories_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_distance_title"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="0"
-                android:id="@+id/finish_running_calories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_distance"
-                android:layout_toRightOf="@+id/finish_running_calories_title"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="@string/kcal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_distance"
-                android:layout_toRightOf="@+id/finish_running_calories"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="speed:"
-                android:id="@+id/finish_running_speed_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_calories_title"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="0"
-                android:id="@+id/finish_running_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_calories"
-                android:layout_toRightOf="@+id/finish_running_speed_title"
-                android:layout_margin="2dp"/>
-            <TextView
-                android:text="@string/speed_ratio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/finish_running_calories"
-                android:layout_toRightOf="@+id/finish_running_speed"
-                android:layout_margin="2dp"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/top3"
-                android:text="Top3 Songs:"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"/>
-            <ScrollView
-                android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/top3">
-                <LinearLayout
-                    android:id="@+id/music_result_holder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
-            </ScrollView>
-        </RelativeLayout>
+                android:layout_weight="1"
+                style="@style/Running.StatisticUnitBackground">
+                <ImageButton
+                    android:id="@+id/finish_camera"
+                    android:background="@drawable/camera"
+                    android:layout_width="42dp"
+                    android:layout_height="35dp"/>
+                <ImageView
+                    android:id="@+id/finish_photo"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:layout_marginRight="0dp"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:id="@+id/finish_duration"
+                    android:text="@string/initial_duration"
+                    style="@style/Running.StatisticNumber"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="@string/distance"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:id="@+id/finish_distance"
+                    android:text="@string/zero"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="@string/km"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="@string/calorie"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:id="@+id/finish_calorie"
+                    android:text="@string/zero"
+                    android:textSize="30dp"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="@string/kcal"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginRight="0dp"
+                style="@style/Running.StatisticUnitBackground">
+                <TextView
+                    android:text="@string/speed"
+                    style="@style/Running.StatisticUnits"/>
+                <TextView
+                    android:id="@+id/finish_speed"
+                    android:text="@string/zero"
+                    android:textSize="30dp"
+                    style="@style/Running.StatisticNumber"/>
+                <TextView
+                    android:text="@string/speed_ratio"
+                    style="@style/Running.StatisticUnits"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-    <RelativeLayout
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center">
-        <Button
-            android:text="@string/save"
-            android:textColor="@color/white"
-            android:id="@+id/save_running_event"
-            android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="30dp"
-            android:background="@color/finish_button_save"/>
-        <Button
-            android:text="@string/discard"
-            android:textColor="@color/white"
-            android:id="@+id/discard_running_event"
-            android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_toRightOf="@+id/save_running_event"
-            android:background="@color/finish_button_discard"/>
-    </RelativeLayout>
+        android:layout_height="match_parent">
+        <com.amk2.musicrunner.views.MusicRunnerLineMapView
+            mrunner:mtext="lalala"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+
 </LinearLayout>

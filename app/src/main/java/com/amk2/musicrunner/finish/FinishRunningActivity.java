@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
+import com.amk2.musicrunner.utilities.CameraLib;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
 import com.amk2.musicrunner.utilities.PhotoLib;
@@ -34,6 +37,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -51,6 +56,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public static String FINISH_RUNNING_SPEED    = "com.amk2.speed";
     public static String FINISH_RUNNING_PHOTO    = "com.amk2.photo";
     public static String FINISH_RUNNING_SONGS    = "com.amk2.songs";
+    public static Integer REQUEST_IMAGE_CAPTURE  = 1;
 
     private LayoutInflater inflater;
 
@@ -58,8 +64,11 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView caloriesTextView;
     private TextView speedTextView;
     private TextView finishTimeTextView;
-    private ImageView photoImageView;
-    private LinearLayout musicListLinearLayout;
+    private TextView saveButton;
+    private TextView discardButton;
+    private ImageView picPreviewImageView;
+    private ImageButton cameraImageButton;
+    //private LinearLayout musicListLinearLayout;
 
     private GoogleMap mMap;
 
@@ -71,8 +80,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private String route     = null;
     private String songNames = null;
 
-    private Button saveButton;
-    private Button discardButton;
 
     private ContentResolver mContentResolver;
 
@@ -80,25 +87,43 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_running);
+        initialize();
+    }
 
+    private void initialize () {
+        initActionBar();
+        initView();
+    }
+
+    private void initActionBar() {
+        getActionBar().hide();
+    }
+
+    private void initView() {
         mContentResolver = getContentResolver();
 
         Intent intent = getIntent();
 
-        saveButton    = (Button) findViewById(R.id.save_running_event);
-        discardButton = (Button) findViewById(R.id.discard_running_event);
+        saveButton    = (TextView) findViewById(R.id.finish_save);
+        discardButton = (TextView) findViewById(R.id.finish_discard);
 
-        saveButton.setOnClickListener(this);
-        discardButton.setOnClickListener(this);
 
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        distanceTextView = (TextView) findViewById(R.id.finish_running_distance);
-        caloriesTextView = (TextView) findViewById(R.id.finish_running_calories);
-        speedTextView    = (TextView) findViewById(R.id.finish_running_speed);
-        photoImageView   = (ImageView) findViewById(R.id.finish_running_photo);
-        finishTimeTextView = (TextView) findViewById(R.id.finish_time);
-        musicListLinearLayout = (LinearLayout) findViewById(R.id.music_result_holder);
+        distanceTextView    = (TextView) findViewById(R.id.finish_distance);
+        caloriesTextView    = (TextView) findViewById(R.id.finish_calorie);
+        speedTextView       = (TextView) findViewById(R.id.finish_speed);
+        finishTimeTextView  = (TextView) findViewById(R.id.finish_duration);
+        picPreviewImageView = (ImageView) findViewById(R.id.finish_photo);
+        cameraImageButton   = (ImageButton) findViewById(R.id.finish_camera);
+
+
+//        musicListLinearLayout = (LinearLayout) findViewById(R.id.music_result_holder);
+
+        saveButton.setOnClickListener(this);
+        discardButton.setOnClickListener(this);
+        picPreviewImageView.setOnClickListener(this);
+        cameraImageButton.setOnClickListener(this);
 
         totalSec  = intent.getIntExtra(FINISH_RUNNING_DURATION, 0);
         distance  = intent.getStringExtra(FINISH_RUNNING_DISTANCE);
@@ -106,8 +131,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
         songNames = intent.getStringExtra(FINISH_RUNNING_SONGS);
-
-        photoImageView.setOnClickListener(this);
 
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
@@ -124,19 +147,20 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             speedTextView.setText(speed);
         }
         if (photoPath != null) {
-            Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
-            photoImageView.setImageBitmap(resizedPhoto);
+            setPicPreview();
+            //Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
+            //picPreviewImageView.setImageBitmap(resizedPhoto);
         }
         if (songNames != null) {
-            addSongNames();
+            //addSongNames();
         }
 
         // Get a handle to the Map Fragment
         mMap = ((MapFragment) getFragmentManager()
-                .findFragmentById(R.id.finish_running_map)).getMap();
+                .findFragmentById(R.id.finish_map)).getMap();
+        mMap.getUiSettings().setZoomControlsEnabled(false);
         // Draw the map base on last run
         mDrawRoute();
-
     }
 
     @Override
@@ -165,9 +189,17 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     }
 
     @Override
+    protected void onActivityResult (int reqCode, int resCode, Intent intent) {
+        if (reqCode == REQUEST_IMAGE_CAPTURE && resCode == RESULT_OK) {
+            CameraLib.galleryAddPic(this, photoPath);
+            setPicPreview();
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.save_running_event:
+            case R.id.finish_save:
                 Calendar calendar = Calendar.getInstance();
                 long timeInMillis = calendar.getTimeInMillis();
                 ContentValues values = new ContentValues();
@@ -185,19 +217,48 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
                 finish();
                 break;
-            case R.id.discard_running_event:
+            case R.id.finish_discard:
                 Log.d("daz", "discard running event");
                 finish();
                 break;
-            case R.id.finish_running_photo:
+            case R.id.finish_photo:
                 if (photoPath != null) {
                     Intent intent = new Intent(this, ShowImageActivity.class);
                     intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
                     startActivity(intent);
                 }
                 break;
+            case R.id.finish_camera:
+                dispatchTakePictureIntent();
+                break;
         }
         MapFragmentRun.resetAllParam();
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File dir = CameraLib.getAlbumStorageDir();
+            File photoFile = null;
+            try {
+                photoFile = CameraLib.createImageFile(dir);
+                photoPath = photoFile.getAbsolutePath();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+
+        }
+    }
+
+    private void setPicPreview () {
+        Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
+        picPreviewImageView.setImageBitmap(resizedPhoto);
+        picPreviewImageView.setVisibility(View.VISIBLE);
+        cameraImageButton.setVisibility(View.GONE);
     }
 
     private void mDrawRoute() {
@@ -247,7 +308,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 View finishMusic = inflater.inflate(R.layout.finish_music_template, null);
                 TextView songNameTextView = (TextView) finishMusic.findViewById(R.id.song_name);
                 songNameTextView.setText((i+1) + ". " + songPerformanceArrayList.get(i).getSong() + ", " + songPerformanceArrayList.get(i).getPerformance().toString() + " kcal/min");
-                musicListLinearLayout.addView(finishMusic);
+                //musicListLinearLayout.addView(finishMusic);
 
                 songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
             }

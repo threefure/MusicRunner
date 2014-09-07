@@ -2,6 +2,9 @@
 <resources>
     <color name="music_runner_green">#9CCEA1</color>
 
+    <color name="music_runner_green_button">#00A174</color>
+    <color name="music_runner_green_button_is_clicked">#22C396</color>
+
     <color name="banner">#33000000</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
@@ -16,7 +19,7 @@
 
     <!-- Start Fragment -->
     <color name="start_go_running">#00A174</color>
-    <color name="start_go_running_is_clicked">#AA00A174</color>
+    <color name="start_go_running_is_clicked">#22C396</color>
 
     <!-- Main Activity tab view -->
     <color name="main_tab_item_text_selected">#706E06</color>
