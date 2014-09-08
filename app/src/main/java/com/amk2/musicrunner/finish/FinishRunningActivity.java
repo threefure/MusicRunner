@@ -27,10 +27,12 @@ import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEve
 import com.amk2.musicrunner.utilities.CameraLib;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.Comparators;
+import com.amk2.musicrunner.utilities.MusicPerformance;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -68,6 +70,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private TextView discardButton;
     private ImageView picPreviewImageView;
     private ImageButton cameraImageButton;
+    private MusicRunnerLineMapView musicRunnerLineMapView;
     //private LinearLayout musicListLinearLayout;
 
     private GoogleMap mMap;
@@ -79,6 +82,8 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private String photoPath = null;
     private String route     = null;
     private String songNames = null;
+
+    private ArrayList<MusicPerformance> musicPerformanceArrayList;
 
 
     private ContentResolver mContentResolver;
@@ -117,6 +122,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         picPreviewImageView = (ImageView) findViewById(R.id.finish_photo);
         cameraImageButton   = (ImageButton) findViewById(R.id.finish_camera);
 
+        musicRunnerLineMapView = (MusicRunnerLineMapView) findViewById(R.id.finish_line_map);
 
 //        musicListLinearLayout = (LinearLayout) findViewById(R.id.music_result_holder);
 
@@ -130,7 +136,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         calories  = intent.getStringExtra(FINISH_RUNNING_CALORIES);
         speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
-        songNames = intent.getStringExtra(FINISH_RUNNING_SONGS);
+        musicPerformanceArrayList = intent.getParcelableArrayListExtra(FINISH_RUNNING_SONGS);
 
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
@@ -151,8 +157,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             //Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
             //picPreviewImageView.setImageBitmap(resizedPhoto);
         }
-        if (songNames != null) {
+        if (musicPerformanceArrayList != null) {
             //addSongNames();
+            musicRunnerLineMapView.setMusicJoints(musicPerformanceArrayList);
         }
 
         // Get a handle to the Map Fragment
@@ -204,7 +211,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 long timeInMillis = calendar.getTimeInMillis();
                 ContentValues values = new ContentValues();
                 values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION, totalSec);
-                values.put(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
+                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
                 values.put(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES, calories);
                 values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE, distance);
                 values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED, speed);

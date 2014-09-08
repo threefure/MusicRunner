@@ -25,14 +25,17 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
+import com.amk2.musicrunner.utilities.MusicPerformance;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
@@ -92,6 +95,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private int actualSec  = 0;
     private Integer previousSongStartTime    = 0;
     private Double previousSongStartCalories = 0.0;
+    private Double previousSongEndDistance = 0.0;
 
     private Double distance = 0.0;
     private Double calorie = 0.0;
@@ -101,6 +105,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private String calorieString;
     private String speedString = "0";
     private String songNames = "";
+
+    private ArrayList<MusicPerformance> musicPerformanceArrayList;
 
     private String photoPath;
 
@@ -144,6 +150,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         Timer timer = new Timer();
         timer.schedule(runningTask, 0, 1000);
         notificationCenter = new NotificationCenter(this);
+
+        musicPerformanceArrayList = new ArrayList<MusicPerformance>();
     }
 
     private void initActionBar() {
@@ -245,7 +253,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     durationTextView.setText(durationString);
 
                     //update distance
-                    distance += 0.01;
+                    distance += 0.1;
                     //distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     distanceString = distance.toString();
                     distanceString = StringLib.truncateDoubleString(distanceString, 2);
@@ -414,7 +422,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, speedString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
-                finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, songNames);
+                finishRunningIntent.putParcelableArrayListExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, musicPerformanceArrayList);
                 startActivity(finishRunningIntent);
                 break;
             case R.id.running_pause:
@@ -442,6 +450,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
     @Override
     public void onChangeMusicSong(MusicRecord previousRecord) {
+
         String songName = previousRecord.mMusicSong.mTitle;
         String performanceString;
         Double timeDiff = ((double)totalSec - previousSongStartTime.doubleValue()) / 60;
@@ -452,11 +461,16 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         }
         performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
         songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
-        previousSongStartCalories = calorie;
-        previousSongStartTime     = totalSec;
+
 
         mMapFragment.musicChangeCallback(previousRecord);
 
+        MusicPerformance mp = new MusicPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle);
+        musicPerformanceArrayList.add(mp);
+
+        previousSongEndDistance = distance;
+        previousSongStartCalories = calorie;
+        previousSongStartTime     = totalSec;
     }
 
     @Override

@@ -46,23 +46,11 @@ public class MusicRunnerLineMapView extends View{
     private Paint mPointPaint;
     private ArrayList<MusicPerformance> musicPerformanceJoints;
 
-    private ArrayList<MusicPerformance> mockjoints;
-
     public MusicRunnerLineMapView(Context _context, AttributeSet attrs) {
         super(_context, attrs);
         context = _context;
+
         initialize();
-
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.MusicRunnerLineMapView,
-                0, 0);
-
-        try {
-            //testString = a.getString(R.styleable.MusicRunnerLineMapView_mtext);
-        } finally {
-            a.recycle();
-        }
     }
 
     private void initialize () {
@@ -76,16 +64,6 @@ public class MusicRunnerLineMapView extends View{
 
         mPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPointPaint.setColor(Color.BLACK);
-
-        mockjoints = new ArrayList<MusicPerformance>();
-
-        mockjoints.add(new MusicPerformance(100, 0.8, 20.1, "jam"));
-        mockjoints.add(new MusicPerformance(300, 2.6, 13.5, "love"));
-        mockjoints.add(new MusicPerformance(400, 1.1, 56.3, "haha"));
-        mockjoints.add(new MusicPerformance(200, 1.5, 10.1, "juauua"));
-        mockjoints.add(new MusicPerformance(300, 2.5, 50.1, "jsdfaua"));
-
-        calibrate();
     }
 
     private void calibrate () {
@@ -100,10 +78,10 @@ public class MusicRunnerLineMapView extends View{
         offsetTopY  = UnitConverter.getPixelsFromDP(context, offsetYTopInDP);
 
         //compute view height
-        int length = mockjoints.size();
+        int length = musicPerformanceJoints.size();
         Double km = 0.0;
         for (int i = 0; i < length; i ++ ) {
-            km += mockjoints.get(i).distance;
+            km += musicPerformanceJoints.get(i).distance;
         }
         lineLength = km * 100;
         height = UnitConverter.getPixelsFromDP(context, lineLength.intValue() + startY.intValue()*2);
@@ -112,9 +90,6 @@ public class MusicRunnerLineMapView extends View{
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d("MusicRunnerLineMap", "width: " + widthMeasureSpec + " height: " + heightMeasureSpec + " default:" + this.getSuggestedMinimumWidth());
-
-        //heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
         setMeasuredDimension(widthMeasureSpec, height.intValue());
     }
 
@@ -122,27 +97,26 @@ public class MusicRunnerLineMapView extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int length = mockjoints.size();
+        int length = musicPerformanceJoints.size();
         int fromX = startX.intValue(), fromY = startY.intValue(), toX = startX.intValue(), toY = startY.intValue();
         Double kms = 0.0;
         Double temp;
         canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
         canvas.drawCircle(toX, toY, radius, mPointPaint);
         for (int i = 0; i < length; i ++) {
-            temp = UnitConverter.getPixelsFromDP(context, mockjoints.get(i).distance * 100);
+            temp = UnitConverter.getPixelsFromDP(context, musicPerformanceJoints.get(i).distance * 100);
             toY = toY + temp.intValue();
-            kms += mockjoints.get(i).distance;
+            kms += musicPerformanceJoints.get(i).distance;
             canvas.drawCircle(toX, toY, radius, mPointPaint);
             canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
-            canvas.drawText(mockjoints.get(i).name + " " + StringLib.truncateDoubleString(mockjoints.get(i).performance.toString(),2) + " kcal/min",
+            canvas.drawText(musicPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(musicPerformanceJoints.get(i).performance.toString(),2) + " kcal/min",
                     toX + offsetRight.intValue(), toY, mTextPaint);
         }
         canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
-
-        this.requestLayout();
     }
 
     public void setMusicJoints (ArrayList<MusicPerformance> joints) {
         musicPerformanceJoints = joints;
+        calibrate();
     }
 }
