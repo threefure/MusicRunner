@@ -1,22 +1,17 @@
 package com.amk2.musicrunner.views;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.utilities.MusicPerformance;
+import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by ktlee on 9/7/14.
@@ -44,7 +39,7 @@ public class MusicRunnerLineMapView extends View{
     private Paint mTextPaint;
     private Paint mLinePaint;
     private Paint mPointPaint;
-    private ArrayList<MusicPerformance> musicPerformanceJoints;
+    private ArrayList<SongPerformance> songPerformanceJoints;
 
     public MusicRunnerLineMapView(Context _context, AttributeSet attrs) {
         super(_context, attrs);
@@ -78,10 +73,10 @@ public class MusicRunnerLineMapView extends View{
         offsetTopY  = UnitConverter.getPixelsFromDP(context, offsetYTopInDP);
 
         //compute view height
-        int length = musicPerformanceJoints.size();
+        int length = songPerformanceJoints.size();
         Double km = 0.0;
         for (int i = 0; i < length; i ++ ) {
-            km += musicPerformanceJoints.get(i).distance;
+            km += songPerformanceJoints.get(i).distance;
         }
         lineLength = km * 100;
         height = UnitConverter.getPixelsFromDP(context, lineLength.intValue() + startY.intValue()*2);
@@ -97,26 +92,26 @@ public class MusicRunnerLineMapView extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int length = musicPerformanceJoints.size();
+        int length = songPerformanceJoints.size();
         int fromX = startX.intValue(), fromY = startY.intValue(), toX = startX.intValue(), toY = startY.intValue();
         Double kms = 0.0;
         Double temp;
         canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
         canvas.drawCircle(toX, toY, radius, mPointPaint);
         for (int i = 0; i < length; i ++) {
-            temp = UnitConverter.getPixelsFromDP(context, musicPerformanceJoints.get(i).distance * 100);
+            temp = UnitConverter.getPixelsFromDP(context, songPerformanceJoints.get(i).distance * 100);
             toY = toY + temp.intValue();
-            kms += musicPerformanceJoints.get(i).distance;
+            kms += songPerformanceJoints.get(i).distance;
             canvas.drawCircle(toX, toY, radius, mPointPaint);
             canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
-            canvas.drawText(musicPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(musicPerformanceJoints.get(i).performance.toString(),2) + " kcal/min",
+            canvas.drawText(songPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(),2) + " kcal/min",
                     toX + offsetRight.intValue(), toY, mTextPaint);
         }
         canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
     }
 
-    public void setMusicJoints (ArrayList<MusicPerformance> joints) {
-        musicPerformanceJoints = joints;
+    public void setMusicJoints (ArrayList<SongPerformance> joints) {
+        songPerformanceJoints = joints;
         calibrate();
     }
 }

@@ -3,11 +3,13 @@ package com.amk2.musicrunner.sqliteDB;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by daz on 2014/5/29.
  */
 public class MusicRunnerDBHelper extends SQLiteOpenHelper {
+    private static final String TAG = "MusicRunnerDBHelper";
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
@@ -51,7 +53,7 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_SONG_PERFORMANCE_TABLE = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB.TABLE_NAME;
     private static final String SQL_DELETE_SONG_NAME_TABLE        = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerSongNameDB.TABLE_NAME;
 
-    public static final int DATA_VERSION = 2;
+    public static final int DATA_VERSION = 5;
     public static final String DATABASE_NAME = "MusicRunner.db";
 
     public MusicRunnerDBHelper(Context context) {
@@ -63,11 +65,12 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DELETE_RUNNING_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RUNNING_EVENT_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_CREATE_SONG_PERFORMANCE_TABLE);
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_PERFORMANCE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_PERFORMANCE_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+        Log.d(TAG, "create db helper");
     }
 
     @Override
@@ -75,16 +78,26 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_DELETE_RUNNING_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RUNNING_EVENT_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_CREATE_SONG_PERFORMANCE_TABLE);
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_PERFORMANCE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_PERFORMANCE_TABLE);
 
-        sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+        Log.d(TAG, "upgrade db helper");
     }
 
     @Override
     public void onDowngrade(SQLiteDatabase sqLiteDatabase, int newerVersion, int oldVersion){
-        super.onDowngrade(sqLiteDatabase, newerVersion, oldVersion);
+        //super.onDowngrade(sqLiteDatabase, newerVersion, oldVersion);
+        sqLiteDatabase.execSQL(SQL_DELETE_RUNNING_EVENT_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_RUNNING_EVENT_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DELETE_SONG_PERFORMANCE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_PERFORMANCE_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+        Log.d(TAG, "downgrade db helper");
     }
 
     @Override

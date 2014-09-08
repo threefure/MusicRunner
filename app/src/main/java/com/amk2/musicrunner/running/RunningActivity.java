@@ -25,12 +25,9 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
-import com.amk2.musicrunner.utilities.MusicPerformance;
-import com.amk2.musicrunner.utilities.PhotoLib;
-import com.amk2.musicrunner.utilities.ShowImageActivity;
+import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
-import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,7 +103,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private String speedString = "0";
     private String songNames = "";
 
-    private ArrayList<MusicPerformance> musicPerformanceArrayList;
+    private ArrayList<SongPerformance> songPerformanceArrayList;
 
     private String photoPath;
 
@@ -151,7 +148,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         timer.schedule(runningTask, 0, 1000);
         notificationCenter = new NotificationCenter(this);
 
-        musicPerformanceArrayList = new ArrayList<MusicPerformance>();
+        songPerformanceArrayList = new ArrayList<SongPerformance>();
     }
 
     private void initActionBar() {
@@ -422,7 +419,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_CALORIES, calorieString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_SPEED, speedString);
                 finishRunningIntent.putExtra(FinishRunningActivity.FINISH_RUNNING_PHOTO, photoPath);
-                finishRunningIntent.putParcelableArrayListExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, musicPerformanceArrayList);
+                finishRunningIntent.putParcelableArrayListExtra(FinishRunningActivity.FINISH_RUNNING_SONGS, songPerformanceArrayList);
                 startActivity(finishRunningIntent);
                 break;
             case R.id.running_pause:
@@ -465,8 +462,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
         mMapFragment.musicChangeCallback(previousRecord);
 
-        MusicPerformance mp = new MusicPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle);
-        musicPerformanceArrayList.add(mp);
+        SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle);
+        songPerformanceArrayList.add(mp);
 
         previousSongEndDistance = distance;
         previousSongStartCalories = calorie;

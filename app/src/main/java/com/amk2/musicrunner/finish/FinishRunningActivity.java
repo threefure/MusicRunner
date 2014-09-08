@@ -2,9 +2,11 @@ package com.amk2.musicrunner.finish;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,25 +14,22 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongNameDB;
 import com.amk2.musicrunner.utilities.CameraLib;
 import com.amk2.musicrunner.utilities.ColorGenerator;
-import com.amk2.musicrunner.utilities.Comparators;
-import com.amk2.musicrunner.utilities.MusicPerformance;
+import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
-import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static android.widget.Toast.makeText;
@@ -52,6 +50,7 @@ import static android.widget.Toast.makeText;
  * Created by daz on 2014/6/15.
  */
 public class FinishRunningActivity extends Activity implements View.OnClickListener{
+    private static final String TAG = "FinishRunningActivity";
     public static String FINISH_RUNNING_DURATION = "com.amk2.duration";
     public static String FINISH_RUNNING_DISTANCE = "com.amk2.distance";
     public static String FINISH_RUNNING_CALORIES = "com.amk2.calories";
@@ -71,7 +70,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private ImageView picPreviewImageView;
     private ImageButton cameraImageButton;
     private MusicRunnerLineMapView musicRunnerLineMapView;
-    //private LinearLayout musicListLinearLayout;
 
     private GoogleMap mMap;
 
@@ -81,11 +79,8 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private String speed     = null;
     private String photoPath = null;
     private String route     = null;
-    private String songNames = null;
 
-    private ArrayList<MusicPerformance> musicPerformanceArrayList;
-
-
+    private ArrayList<SongPerformance> songPerformanceArrayList;
     private ContentResolver mContentResolver;
 
     @Override
@@ -106,25 +101,18 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
     private void initView() {
         mContentResolver = getContentResolver();
-
         Intent intent = getIntent();
-
-        saveButton    = (TextView) findViewById(R.id.finish_save);
-        discardButton = (TextView) findViewById(R.id.finish_discard);
-
-
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        distanceTextView    = (TextView) findViewById(R.id.finish_distance);
-        caloriesTextView    = (TextView) findViewById(R.id.finish_calorie);
-        speedTextView       = (TextView) findViewById(R.id.finish_speed);
-        finishTimeTextView  = (TextView) findViewById(R.id.finish_duration);
-        picPreviewImageView = (ImageView) findViewById(R.id.finish_photo);
-        cameraImageButton   = (ImageButton) findViewById(R.id.finish_camera);
-
+        saveButton             = (TextView) findViewById(R.id.finish_save);
+        discardButton          = (TextView) findViewById(R.id.finish_discard);
+        distanceTextView       = (TextView) findViewById(R.id.finish_distance);
+        caloriesTextView       = (TextView) findViewById(R.id.finish_calorie);
+        speedTextView          = (TextView) findViewById(R.id.finish_speed);
+        finishTimeTextView     = (TextView) findViewById(R.id.finish_duration);
+        picPreviewImageView    = (ImageView) findViewById(R.id.finish_photo);
+        cameraImageButton      = (ImageButton) findViewById(R.id.finish_camera);
         musicRunnerLineMapView = (MusicRunnerLineMapView) findViewById(R.id.finish_line_map);
-
-//        musicListLinearLayout = (LinearLayout) findViewById(R.id.music_result_holder);
 
         saveButton.setOnClickListener(this);
         discardButton.setOnClickListener(this);
@@ -136,7 +124,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         calories  = intent.getStringExtra(FINISH_RUNNING_CALORIES);
         speed     = intent.getStringExtra(FINISH_RUNNING_SPEED);
         photoPath = intent.getStringExtra(FINISH_RUNNING_PHOTO);
-        musicPerformanceArrayList = intent.getParcelableArrayListExtra(FINISH_RUNNING_SONGS);
+        songPerformanceArrayList = intent.getParcelableArrayListExtra(FINISH_RUNNING_SONGS);
 
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
@@ -154,12 +142,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         }
         if (photoPath != null) {
             setPicPreview();
-            //Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
-            //picPreviewImageView.setImageBitmap(resizedPhoto);
         }
-        if (musicPerformanceArrayList != null) {
-            //addSongNames();
-            musicRunnerLineMapView.setMusicJoints(musicPerformanceArrayList);
+        if (songPerformanceArrayList != null) {
+            musicRunnerLineMapView.setMusicJoints(songPerformanceArrayList);
         }
 
         // Get a handle to the Map Fragment
@@ -207,25 +192,10 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish_save:
-                Calendar calendar = Calendar.getInstance();
-                long timeInMillis = calendar.getTimeInMillis();
-                ContentValues values = new ContentValues();
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION, totalSec);
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES, calories);
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE, distance);
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED, speed);
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH, photoPath);
-                values.put(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE, route);
-                //values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SONGS, songNames);
-                Uri uri = mContentResolver.insert(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, values);
-
-                Log.d("Save running event, uri=", uri.toString());
-
+                saveToSQLiteDB();
                 finish();
                 break;
             case R.id.finish_discard:
-                Log.d("daz", "discard running event");
                 finish();
                 break;
             case R.id.finish_photo:
@@ -294,31 +264,70 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         }
     }
 
-    private void addSongNames() {
-        ArrayList<SongPerformance> songPerformanceArrayList = new ArrayList<SongPerformance>();
-        for (String song : songNames.split(Constant.SONG_SEPARATOR)) {
-            if (song.length() > 0) {
-                String[] songXperf = song.split(Constant.PERF_SEPARATOR);
-                Double perf = Double.parseDouble(songXperf[1]);
-                songPerformanceArrayList.add(new SongPerformance(songXperf[0], perf));
-            }
-        }
-        songNames = "";
-        if (songPerformanceArrayList.size() > 0) {
-            Collections.sort(songPerformanceArrayList, new Comparators.SongPerformanceComparators());
-            int max = 3;
-            for (int i = 0; i < songPerformanceArrayList.size() && i < max; i++) {
-                String songName = songPerformanceArrayList.get(i).getSong();
-                String performanceString = songPerformanceArrayList.get(i).getPerformance().toString();
-                Log.d("sorted song", performanceString + "," + songName);
+    private void saveToSQLiteDB() {
+        Calendar calendar = Calendar.getInstance();
+        long timeInMillis = calendar.getTimeInMillis();
 
-                View finishMusic = inflater.inflate(R.layout.finish_music_template, null);
-                TextView songNameTextView = (TextView) finishMusic.findViewById(R.id.song_name);
-                songNameTextView.setText((i+1) + ". " + songPerformanceArrayList.get(i).getSong() + ", " + songPerformanceArrayList.get(i).getPerformance().toString() + " kcal/min");
-                //musicListLinearLayout.addView(finishMusic);
+        Uri eventUri = saveEvent(timeInMillis);
+        long id = ContentUris.parseId(eventUri);
+        saveSongPerformance(id, timeInMillis);
+    }
 
-                songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
+    private Uri saveEvent (long timeInMillis) {
+        ContentValues values = new ContentValues();
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION, totalSec);
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND, Long.toString(timeInMillis));
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES, calories);
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE, distance);
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED, speed);
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH, photoPath);
+        values.put(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE, route);
+        Uri uri = mContentResolver.insert(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, values);
+        return uri;
+    }
+
+    private void saveSongPerformance (long eventId, long timeInMillis) {
+        int length = songPerformanceArrayList.size();
+        long songId;
+        SongPerformance currentSP;
+        String[] songNameProjection = {
+                MusicRunnerSongNameDB.COLUMN_NAME_ID
+        };
+        String songNameSelection = MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME + " = ?";
+        String[] songNameSelectionArgs = new String[1];
+        Cursor cursor;
+        for (int i = 0; i < length; i ++) {
+            currentSP = songPerformanceArrayList.get(i);
+            songNameSelectionArgs[0] = currentSP.name;
+            cursor = mContentResolver.query(MusicRunnerSongNameDB.CONTENT_URI,
+                    songNameProjection, songNameSelection, songNameSelectionArgs, null);
+            if (cursor == null) {
+                // no such song in DB;
+                songId = saveSongName(currentSP.name);
+            } else if (cursor.getCount() < 1) {
+                songId = saveSongName(currentSP.name);
+            } else {
+                cursor.moveToFirst();
+                songId = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_ID));
             }
+            ContentValues values = new ContentValues();
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_SONG_ID, songId);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_EVENT_ID, eventId);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_DURATION, currentSP.duration);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_DATE_IN_MILLISECOND, timeInMillis);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES, currentSP.calories);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_DISTANCE, currentSP.distance);
+            values.put(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED, currentSP.speed);
+            Uri uri = mContentResolver.insert(MusicRunnerSongPerformanceDB.CONTENT_URI, values);
+            Log.d(TAG, "Saved song performance: " + currentSP.name + " into DB, id=" + ContentUris.parseId(uri));
         }
+    }
+
+    private long saveSongName (String name) {
+        ContentValues values = new ContentValues();
+        values.put(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME, name);
+        Uri uri = mContentResolver.insert(MusicRunnerSongNameDB.CONTENT_URI, values);
+        Log.d(TAG, "Saved song name: " + name + " into DB, id=" + ContentUris.parseId(uri));
+        return ContentUris.parseId(uri);
     }
 }
