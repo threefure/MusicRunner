@@ -1,222 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/my_background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-    <LinearLayout
-        android:id="@+id/my_user_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:background="#80000000">
-        <TextView
-            android:id="@+id/my_user_name"
-            android:layout_marginLeft="110dp"
-            android:layout_marginRight="20dp"
-            android:height="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:layout_marginLeft="110dp"
-            android:layout_marginRight="20dp"
-            android:width="400dp"
-            android:height="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/user_profile_picture"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginLeft="30dp"
-        android:layout_alignBottom="@+id/my_user_status"
-        android:background="@drawable/my_profile_picture"
-        android:orientation="vertical" />
-    <TabHost
-        android:id="@+id/my_tab_host"
-        android:layout_below="@+id/my_user_status"
+    android:layout_height="match_parent"
+    android:background="@color/my_background_color">
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:paddingRight="@dimen/tab_view_padding_left_right"
-        android:paddingLeft="@dimen/tab_view_padding_left_right"
-        android:paddingBottom="@dimen/tab_view_padding_bottom" >
-        <TabWidget
-            android:id="@android:id/tabs"
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/tab_height"
-            android:showDividers="none"
-            android:background="@drawable/running_tab_widget_background">
-        </TabWidget>
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_height="120dp"
+                style="@style/My.Card">
+                <ImageView
+                    android:id="@+id/my_user_icon"
+                    android:src="@drawable/sunny"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />
+                <LinearLayout
+                    android:layout_toRightOf="@+id/my_user_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:text="Danny Chan"
+                        android:textSize="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="Run Beginner"
+                        android:textSize="14dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="18888 pts"
+                        android:textSize="32dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/my_mascot_icon"
+                    android:src="@drawable/fox"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />
+            </RelativeLayout>
             <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/my_running_tab"
-                android:paddingTop="50dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                style="@style/My.Card"
+                android:orientation="vertical">
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="@string/my_running_times"/>
+                    android:text="Total"
+                    style="@style/My.Title" />
+                <TextView
+                    android:text="Times LV2"
+                    style="@style/My.BarTitle"/>
+                <ProgressBar
+                    android:progressDrawable="@drawable/progress_bar_green"
+                    android:progress="30"
+                    style="@style/My.Bar" />
+                <TextView
+                    android:text="2/7 times"
+                    style="@style/My.BarSubtitle"/>
+
+                <TextView
+                    android:text="Calories LV2"
+                    style="@style/My.BarTitle" />
+                <ProgressBar
+                    android:progressDrawable="@drawable/progress_bar_yellow"
+                    android:progress="60"
+                    style="@style/My.Bar" />
+                <TextView
+                    android:text="2/7 km"
+                    style="@style/My.BarSubtitle"/>
+
+                <TextView
+                    android:text="Distance LV2"
+                    style="@style/My.BarTitle" />
+                <ProgressBar
+                    android:progressDrawable="@drawable/progress_bar_red"
+                    android:progress="80"
+                    style="@style/My.Bar" />
+                <TextView
+                    android:text="3/7 km"
+                    style="@style/My.BarSubtitle"/>
+            </LinearLayout>
+            <LinearLayout
+                style="@style/My.Card"
+                android:paddingBottom="8dp"
+                android:orientation="vertical">
+                <TextView
+                    android:text="This Week"
+                    style="@style/My.Title"/>
                 <LinearLayout
-                    android:layout_weight="5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ProgressBar
-                        android:id="@+id/time_bar"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_weight="3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
                     <TextView
-                        android:id="@+id/my_times_text"
-                        android:gravity="right"
-                        android:layout_weight="9"
-                        android:paddingRight="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="Duration"
+                        style="@style/My.Subtitle"/>
                     <TextView
-                        android:text="times"
-                        android:layout_weight="8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="00 : 00 : 12"
+                        style="@style/My.Number"/>
+                    <TextView
+                        android:text=""
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="@string/my_running_speeds"/>
                 <LinearLayout
-                    android:layout_weight="5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ProgressBar
-                        android:id="@+id/speeds_bar"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_weight="3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
                     <TextView
-                        android:id="@+id/my_speeds_text"
-                        android:gravity="right"
-                        android:layout_weight="9"
-                        android:paddingRight="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="Times"
+                        style="@style/My.Subtitle" />
                     <TextView
-                        android:text="km/min"
-                        android:layout_weight="8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="3"
+                        style="@style/My.Number" />
+                    <TextView
+                        android:text="Times"
+                        style="@style/My.Subtitle" />
                 </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="@string/my_running_calories"/>
                 <LinearLayout
-                    android:layout_weight="5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ProgressBar
-                        android:id="@+id/calories_bar"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_weight="3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
                     <TextView
-                        android:id="@+id/my_calories_text"
-                        android:gravity="right"
-                        android:layout_weight="9"
-                        android:paddingRight="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="Distance"
+                        style="@style/My.Subtitle" />
                     <TextView
-                        android:text="kcal"
-                        android:layout_weight="8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:text="@string/my_running_distances"/>
-                <LinearLayout
-                    android:layout_weight="5"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ProgressBar
-                        android:id="@+id/distance_bar"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_weight="3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/my_distance_text"
-                        android:gravity="right"
-                        android:layout_weight="9"
-                        android:paddingRight="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="3"
+                        style="@style/My.Number" />
                     <TextView
                         android:text="km"
-                        android:layout_weight="8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        style="@style/My.Subtitle" />
                 </LinearLayout>
                 <LinearLayout
-                    android:layout_weight="4"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
                     <TextView
-                        android:layout_weight="4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                    <ImageButton
-                        android:id="@+id/my_past_record_button"
-                        android:src="@drawable/my_past_record"
-                        android:padding="10dp"
-                        android:scaleType="fitXY"
-                        android:background="@null"
-                        android:layout_weight="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="Speed"
+                        style="@style/My.Subtitle" />
                     <TextView
-                        android:layout_weight="4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:text="11"
+                        style="@style/My.Number" />
+                    <TextView
+                        android:text="min/km"
+                        style="@style/My.Subtitle" />
                 </LinearLayout>
-
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/my_music_tab"
+            <RelativeLayout
+                android:id="@+id/my_past_activities"
+                style="@style/My.Card">
+                <TextView
+                    android:text="Past Activities"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text=">"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="50dp">
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:id="@+id/my_music_container"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </ScrollView>
-            </LinearLayout>
-        </FrameLayout>
-    </TabHost>
-
-
+                android:layout_height="50dp"
+                android:layout_margin="1dp"
+                android:background="@color/white"/>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

@@ -151,12 +151,12 @@ public class PastRecordFragment extends Fragment implements View.OnClickListener
         HashMap<String, Integer> readableTime = TimeConverter.getReadableTimeFormatFromSeconds(durationInSec);
         String durationString = TimeConverter.getDurationString(readableTime);
         String dateString = TimeConverter.getDateString(timeInMillis);
-        String mostEfficientSong = MyFragment.getMostEfficientSongs(songNames);
+        //String mostEfficientSong = MyFragment.getMostEfficientSongs(songNames);
 
         textViewDate.setText(dateString);
         textViewDistance.setText(distance);
         textViewDuration.setText(durationString);
-        textViewSongName.setText(mostEfficientSong);
+        //textViewSongName.setText(mostEfficientSong);
         pastRecordRunningEventContainer.addView(pastRecord);
 
         imageButtonShare.setTag(id);

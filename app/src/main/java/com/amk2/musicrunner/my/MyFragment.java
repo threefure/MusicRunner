@@ -79,27 +79,26 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     }
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.my_fragment, container, false);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
+        //mActivity = getActivity();
 		// This function is like onCreate() in activity.
 		// You can start from here.
-        SharedPreferences preferences = this.getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String account = preferences.getString(Constant.ACCOUNT_PARAMS, null);
+        //SharedPreferences preferences = this.getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        //String account = preferences.getString(Constant.ACCOUNT_PARAMS, null);
 //        TextView textView = (TextView) getView().findViewById(R.id.my_view);
 //        textView.setText(account,TextView.BufferType.EDITABLE);
-        inflater = (LayoutInflater) getView().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        initialize();
+        //inflater = (LayoutInflater) getView().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //initialize();
 	}
 
     private void initialize() {
-        initTabs();
+        /*initTabs();
 
         mContentResolver = getActivity().getContentResolver();
 
@@ -123,18 +122,18 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         //showing user name
         String userName = SharedPreferencesUtility.getAccount(getActivity());
         TextView userNameTextView = (TextView) getView().findViewById(R.id.my_user_name);
-        userNameTextView.setText(userName);
+        userNameTextView.setText(userName);*/
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        myMusicContainer.removeAllViews();
+        //myMusicContainer.removeAllViews();
         //setValueOfProgressBar();
     }
 
     private void initTabs(){
-        mTabHost = (TabHost) getView().findViewById(R.id.my_tab_host);
+        /*mTabHost = (TabHost) getView().findViewById(R.id.my_tab_host);
         LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
         layoutInflater.inflate(R.layout.running_map_tab, null);
 
@@ -165,11 +164,11 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 //        TextView tab2 = (TextView) tabView2.findViewById(android.R.id.title);
 //        tab2.setTextColor(this.getResources().getColorStateList(R.drawable.my_tab_selector));
         //set tab background color depending on selected/unselected
-        mTabHost.setOnTabChangedListener(this);
+        mTabHost.setOnTabChangedListener(this);*/
     }
 
     private void addTab(String tag, String labelText) {
-        View tabView = getTabView(tag);
+        /*View tabView = getTabView(tag);
         TextView tabText = (TextView)tabView.findViewById(R.id.tab_text);
         tabText.setText(labelText);
         int contentId = -1;
@@ -179,9 +178,9 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
             contentId = R.id.my_music_tab;
         }
         mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
-                .setContent(contentId));
+                .setContent(contentId));*/
     }
-
+/*
     private View getTabView(String tag) {
         LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
         View tabView = new View(mActivity);
@@ -263,7 +262,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         TextView distanceTextView = (TextView) getView().findViewById(R.id.my_distance_text);
         distanceTextView.setText(distanceBarStatus.toString());
     }
-
+*/
     @Override
     public void onTabChanged(String tabId) {
 //        TabHost tab = (TabHost) getView().findViewById(R.id.my_tab_host);
@@ -278,13 +277,13 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.my_past_record_button:
+            /*case R.id.my_past_record_button:
                 // Go to past record fragment
                 mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();
-                break;
+                break;*/
         }
     }
-
+/*
     public void addMusicSongs (String songNames) {
         String songName = getMostEfficientSongs(songNames);
         if (songName.length() > 0) {
@@ -317,5 +316,5 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 
         Log.d("getMostEfficientSongs", result);
         return result;
-    }
+    }*/
 }
