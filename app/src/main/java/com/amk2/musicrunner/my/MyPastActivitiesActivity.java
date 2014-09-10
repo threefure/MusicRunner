@@ -1,0 +1,151 @@
+package com.amk2.musicrunner.my;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
+import com.amk2.musicrunner.utilities.PhotoLib;
+import com.amk2.musicrunner.utilities.StringLib;
+import com.amk2.musicrunner.utilities.TimeConverter;
+
+import org.w3c.dom.Text;
+
+import java.util.Calendar;
+import java.util.Locale;
+
+/**
+ * Created by ktlee on 9/10/14.
+ */
+public class MyPastActivitiesActivity extends Activity {
+
+    private ActionBar mActionBar;
+    private ContentResolver mContentResolver;
+
+    private LinearLayout myPastActivityContainer;
+    private LayoutInflater inflater;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_past_activities);
+        mContentResolver = getContentResolver();
+
+        initialize();
+        getPastActivities();
+    }
+
+    private void initialize() {
+        mActionBar = getActionBar();
+        initActionBar();
+        initViews();
+    }
+
+    private void initViews() {
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        myPastActivityContainer = (LinearLayout) findViewById(R.id.my_past_activity_container);
+    }
+
+    private void getPastActivities() {
+        Integer duration;
+        String distance, currentEpoch, photoPath;
+        String[] projection = {
+                MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH
+        };
+        String orderBy = MusicRunnerRunningEventDB.COLUMN_NAME_ID + " DESC";
+        Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, orderBy);
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
+            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+            currentEpoch       = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+            photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
+
+            addPastActivity(duration, distance, currentEpoch, photoPath);
+        }
+    }
+
+    private void addPastActivity(Integer duration, String distance, String currentEpoch, String photoPath) {
+        View pastActivity = inflater.inflate(R.layout.my_past_activity_template, null);
+        ImageView photoImageView = (ImageView) pastActivity.findViewById(R.id.my_past_activity_photo);
+        TextView summaryTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_summary);
+        TextView dateTextView    = (TextView) pastActivity.findViewById(R.id.my_past_activity_date);
+        String summaryString, dateString, situationInDay;
+        Integer hour;
+
+        Calendar date = Calendar.getInstance();
+
+        if (photoPath != null && photoPath.length() > 0) {
+            Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, photoImageView.getLayoutParams().width, photoImageView.getLayoutParams().height);
+            photoImageView.setImageBitmap(resizedPhoto);
+        }
+
+        summaryString = distance + " km  |  " + TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
+        summaryTextView.setText(summaryString);
+
+        date.setTimeInMillis(Long.parseLong(currentEpoch));
+        hour = date.get(Calendar.HOUR_OF_DAY);
+        if (hour < 6) {
+            situationInDay = "Midnight";
+        } else if (hour >= 6 && hour < 12) {
+            situationInDay = "Morning";
+        } else if (hour >= 12 && hour < 18) {
+            situationInDay = "Afternoon";
+        } else {
+            situationInDay = "Night";
+        }
+
+        dateString = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US) + " " + situationInDay + ", " + date.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US) + " " + date.get(Calendar.DAY_OF_MONTH);
+        dateTextView.setText(dateString);
+
+        myPastActivityContainer.addView(pastActivity);
+    }
+
+    private void initActionBar() {
+        View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        mActionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(Gravity.CENTER));
+    }
+
+    @Override
+    protected void onStart () {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+}

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.running.RunningActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
@@ -108,7 +110,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-        //mActivity = getActivity();
+        mActivity = getActivity();
 		// This function is like onCreate() in activity.
 		// You can start from here.
         //SharedPreferences preferences = this.getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -184,7 +186,16 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     public void getTotalDataFromDB () {
         Calendar event_date = Calendar.getInstance();
         Calendar today      = Calendar.getInstance();
-        String distance, calories, speed, current_epoch;
+        String distance, calories, speed, currentEpoch;
+        totalTimes = 0;
+        totalCalories = 0.0;
+        totalDistance = 0.0;
+        weeklyDuration = 0;
+        weeklyTimes = 0;
+        weeklyDistance = 0.0;
+        weeklyCalories = 0.0;
+        weeklySpeed = 100.0;
+
         String[] projection = {
                 MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
                 MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
@@ -194,26 +205,18 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
         };
         Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
         cursor.moveToFirst();
-        totalTimes = 0;
-        totalCalories = 0.0;
-        totalDistance = 0.0;
-        weeklyDuration = 0;
-        weeklyTimes = 0;
-        weeklyDistance = 0.0;
-        weeklyCalories = 0.0;
-        weeklySpeed = 100.0;
         while(cursor.moveToNext()) {
             distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
             calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
-            current_epoch      = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+            currentEpoch       = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
             speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
-            event_date.setTimeInMillis(Long.parseLong(current_epoch));
+            event_date.setTimeInMillis(Long.parseLong(currentEpoch));
 
             totalTimes++;
             totalCalories += Double.parseDouble(calories);
             totalDistance += Double.parseDouble(distance);
 
-            Log.d(TAG, "week of year = " + event_date.get(Calendar.WEEK_OF_YEAR) + " epoch=" + Long.parseLong(current_epoch));
+            Log.d(TAG, "week of year = " + event_date.get(Calendar.WEEK_OF_YEAR) + " epoch=" + Long.parseLong(currentEpoch));
             // set up this week data
             if (event_date.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)) {
                 weeklyTimes ++;
@@ -393,6 +396,9 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.my_past_activities:
+                startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
+                break;
             /*case R.id.my_past_record_button:
                 // Go to past record fragment
                 mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();

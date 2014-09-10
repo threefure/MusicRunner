@@ -152,7 +152,6 @@
     <style name="My.Card">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">1dp</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@drawable/music_runner_green_border</item>
     </style>
 </resources>

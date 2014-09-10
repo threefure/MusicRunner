@@ -95,6 +95,9 @@
         <activity
             android:name="com.amk2.musicrunner.finish.FinishRunningActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.amk2.musicrunner.my.MyPastActivitiesActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.amk2.musicrunner.running.MusicService" />
 
