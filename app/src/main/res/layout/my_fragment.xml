@@ -61,36 +61,42 @@
                     android:text="Total"
                     style="@style/My.Title" />
                 <TextView
-                    android:text="Times LV2"
+                    android:id="@+id/my_time_level"
+                    android:text="Times LV1"
                     style="@style/My.BarTitle"/>
                 <ProgressBar
+                    android:id="@+id/my_time_progress_bar"
                     android:progressDrawable="@drawable/progress_bar_green"
-                    android:progress="30"
                     style="@style/My.Bar" />
                 <TextView
-                    android:text="2/7 times"
+                    android:id="@+id/my_time_count"
+                    android:text="0/10 times"
                     style="@style/My.BarSubtitle"/>
 
                 <TextView
-                    android:text="Calories LV2"
+                    android:id="@+id/my_calorie_level"
+                    android:text="Calories LV1"
                     style="@style/My.BarTitle" />
                 <ProgressBar
+                    android:id="@+id/my_calorie_progress_bar"
                     android:progressDrawable="@drawable/progress_bar_yellow"
-                    android:progress="60"
                     style="@style/My.Bar" />
                 <TextView
-                    android:text="2/7 km"
+                    android:id="@+id/my_calorie_count"
+                    android:text="0/10 kcal"
                     style="@style/My.BarSubtitle"/>
 
                 <TextView
-                    android:text="Distance LV2"
+                    android:id="@+id/my_distance_level"
+                    android:text="Distance LV1"
                     style="@style/My.BarTitle" />
                 <ProgressBar
+                    android:id="@+id/my_distance_progress_bar"
                     android:progressDrawable="@drawable/progress_bar_red"
-                    android:progress="80"
                     style="@style/My.Bar" />
                 <TextView
-                    android:text="3/7 km"
+                    android:id="@+id/my_distance_count"
+                    android:text="0/10 km"
                     style="@style/My.BarSubtitle"/>
             </LinearLayout>
             <LinearLayout
@@ -108,6 +114,7 @@
                         android:text="Duration"
                         style="@style/My.Subtitle"/>
                     <TextView
+                        android:id="@+id/my_weekly_duration"
                         android:text="00 : 00 : 12"
                         style="@style/My.Number"/>
                     <TextView
@@ -124,10 +131,11 @@
                         android:text="Times"
                         style="@style/My.Subtitle" />
                     <TextView
+                        android:id="@+id/my_weekly_times"
                         android:text="3"
                         style="@style/My.Number" />
                     <TextView
-                        android:text="Times"
+                        android:text="times"
                         style="@style/My.Subtitle" />
                 </LinearLayout>
                 <LinearLayout
@@ -138,6 +146,7 @@
                         android:text="Distance"
                         style="@style/My.Subtitle" />
                     <TextView
+                        android:id="@+id/my_weekly_distance"
                         android:text="3"
                         style="@style/My.Number" />
                     <TextView
@@ -149,9 +158,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp">
                     <TextView
+                        android:text="Calories"
+                        style="@style/My.Subtitle" />
+                    <TextView
+                        android:id="@+id/my_weekly_calories"
+                        android:text="333"
+                        style="@style/My.Number" />
+                    <TextView
+                        android:text="kcal"
+                        style="@style/My.Subtitle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
+                    <TextView
                         android:text="Speed"
                         style="@style/My.Subtitle" />
                     <TextView
+                        android:id="@+id/my_weekly_speed"
                         android:text="11"
                         style="@style/My.Number" />
                     <TextView

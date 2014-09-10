@@ -16,14 +16,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
+import com.amk2.musicrunner.utilities.StringLib;
+import com.amk2.musicrunner.utilities.TimeConverter;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -33,13 +36,17 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MyFragment extends Fragment implements TabHost.OnTabChangeListener, View.OnClickListener {
+
+    private final String TAG = "MyFragment";
 
     public static final String RUNNING_TAB_TAG = "running_tab_tag";
     public static final String MUSIC_TAB_TAG = "music_tab_tag";
@@ -62,15 +69,30 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     private LayoutInflater inflater;
     private LinearLayout myMusicContainer;
 
-    private TabHost mTabHost;
-    private ProgressBar timesBar;
-    private ProgressBar speedsBar;
-    private ProgressBar caloriesBar;
-    private ProgressBar distanceBar;
-    private Integer timesBarStatus;
-    private Integer speedsBarStatus;
-    private Integer caloriesBarStatus;
-    private Integer distanceBarStatus;
+    private ProgressBar timesProgressBar;
+    private ProgressBar calorieProgressBar;
+    private ProgressBar distanceProgressBar;
+
+    private TextView totalTimesTextView;
+    private TextView totalCalorieTextView;
+    private TextView totalDistanceTextView;
+    private TextView weeklyDurationTextView;
+    private TextView weeklyTimesTextView;
+    private TextView weeklyDistanceTextView;
+    private TextView weeklyCalorieTextView;
+    private TextView weeklySpeedTextView;
+
+    private RelativeLayout pastActivitiesRelativeLayout;
+
+    private Integer totalTimes;
+    private Integer weeklyDuration;
+    private Integer weeklyTimes;
+    private Double totalCalories;
+    private Double totalDistance;
+    private Double weeklyCalories;
+    private Double weeklyDistance;
+    private Double weeklySpeed;
+
     private ImageButton pastRecordMutton;
     private Handler handler = new Handler();
 
@@ -94,10 +116,12 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 //        TextView textView = (TextView) getView().findViewById(R.id.my_view);
 //        textView.setText(account,TextView.BufferType.EDITABLE);
         //inflater = (LayoutInflater) getView().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //initialize();
+        initialize();
 	}
 
     private void initialize() {
+        mContentResolver = getActivity().getContentResolver();
+        initViews();
         /*initTabs();
 
         mContentResolver = getActivity().getContentResolver();
@@ -128,8 +152,100 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     @Override
     public void onStart() {
         super.onStart();
+        getTotalDataFromDB();
+        setProgressBar();
+        setWeeklySummary();
         //myMusicContainer.removeAllViews();
         //setValueOfProgressBar();
+    }
+
+
+    public void initViews () {
+        View thisView = getView();
+        timesProgressBar    = (ProgressBar) thisView.findViewById(R.id.my_time_progress_bar);
+        calorieProgressBar  = (ProgressBar) thisView.findViewById(R.id.my_calorie_progress_bar);
+        distanceProgressBar = (ProgressBar) thisView.findViewById(R.id.my_distance_progress_bar);
+
+        totalTimesTextView    = (TextView) thisView.findViewById(R.id.my_time_count);
+        totalCalorieTextView  = (TextView) thisView.findViewById(R.id.my_calorie_count);
+        totalDistanceTextView = (TextView) thisView.findViewById(R.id.my_distance_count);
+
+        weeklyDurationTextView = (TextView) thisView.findViewById(R.id.my_weekly_duration);
+        weeklyTimesTextView    = (TextView) thisView.findViewById(R.id.my_weekly_times);
+        weeklyDistanceTextView = (TextView) thisView.findViewById(R.id.my_weekly_distance);
+        weeklyCalorieTextView  = (TextView) thisView.findViewById(R.id.my_weekly_calories);
+        weeklySpeedTextView    = (TextView) thisView.findViewById(R.id.my_weekly_speed);
+
+        pastActivitiesRelativeLayout = (RelativeLayout) thisView.findViewById(R.id.my_past_activities);
+
+        pastActivitiesRelativeLayout.setOnClickListener(this);
+    }
+
+    public void getTotalDataFromDB () {
+        Calendar event_date = Calendar.getInstance();
+        Calendar today      = Calendar.getInstance();
+        String distance, calories, speed, current_epoch;
+        String[] projection = {
+                MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
+                MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerRunningEventDB.COLUMN_NAME_SPEED,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND
+        };
+        Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
+        cursor.moveToFirst();
+        totalTimes = 0;
+        totalCalories = 0.0;
+        totalDistance = 0.0;
+        weeklyDuration = 0;
+        weeklyTimes = 0;
+        weeklyDistance = 0.0;
+        weeklyCalories = 0.0;
+        weeklySpeed = 100.0;
+        while(cursor.moveToNext()) {
+            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+            calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
+            current_epoch      = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+            speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
+            event_date.setTimeInMillis(Long.parseLong(current_epoch));
+
+            totalTimes++;
+            totalCalories += Double.parseDouble(calories);
+            totalDistance += Double.parseDouble(distance);
+
+            Log.d(TAG, "week of year = " + event_date.get(Calendar.WEEK_OF_YEAR) + " epoch=" + Long.parseLong(current_epoch));
+            // set up this week data
+            if (event_date.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)) {
+                weeklyTimes ++;
+                weeklyDuration += cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
+                weeklyDistance += Double.parseDouble(distance);
+                weeklyCalories += Double.parseDouble(calories);
+                weeklySpeed     = (weeklySpeed > Double.parseDouble(speed))? Double.parseDouble(speed) : weeklySpeed;
+            }
+        }
+    }
+
+    public void setProgressBar () {
+        timesProgressBar.setMax(30);
+        timesProgressBar.setProgress(totalTimes.intValue());
+        totalTimesTextView.setText(totalTimes.intValue() + "/30 times");
+
+        calorieProgressBar.setMax(100);
+        calorieProgressBar.setProgress(totalCalories.intValue());
+        totalCalorieTextView.setText(totalCalories.intValue() + "/100 kcal");
+
+        distanceProgressBar.setMax(50);
+        distanceProgressBar.setProgress(totalDistance.intValue());
+        totalDistanceTextView.setText(totalDistance.intValue() + "/50 km");
+    }
+
+    public void setWeeklySummary () {
+        String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
+        weeklyDurationTextView.setText(duration);
+        weeklyTimesTextView.setText(weeklyTimes.toString());
+        weeklyDistanceTextView.setText(StringLib.truncateDoubleString(weeklyDistance.toString(), 2));
+        weeklyCalorieTextView.setText(StringLib.truncateDoubleString(weeklyCalories.toString(), 2));
+        weeklySpeedTextView.setText(StringLib.truncateDoubleString(weeklySpeed.toString(), 2));
     }
 
     private void initTabs(){
