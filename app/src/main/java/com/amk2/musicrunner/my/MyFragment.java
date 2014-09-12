@@ -204,7 +204,6 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
                 MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND
         };
         Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
-        cursor.moveToFirst();
         while(cursor.moveToNext()) {
             distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
             calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));

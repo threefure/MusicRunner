@@ -12,17 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.PhotoLib;
-import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -64,6 +59,7 @@ public class MyPastActivitiesActivity extends Activity {
         Integer duration;
         String distance, currentEpoch, photoPath;
         String[] projection = {
+                MusicRunnerRunningEventDB.COLUMN_NAME_ID,
                 MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
                 MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
                 MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND,
@@ -71,7 +67,6 @@ public class MyPastActivitiesActivity extends Activity {
         };
         String orderBy = MusicRunnerRunningEventDB.COLUMN_NAME_ID + " DESC";
         Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, orderBy);
-        cursor.moveToFirst();
         while (cursor.moveToNext()) {
             duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
             distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
@@ -87,8 +82,7 @@ public class MyPastActivitiesActivity extends Activity {
         ImageView photoImageView = (ImageView) pastActivity.findViewById(R.id.my_past_activity_photo);
         TextView summaryTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_summary);
         TextView dateTextView    = (TextView) pastActivity.findViewById(R.id.my_past_activity_date);
-        String summaryString, dateString, situationInDay;
-        Integer hour;
+        String summaryString, dateString, dayPeriod;
 
         Calendar date = Calendar.getInstance();
 
@@ -101,18 +95,9 @@ public class MyPastActivitiesActivity extends Activity {
         summaryTextView.setText(summaryString);
 
         date.setTimeInMillis(Long.parseLong(currentEpoch));
-        hour = date.get(Calendar.HOUR_OF_DAY);
-        if (hour < 6) {
-            situationInDay = "Midnight";
-        } else if (hour >= 6 && hour < 12) {
-            situationInDay = "Morning";
-        } else if (hour >= 12 && hour < 18) {
-            situationInDay = "Afternoon";
-        } else {
-            situationInDay = "Night";
-        }
+        dayPeriod = TimeConverter.getDayPeriod(date.get(Calendar.HOUR_OF_DAY));
 
-        dateString = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US) + " " + situationInDay + ", " + date.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US) + " " + date.get(Calendar.DAY_OF_MONTH);
+        dateString = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US) + " " + dayPeriod + ", " + date.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US) + " " + date.get(Calendar.DAY_OF_MONTH);
         dateTextView.setText(dateString);
 
         myPastActivityContainer.addView(pastActivity);

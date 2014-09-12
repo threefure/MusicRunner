@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.widget.Toast.makeText;
 
@@ -61,10 +62,12 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
     private LayoutInflater inflater;
 
+    private TextView finishDateTextView;
+    private TextView finishTimeTextView;
     private TextView distanceTextView;
     private TextView caloriesTextView;
     private TextView speedTextView;
-    private TextView finishTimeTextView;
+    private TextView finishDurationTextView;
     private TextView saveButton;
     private TextView discardButton;
     private ImageView picPreviewImageView;
@@ -82,6 +85,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
     private ArrayList<SongPerformance> songPerformanceArrayList;
     private ContentResolver mContentResolver;
+
+    private Calendar calendar;
+    private long timeInMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +110,14 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         Intent intent = getIntent();
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        finishDateTextView     = (TextView) findViewById(R.id.finish_date);
+        finishTimeTextView     = (TextView) findViewById(R.id.finish_time);
         saveButton             = (TextView) findViewById(R.id.finish_save);
         discardButton          = (TextView) findViewById(R.id.finish_discard);
         distanceTextView       = (TextView) findViewById(R.id.finish_distance);
         caloriesTextView       = (TextView) findViewById(R.id.finish_calorie);
         speedTextView          = (TextView) findViewById(R.id.finish_speed);
-        finishTimeTextView     = (TextView) findViewById(R.id.finish_duration);
+        finishDurationTextView = (TextView) findViewById(R.id.finish_duration);
         picPreviewImageView    = (ImageView) findViewById(R.id.finish_photo);
         cameraImageButton      = (ImageButton) findViewById(R.id.finish_camera);
         musicRunnerLineMapView = (MusicRunnerLineMapView) findViewById(R.id.finish_line_map);
@@ -129,7 +137,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         if (totalSec > 0) {
             HashMap<String, Integer> time =  TimeConverter.getReadableTimeFormatFromSeconds(totalSec);
             String duration = TimeConverter.getDurationString(time);
-            finishTimeTextView.setText(duration);
+            finishDurationTextView.setText(duration);
         }
         if (distance != null) {
             distanceTextView.setText(distance);
@@ -140,12 +148,22 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         if (speed != null) {
             speedTextView.setText(speed);
         }
-        if (photoPath != null) {
+        if (photoPath != null && photoPath.length() > 0) {
             setPicPreview();
         }
         if (songPerformanceArrayList != null) {
             musicRunnerLineMapView.setMusicJoints(songPerformanceArrayList);
         }
+
+        calendar = Calendar.getInstance();
+        timeInMillis = calendar.getTimeInMillis();
+
+        String dayPeriod, dateString, timeString;
+        dayPeriod = TimeConverter.getDayPeriod(calendar.get(Calendar.HOUR_OF_DAY));
+        timeString = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US) + " " + dayPeriod;
+        dateString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " + calendar.get(Calendar.DAY_OF_MONTH);
+        finishDateTextView.setText(dateString);
+        finishTimeTextView.setText(timeString);
 
         // Get a handle to the Map Fragment
         mMap = ((MapFragment) getFragmentManager()
@@ -265,9 +283,6 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     }
 
     private void saveToSQLiteDB() {
-        Calendar calendar = Calendar.getInstance();
-        long timeInMillis = calendar.getTimeInMillis();
-
         Uri eventUri = saveEvent(timeInMillis);
         long id = ContentUris.parseId(eventUri);
         saveSongPerformance(id, timeInMillis);

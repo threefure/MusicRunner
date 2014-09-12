@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,6 +45,8 @@ import java.util.TimerTask;
  * Created by ktlee on 5/10/14.
  */
 public class RunningActivity extends Activity implements ViewPager.OnPageChangeListener, View.OnClickListener, MusicControllerFragment.OnChangeSongListener, DistanceFragment.OnBackToDistanceListener {
+
+    public final String TAG = "RunningActivity";
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int STATE_RUNNING = 1;
@@ -342,6 +345,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
             galleryAddPic();
             //Bitmap resizedPhoto = PhotoLib.resizeToFitTarget(photoPath, picPreviewImageView.getLayoutParams().width, picPreviewImageView.getLayoutParams().height);
             //picPreviewImageView.setImageBitmap(resizedPhoto);
+        } else {
+            photoPath = "";
         }
     }
 

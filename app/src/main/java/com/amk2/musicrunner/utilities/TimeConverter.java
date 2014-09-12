@@ -70,4 +70,18 @@ public class TimeConverter {
         dateString += min;
         return dateString;
     }
+
+    public static String getDayPeriod (int hour) {
+        String dayPeriod;
+        if (hour < 6) {
+            dayPeriod = "Midnight";
+        } else if (hour >= 6 && hour < 12) {
+            dayPeriod = "Morning";
+        } else if (hour >= 12 && hour < 18) {
+            dayPeriod = "Afternoon";
+        } else {
+            dayPeriod = "Night";
+        }
+        return dayPeriod;
+    }
 }
