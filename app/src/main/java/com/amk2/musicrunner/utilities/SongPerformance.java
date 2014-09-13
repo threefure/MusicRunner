@@ -32,8 +32,16 @@ public class SongPerformance implements Parcelable{
         duration    = dur;
         distance    = dis;
         calories    = cal;
-        performance = calories*60/duration;
+        performance = calories*60 / duration;
         speed       = distance*60 / duration;
+        name        = n;
+    }
+    public SongPerformance(Integer dur, Double dis, Double cal, Double sp, String n) {
+        duration    = dur;
+        distance    = dis;
+        calories    = cal;
+        performance = calories*60 / duration;
+        speed       = sp;
         name        = n;
     }
 

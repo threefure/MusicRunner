@@ -185,6 +185,7 @@
             </LinearLayout>
             <RelativeLayout
                 android:id="@+id/my_past_activities"
+                android:background="@drawable/music_runner_clickable_card"
                 style="@style/My.Card">
                 <TextView
                     android:text="Past Activities"

@@ -98,6 +98,9 @@
         <activity
             android:name="com.amk2.musicrunner.my.MyPastActivitiesActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.amk2.musicrunner.my.MyPastActivityDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.amk2.musicrunner.running.MusicService" />
 
@@ -111,7 +114,7 @@
             </intent-filter-->
         </activity>
         <activity
-            android:name="com.amk2.musicrunner.my.PastRecordDetailsActivity"
+            android:name=".my.MyPastActivityDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.amk2.musicrunner.login.FBLogin"

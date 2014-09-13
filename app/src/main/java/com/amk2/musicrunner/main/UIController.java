@@ -5,7 +5,7 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.music.MusicFragment;
 import com.amk2.musicrunner.my.MyFragment;
-import com.amk2.musicrunner.my.PastRecordFragment;
+//import com.amk2.musicrunner.my.PastRecordFragment;
 import com.amk2.musicrunner.start.StartFragment;
 import com.amk2.musicrunner.weather.WeatherFragment;
 
@@ -45,7 +45,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     // Fragments for each tab
     private StartFragment mStartFragment;
     private MyFragment mMyFragment;
-    private PastRecordFragment mPastRecordFragment;
+    //private PastRecordFragment mPastRecordFragment;
     private MusicFragment mMusicFragment;
     private WeatherFragment mWeatherFragment;
     //private DiscoverFragment mDiscoverFragment;
@@ -125,9 +125,9 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 @Override
                 public void onClick(View v) {
                     mViewPager.setCurrentItem(TabState.MY);
-                    if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
-                        ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
-                    }
+                    //if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
+                    //    ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
+                    //}
                     Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
                 }
             });
@@ -258,11 +258,11 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 mMainActivity.finish();
                 break;
             case TabState.MY:
-                if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
-                    ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
-                } else {
+                //if(mMainPagerAdapter.getFragment(TabState.MY) instanceof PastRecordFragment) {
+                //    ((PastRecordFragment) mMainPagerAdapter.getFragment(TabState.MY)).onBackPressed();
+                //} else {
                     mViewPager.setCurrentItem(TabState.START);
-                }
+                //}
                 break;
             case TabState.WEATHER:
                 mViewPager.setCurrentItem(TabState.START);
@@ -313,12 +313,12 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
         @Override
         public int getItemPosition(Object object) {
-            if (object instanceof MyFragment && mFragmentAtMyTab instanceof PastRecordFragment) {
+            /*if (object instanceof MyFragment && mFragmentAtMyTab instanceof PastRecordFragment) {
                 return POSITION_NONE;
             }
             if (object instanceof PastRecordFragment && mFragmentAtMyTab instanceof MyFragment) {
                 return POSITION_NONE;
-            }
+            }*/
             return POSITION_UNCHANGED;
         }
 
@@ -328,16 +328,16 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 mCurTransaction = mFragmentManager.beginTransaction();
             }
             if (mFragmentAtMyTab instanceof MyFragment) {
-                addPastRecordFragment();
-                mFragmentAtMyTab = mPastRecordFragment;
-                ((PastRecordFragment) mFragmentAtMyTab).setMyTabFragmentListener(this);
+                ///addPastRecordFragment();
+                //mFragmentAtMyTab = mPastRecordFragment;
+                //((PastRecordFragment) mFragmentAtMyTab).setMyTabFragmentListener(this);
             } else { // Instance of PastRecordFragment
                 mCurTransaction.remove(mFragmentAtMyTab);
                 mFragmentAtMyTab = mMyFragment;
             }
             notifyDataSetChanged();
         }
-
+/*
         private void addPastRecordFragment() {
             mPastRecordFragment = (PastRecordFragment) mFragmentManager
                     .findFragmentByTag(FragmentTag.PAST_RECORD_FRAGMENT_TAG);
@@ -346,7 +346,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 mCurTransaction.add(R.id.tab_pager, mPastRecordFragment,
                         FragmentTag.PAST_RECORD_FRAGMENT_TAG);
             }
-        }
+        }*/
     }
 
     @Override

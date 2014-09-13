@@ -85,29 +85,34 @@ public class MusicRunnerLineMapView extends View{
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(widthMeasureSpec, height.intValue());
+        if (isInEditMode()) {
+            setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+        } else {
+            setMeasuredDimension(widthMeasureSpec, height.intValue());
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        int length = songPerformanceJoints.size();
-        int fromX = startX.intValue(), fromY = startY.intValue(), toX = startX.intValue(), toY = startY.intValue();
-        Double kms = 0.0;
-        Double temp;
-        canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
-        canvas.drawCircle(toX, toY, radius, mPointPaint);
-        for (int i = 0; i < length; i ++) {
-            temp = UnitConverter.getPixelsFromDP(context, songPerformanceJoints.get(i).distance * 100);
-            toY = toY + temp.intValue();
-            kms += songPerformanceJoints.get(i).distance;
+        if (!isInEditMode()) {
+            int length = songPerformanceJoints.size();
+            int fromX = startX.intValue(), fromY = startY.intValue(), toX = startX.intValue(), toY = startY.intValue();
+            Double kms = 0.0;
+            Double temp;
+            canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
             canvas.drawCircle(toX, toY, radius, mPointPaint);
-            canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
-            canvas.drawText(songPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(),2) + " kcal/min",
-                    toX + offsetRight.intValue(), toY, mTextPaint);
+            for (int i = 0; i < length; i++) {
+                temp = UnitConverter.getPixelsFromDP(context, songPerformanceJoints.get(i).distance * 100);
+                toY = toY + temp.intValue();
+                kms += songPerformanceJoints.get(i).distance;
+                canvas.drawCircle(toX, toY, radius, mPointPaint);
+                canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
+                canvas.drawText(songPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
+                        toX + offsetRight.intValue(), toY, mTextPaint);
+            }
+            canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
         }
-        canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
     }
 
     public void setMusicJoints (ArrayList<SongPerformance> joints) {
