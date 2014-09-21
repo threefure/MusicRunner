@@ -31,13 +31,14 @@
     <string name="map_tab_text">MAP</string>
     <string name="music_tab_text">MUSIC</string>
 
-    <!-- Music fragment -->
+    <!-- Music Controller fragment -->
     <string name="empty_music_text">Please add music to rock!</string>
     <string name="empty_music_artist">Unknown artist</string>
     <string name="previous_button_text">Previous</string>
     <string name="next_button_text">Next</string>
     <string name="pause_button_text">Pause</string>
     <string name="play_button_text">Play</string>
+    <string name="this_song_text">This Song</string>
 
     <!-- Map fragment -->
     <string name="map_fragment_text">Map</string>

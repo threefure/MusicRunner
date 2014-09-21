@@ -57,12 +57,12 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     private OnBackToDistanceListener mOnBackToDistanceListener;
 
     private View mMusicController;
-    private View mMusicInfoContainer;
+    private View mRunningInfoContainer;
     private View mMusicControlContainer;
+
     private TextView mEmptyMusicText;
     private TextView mMusicTitle;
     private TextView mMusicArtist;
-    private ImageView mMusicAlbumArt;
     private ImageView mPreviousButton;
     private ImageView mNextButton;
     private ImageView mPlayPauseButton;
@@ -148,7 +148,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     }
 
     private void setAllViewsVisible() {
-        mMusicInfoContainer.setVisibility(View.VISIBLE);
+        mRunningInfoContainer.setVisibility(View.VISIBLE);
         mMusicControlContainer.setVisibility(View.VISIBLE);
     }
 
@@ -185,12 +185,11 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
 
     private void setViews() {
         mMusicController = mFragmentView.findViewById(R.id.music_controller);
-        mMusicInfoContainer = mFragmentView.findViewById(R.id.music_info_container);
+        mRunningInfoContainer = mFragmentView.findViewById(R.id.running_info_container);
         mMusicControlContainer = mFragmentView.findViewById(R.id.music_control_container);
         mEmptyMusicText = (TextView) mFragmentView.findViewById(R.id.empty_music_text);
 
         // Music information
-        mMusicAlbumArt = (ImageView) mFragmentView.findViewById(R.id.music_album_art);
         mMusicArtist = (TextView) mFragmentView.findViewById(R.id.music_artist);
         mMusicTitle = (TextView) mFragmentView.findViewById(R.id.music_title);
 
@@ -336,7 +335,6 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         long id = mMusicService.getPlayingSong().mId;
         Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
         String musicFilePath = getMusicFilePath(musicUri);
-        mMusicAlbumArt.setImageBitmap(getMusicAlbumArt(musicFilePath));
     }
 
     private Bitmap getMusicAlbumArt(String filePath) {

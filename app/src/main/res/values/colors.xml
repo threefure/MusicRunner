@@ -50,8 +50,9 @@
     <color name="my_title">#390600</color>
     <color name="my_subtitle">#577F50</color>
 
-    <!-- Music fragment -->
+    <!-- Music Controller fragment -->
     <color name="music_info_text_color">#FFFFFF</color>
+    <color name="music_controller_background_color">#686761</color>
 
     <!-- Past Record fragment -->
     <color name="light_yellow">#F3F781</color>

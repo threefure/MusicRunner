@@ -27,11 +27,16 @@
     <dimen name="running_tab_widget_shape_corner">6dp</dimen>
     <dimen name="running_tab_item_content_margin">6dp</dimen>
 
-    <!-- Music Fragment -->
-    <dimen name="music_control_button_width_height">30dp</dimen>
-    <dimen name="music_info_container_padding_left_right">10dp</dimen>
-    <dimen name="music_control_container_padding_left_right">20dp</dimen>
-    <dimen name="music_album_art_width_height">120dp</dimen>
+    <!-- Music Controller Fragment -->
+    <dimen name="music_control_container_padding_left_right">10dp</dimen>
+    <dimen name="music_control_container_padding_top">15dp</dimen>
+    <dimen name="music_control_container_padding_bottom">10dp</dimen>
+    <dimen name="music_control_title_text_size">25dp</dimen>
+    <dimen name="music_control_artist_text_size">18dp</dimen>
+    <dimen name="music_control_this_song_text_size">18dp</dimen>
+    <dimen name="music_control_buttons_container_padding_top_bottom">25dp</dimen>
+    <dimen name="previous_next_play_pause_buttons_width_height">70dp</dimen>
+    <dimen name="shuffle_list_width_height">25dp</dimen>
 
     <!-- Past Record Fragment -->
     <dimen name="total_distance">40dp</dimen>
