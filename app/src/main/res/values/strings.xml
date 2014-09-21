@@ -53,7 +53,6 @@
     <string name="google_map_api_key">AIzaSyCG22OmmJ0Brv9fhnFXWfNIwYwQcFQ9nQU</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="hello_world">Hello world!</string>
 
     <!-- My Running -->
     <string name="my_running_times">Times</string>
@@ -81,4 +80,9 @@
     <!-- Facebook Setting -->
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">445576178911956</string>
+    <string name="title_activity_setting">SettingActivity</string>
+
+    <!-- Setting -->
+    <string name="setting_text">Setting</string>
+
 </resources>

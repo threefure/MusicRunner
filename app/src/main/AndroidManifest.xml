@@ -40,10 +40,10 @@
             android:value="@string/google_map_api_key" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
 
         <activity
-            android:name="com.amk2.musicrunner.main.MusicRunnerActivity"
+            android:name=".main.MusicRunnerActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -51,7 +51,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <provider
@@ -60,7 +59,8 @@
             android:exported="false"
             android:syncable="true" />
 
-        <!--service android:name="com.amk2.musicrunner.services.AuthenticatorService" >
+        <!--
+        service android:name="com.amk2.musicrunner.services.AuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -87,44 +87,51 @@
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
-        </service-->
+        </service
+        -->
 
         <activity
-            android:name="com.amk2.musicrunner.running.RunningActivity"
+            android:name=".running.RunningActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.amk2.musicrunner.finish.FinishRunningActivity"
+            android:name=".finish.FinishRunningActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.amk2.musicrunner.my.MyPastActivitiesActivity"
+            android:name=".my.MyPastActivitiesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.amk2.musicrunner.my.MyPastActivityDetailsActivity"
+            android:name=".my.MyPastActivityDetailsActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name="com.amk2.musicrunner.running.MusicService" />
+        <service android:name=".running.MusicService" />
 
         <activity
-            android:name="com.amk2.musicrunner.login.LoginActivity"
+            android:name=".login.LoginActivity"
             android:label="@string/app_name" >
-            <!--intent-filter>
+
+            <!--
+            intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter-->
+            </intent-filter
+            -->
         </activity>
         <activity
             android:name=".my.MyPastActivityDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.amk2.musicrunner.login.FBLogin"
+            android:name=".login.FBLogin"
             android:label="@string/title_activity_fblogin" >
         </activity>
+        <activity android:name="com.facebook.LoginActivity" />
         <activity
-            android:name="com.facebook.LoginActivity"/>
-        <activity
-            android:name="com.amk2.musicrunner.utilities.ShowImageActivity"
+            android:name=".utilities.ShowImageActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".setting.SettingActivity"
+            android:label="@string/title_activity_setting" >
+        </activity>
     </application>
 
 </manifest>

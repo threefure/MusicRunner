@@ -6,6 +6,7 @@ import com.amk2.musicrunner.RunningTabContentFactory;
 import com.amk2.musicrunner.music.MusicFragment;
 import com.amk2.musicrunner.my.MyFragment;
 //import com.amk2.musicrunner.my.PastRecordFragment;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.start.StartFragment;
 import com.amk2.musicrunner.weather.WeatherFragment;
 
@@ -14,12 +15,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 
 /**
@@ -28,17 +31,17 @@ import android.widget.TabHost;
  *
  * @author DannyLin
  */
-public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener {
+public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, View.OnClickListener {
 
     private static final String TAG = "UIController";
     private static final int TAB_SIZE = 4;
 
     private final MusicRunnerActivity mMainActivity;
 
-    private TabHost mTabHost;
+    private ActionBar mActionBar;
+    private Button mSettingButton;
 
     private FragmentManager mFragmentManager;
-    private ActionBar mActionBar;
     private SwipeControllableViewPager mViewPager;
     private MainTabViewPagerAdapter mMainPagerAdapter;
 
@@ -50,6 +53,8 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private WeatherFragment mWeatherFragment;
     //private DiscoverFragment mDiscoverFragment;
     //private SettingFragment mSettingFragment;
+
+    private TabHost mTabHost;
 
     public static class TabState {
         public static final int START = 0;
@@ -94,6 +99,9 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     private void initActionBar() {
         View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
+        mSettingButton = (Button)actionBarView.findViewById(R.id.setting_button);
+        mSettingButton.setOnClickListener(this);
+
         mActionBar.setDisplayShowCustomEnabled(true);
         mActionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(Gravity.CENTER));
     }
@@ -371,4 +379,12 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.setting_button:
+                mMainActivity.startActivity(new Intent(mMainActivity, SettingActivity.class));
+                break;
+        }
+    }
 }
