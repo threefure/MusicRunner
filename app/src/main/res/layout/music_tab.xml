@@ -6,14 +6,6 @@
     <ImageView
         android:layout_width="@dimen/tab_icon_width_height"
         android:layout_height="@dimen/tab_icon_width_height"
-        android:src="@drawable/main_my_tab_icon_selector"
-        android:visibility="gone"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/music_tab"
-        android:textColor="@drawable/main_tab_item_text_color_selector"
-        android:textSize="@dimen/tab_text_size" />
+        android:src="@drawable/main_music_tab_icon_selector"/>
 
 </LinearLayout>
