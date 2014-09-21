@@ -192,7 +192,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             speed       = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
 
             songName = getSongName(songId);
-            SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), Double.parseDouble(calories), Double.parseDouble(speed), songName);
+            SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), Double.parseDouble(calories), Double.parseDouble(speed), songName, null);
             songPerformanceArrayList.add(sp);
         }
     }

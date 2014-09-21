@@ -15,20 +15,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.my.MyPastActivityDetailsActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongNameDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerArtistDB;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by logicmelody on 2014/8/30.
  */
 public class MusicFragment extends Fragment implements View.OnClickListener{
+
+    private static String SONG_NAME = "songName";
+    private static String ARTIST_ID = "artistId";
+    private static String SONG_REAL_ID = "songRealId";
 
     private double performanceRangeOffset = 0.0001;
 
@@ -101,13 +105,13 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
         ImageView albumPhotoImageView = (ImageView) songRankTemplate.findViewById(R.id.album_photo);
 
         songNameTextView.setText(sp.name);
+        singerTextView.setText(sp.artist);
         caloriesTextView.setText(StringLib.truncateDoubleString(sp.calories.toString(), 1));
         distanceTextView.setText(StringLib.truncateDoubleString(sp.distance.toString(), 1));
         timesTextView.setText(sp.times.toString());
         if (isBest) {
             rankTagTextView.setText("Best");
         } else {
-            Log.d("MusicFragment", "average: " + averagePerformance.toString() + " current: " + sp.performance.toString());
             if (sp.performance > averagePerformance + performanceRangeOffset) {
                 rankTagTextView.setText("Up");
                 rankTagTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_up_song_tag));
@@ -125,9 +129,10 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
     }
 
     private void getMusicRanks() {
-        Integer songId, duration, lastSongId = -1;
+        HashMap<String, String> songInfo;
+        Integer duration, songId, lastSongId = -1;
         Double caloriesTemp;
-        String calories, distance, currentEpoch, speed, songName;
+        String calories, distance, currentEpoch, speed, songName, artist;
         String[] projection = {
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_ID,
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_SONG_ID,
@@ -154,9 +159,12 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
             totalDuration += duration;
 
             if (lastSongId != songId) {
-                songName = getSongName(songId);
-                SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), caloriesTemp, Double.parseDouble(speed), songName);
+                //songName = getSongName(songId);
+                songInfo = getSongInfo(songId);
+                artist   = getArtist(Long.parseLong(songInfo.get(ARTIST_ID)));
+                SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), caloriesTemp, Double.parseDouble(speed), songInfo.get(SONG_NAME), artist);
                 sp.setSongId(songId);
+                sp.setRealSongId(Long.parseLong(songInfo.get(SONG_REAL_ID)));
                 songPerformanceList.add(sp);
                 lastSongId = songId;
             } else {
@@ -182,6 +190,44 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
             songName = cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME));
         }
         return songName;
+    }
+
+    private HashMap<String, String> getSongInfo (Integer songId) {
+        HashMap<String, String> songInfo = new HashMap<String, String>();
+        String[] projection = {
+                MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME,
+                MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID,
+                MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID
+        };
+        String selection = MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = { songId.toString() };
+
+        Cursor cursor = mContentResolver.query(MusicRunnerSongNameDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            Long artistId   = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID));
+            Long songRealId = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID));
+            songInfo.put(SONG_NAME, cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME)));
+            songInfo.put(ARTIST_ID, artistId.toString());
+            songInfo.put(SONG_REAL_ID, songRealId.toString());
+        }
+        return songInfo;
+    }
+
+    private String getArtist (Long artistId) {
+        String[] projection = {
+                MusicRunnerArtistDB.COLUMN_NAME_ARTIST
+        };
+        String artist = "";
+        String selection = MusicRunnerArtistDB.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = { artistId.toString() };
+
+        Cursor cursor = mContentResolver.query(MusicRunnerArtistDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            artist = cursor.getString(cursor.getColumnIndex(MusicRunnerArtistDB.COLUMN_NAME_ARTIST));
+        }
+        return artist;
     }
 
     @Override

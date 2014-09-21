@@ -469,7 +469,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
         mMapFragment.musicChangeCallback(previousRecord);
 
-        SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle);
+        SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle, previousRecord.mMusicSong.mArtist);
+        mp.setRealSongId(previousRecord.mMusicSong.mId);
         songPerformanceArrayList.add(mp);
 
         previousSongEndDistance = distance;

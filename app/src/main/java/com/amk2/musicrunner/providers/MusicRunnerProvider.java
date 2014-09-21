@@ -16,6 +16,7 @@ import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicTrackCommonDataD
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongNameDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerArtistDB;
 
 /**
  * Created by ktlee on 5/24/14.
@@ -31,6 +32,8 @@ public class MusicRunnerProvider extends ContentProvider {
     private static final int SONG_PERFORMANCE_DATA_ITEM_INDICATOR = 6;
     private static final int SONG_NAME_DATA_DIR_INDICATOR = 7;
     private static final int SONG_NAME_DATA_ITEM_INDICATOR = 8;
+    private static final int ARTIST_DATA_DIR_INDICATOR = 9;
+    private static final int ARTIST_DATA_ITEM_INDICATOR = 10;
 
     private MusicRunnerDBHelper musicTrackDBHelper;
     private static final UriMatcher uriMatcher;
@@ -44,6 +47,8 @@ public class MusicRunnerProvider extends ContentProvider {
         uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerSongPerformanceDB.TABLE_NAME + "/#", SONG_PERFORMANCE_DATA_ITEM_INDICATOR);
         uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerSongNameDB.TABLE_NAME, SONG_NAME_DATA_DIR_INDICATOR);
         uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerSongNameDB.TABLE_NAME + "/#", SONG_NAME_DATA_ITEM_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerArtistDB.TABLE_NAME, ARTIST_DATA_DIR_INDICATOR);
+        uriMatcher.addURI(MusicRunnerDBMetaData.AUTHORITY, MusicRunnerArtistDB.TABLE_NAME + "/#", ARTIST_DATA_ITEM_INDICATOR);
     }
 
     @Override
@@ -84,6 +89,13 @@ public class MusicRunnerProvider extends ContentProvider {
             case SONG_NAME_DATA_ITEM_INDICATOR:
                 sqLiteQueryBuilder.setTables(MusicRunnerSongNameDB.TABLE_NAME);
                 sqLiteQueryBuilder.appendWhere(MusicRunnerSongNameDB.COLUMN_NAME_ID + " = " + uri.getPathSegments().get(1));
+                break;
+            case ARTIST_DATA_DIR_INDICATOR:
+                sqLiteQueryBuilder.setTables(MusicRunnerArtistDB.TABLE_NAME);
+                break;
+            case ARTIST_DATA_ITEM_INDICATOR:
+                sqLiteQueryBuilder.setTables(MusicRunnerArtistDB.TABLE_NAME);
+                sqLiteQueryBuilder.appendWhere(MusicRunnerArtistDB.COLUMN_NAME_ID + " = " + uri.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri.toString());
@@ -143,6 +155,10 @@ public class MusicRunnerProvider extends ContentProvider {
             case SONG_NAME_DATA_DIR_INDICATOR:
                 TableName = MusicRunnerSongNameDB.TABLE_NAME;
                 ContentUri = MusicRunnerSongNameDB.CONTENT_URI;
+                break;
+            case ARTIST_DATA_DIR_INDICATOR:
+                TableName = MusicRunnerArtistDB.TABLE_NAME;
+                ContentUri = MusicRunnerArtistDB.CONTENT_URI;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri);

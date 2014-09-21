@@ -25,11 +25,13 @@ import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongNameDB;
+import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerArtistDB;
 import com.amk2.musicrunner.utilities.CameraLib;
 import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
+import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -318,9 +320,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                     songNameProjection, songNameSelection, songNameSelectionArgs, null);
             if (cursor == null) {
                 // no such song in DB;
-                songId = saveSongName(currentSP.name);
+                songId = saveSongName(currentSP.name, currentSP.artist, currentSP.realSongId);
             } else if (cursor.getCount() < 1) {
-                songId = saveSongName(currentSP.name);
+                songId = saveSongName(currentSP.name, currentSP.artist, currentSP.realSongId);
             } else {
                 cursor.moveToFirst();
                 songId = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_ID));
@@ -338,11 +340,38 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         }
     }
 
-    private long saveSongName (String name) {
+    private long saveSongName (String name, String artist, long realSongId) {
+        long artistId;
         ContentValues values = new ContentValues();
+        String[] artistProjection = {
+                MusicRunnerArtistDB.COLUMN_NAME_ID
+        };
+        String artistSelection = MusicRunnerArtistDB.COLUMN_NAME_ARTIST + " = ?";
+        String[] artistSelectionArgs = {artist};
+        Cursor cursor = mContentResolver.query(MusicRunnerArtistDB.CONTENT_URI,
+                artistProjection, artistSelection, artistSelectionArgs, null);
+        if (cursor == null) {
+            artistId = saveArtist(artist);
+        } else if (cursor.getCount() < 1) {
+            artistId = saveArtist(artist);
+        } else {
+            cursor.moveToFirst();
+            artistId = cursor.getLong(cursor.getColumnIndex(MusicRunnerArtistDB.COLUMN_NAME_ID));
+        }
+
         values.put(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME, name);
+        values.put(MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID, artistId);
+        values.put(MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID, realSongId);
         Uri uri = mContentResolver.insert(MusicRunnerSongNameDB.CONTENT_URI, values);
         Log.d(TAG, "Saved song name: " + name + " into DB, id=" + ContentUris.parseId(uri));
+        return ContentUris.parseId(uri);
+    }
+
+    private long saveArtist (String artist) {
+        ContentValues values = new ContentValues();
+        values.put(MusicRunnerArtistDB.COLUMN_NAME_ARTIST, artist);
+        Uri uri = mContentResolver.insert(MusicRunnerArtistDB.CONTENT_URI, values);
+        Log.d(TAG, "Saved artist: " + artist + " into artist DB, id=" + ContentUris.parseId(uri));
         return ContentUris.parseId(uri);
     }
 }

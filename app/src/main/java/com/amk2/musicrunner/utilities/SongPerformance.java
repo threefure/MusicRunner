@@ -13,11 +13,13 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
     public Integer duration;
     public Integer times;
     public Integer songId;
+    public Long realSongId;
     public Double distance;
     public Double calories;
     public Double performance;
     public Double speed;
     public String name;
+    public String artist;
 
     /*
     * create be ktlee
@@ -27,14 +29,16 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         times       = p.readInt();
         duration    = p.readInt();
         songId      = p.readInt();
+        realSongId  = p.readLong();
         distance    = p.readDouble();
         calories    = p.readDouble();
         performance = p.readDouble();
         speed       = p.readDouble();
         name        = p.readString();
+        artist      = p.readString();
     }
 
-    public SongPerformance(Integer dur, Double dis, Double cal, String n) {
+    public SongPerformance(Integer dur, Double dis, Double cal, String n, String ar) {
         songId      = -1;
         times       = 1;
         duration    = dur;
@@ -43,8 +47,9 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         performance = calories*60 / duration;
         speed       = distance*60 / duration;
         name        = n;
+        artist      = ar;
     }
-    public SongPerformance(Integer dur, Double dis, Double cal, Double sp, String n) {
+    public SongPerformance(Integer dur, Double dis, Double cal, Double sp, String n, String ar) {
         songId      = -1;
         times       = 1;
         duration    = dur;
@@ -53,6 +58,7 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         performance = calories*60 / duration;
         speed       = sp;
         name        = n;
+        artist      = ar;
     }
 
     public void addSongRecord (Integer dur, Double dis, Double cal) {
@@ -67,6 +73,10 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         songId = id;
     }
 
+    public void setRealSongId (Long id) {
+        realSongId = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -77,11 +87,13 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         parcel.writeInt(times);
         parcel.writeInt(duration);
         parcel.writeInt(songId);
+        parcel.writeLong(realSongId);
         parcel.writeDouble(distance);
         parcel.writeDouble(calories);
         parcel.writeDouble(performance);
         parcel.writeDouble(speed);
         parcel.writeString(name);
+        parcel.writeString(artist);
     }
 
     public static final Parcelable.Creator<SongPerformance> CREATOR

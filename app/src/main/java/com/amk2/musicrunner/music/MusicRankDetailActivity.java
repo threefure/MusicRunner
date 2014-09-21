@@ -19,12 +19,16 @@ import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
  * Created by ktlee on 9/18/14.
  */
 public class MusicRankDetailActivity extends Activity {
+    private static String SONG_NAME = "songName";
+    private static String ARTIST_ID = "artistId";
+    private static String SONG_REAL_ID = "songRealId";
 
     public static final String SONG_ID = "music.id";
 
@@ -76,11 +80,12 @@ public class MusicRankDetailActivity extends Activity {
     }
 
     private void setViews() {
+        HashMap<String, String> songInfo;
         Calendar calendar = Calendar.getInstance();
         Integer songId = (Integer) getIntent().getExtras().get(SONG_ID);
         Integer duration, totalDuration, times;
         Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, pace;
-        String calories, distance, currentEpoch, speed, songName, durationString, bestEpoch = null;
+        String calories, distance, currentEpoch, speed, songName, durationString, artist, bestEpoch = null;
         String[] projection = {
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_ID,
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES,
@@ -117,7 +122,9 @@ public class MusicRankDetailActivity extends Activity {
             times ++;
         }
 
-        songName = getSongName(songId);
+        //songName = getSongName(songId);
+        songInfo = getSongInfo(songId);
+        artist   = getArtist(Long.parseLong(songInfo.get(ARTIST_ID)));
         averagePerformance = totalCalories*60/totalDuration.doubleValue();
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(totalDuration));
         pace = totalDuration/(totalDistance*60);
@@ -125,7 +132,8 @@ public class MusicRankDetailActivity extends Activity {
             calendar.setTimeInMillis(Long.parseLong(bestEpoch));
         }
 
-        songNameTextView.setText(songName);
+        songNameTextView.setText(songInfo.get(SONG_NAME));
+        singerTextView.setText(artist);
         bestPerformanceTextView.setText(StringLib.truncateDoubleString(bestPerformance.toString(), 2));
         bestPerformanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
                 calendar.get(Calendar.DAY_OF_MONTH));
@@ -152,6 +160,44 @@ public class MusicRankDetailActivity extends Activity {
             songName = cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME));
         }
         return songName;
+    }
+
+    private HashMap<String, String> getSongInfo (Integer songId) {
+        HashMap<String, String> songInfo = new HashMap<String, String>();
+        String[] projection = {
+                MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME,
+                MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID,
+                MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID
+        };
+        String selection = MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = { songId.toString() };
+
+        Cursor cursor = mContentResolver.query(MusicRunnerSongNameDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            Long artistId   = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID));
+            Long songRealId = cursor.getLong(cursor.getColumnIndex(MusgiticRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID));
+            songInfo.put(SONG_NAME, cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME)));
+            songInfo.put(ARTIST_ID, artistId.toString());
+            songInfo.put(SONG_REAL_ID, songRealId.toString());
+        }
+        return songInfo;
+    }
+
+    private String getArtist (Long artistId) {
+        String[] projection = {
+                MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ARTIST
+        };
+        String artist = "";
+        String selection = MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = { artistId.toString() };
+
+        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerArtistDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            artist = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ARTIST));
+        }
+        return artist;
     }
 
     @Override

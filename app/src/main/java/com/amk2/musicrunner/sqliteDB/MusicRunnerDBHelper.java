@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.drive.internal.CreateContentsRequest;
+
 /**
  * Created by daz on 2014/5/29.
  */
@@ -46,14 +48,23 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_SONG_NAME_TABLE =
             "CREATE TABLE " + MusicRunnerDBMetaData.MusicRunnerSongNameDB.TABLE_NAME + " (" +
                     MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID               + INTEGER_TYPE + COMMA_SEP +
+                    MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID               + INTEGER_TYPE + COMMA_SEP +
                     MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME                  + TEXT_TYPE +
+                    " )";
+
+    private static final String SQL_CREATE_ARTIST_TABLE =
+            "CREATE TABLE " + MusicRunnerDBMetaData.MusicRunnerArtistDB.TABLE_NAME + " (" +
+                    MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ARTIST                  + TEXT_TYPE +
                     " )";
     //private static final String SQL_DELETE_COMMON_DATA_TABLE = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicTrackCommonDataDB.TABLE_NAME;
     private static final String SQL_DELETE_RUNNING_EVENT_TABLE    = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerRunningEventDB.TABLE_NAME;
     private static final String SQL_DELETE_SONG_PERFORMANCE_TABLE = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB.TABLE_NAME;
     private static final String SQL_DELETE_SONG_NAME_TABLE        = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerSongNameDB.TABLE_NAME;
+    private static final String SQL_DELETE_ARTIST_TABLE           = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerArtistDB.TABLE_NAME;
 
-    public static final int DATA_VERSION = 5;
+    public static final int DATA_VERSION = 6;
     public static final String DATABASE_NAME = "MusicRunner.db";
 
     public MusicRunnerDBHelper(Context context) {
@@ -70,6 +81,9 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DELETE_ARTIST_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_ARTIST_TABLE);
         Log.d(TAG, "create db helper");
     }
 
@@ -83,6 +97,9 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DELETE_ARTIST_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_ARTIST_TABLE);
         Log.d(TAG, "upgrade db helper");
     }
 
@@ -97,6 +114,9 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_DELETE_SONG_NAME_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SONG_NAME_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_DELETE_ARTIST_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_ARTIST_TABLE);
         Log.d(TAG, "downgrade db helper");
     }
 

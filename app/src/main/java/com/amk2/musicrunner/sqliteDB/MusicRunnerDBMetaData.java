@@ -79,8 +79,17 @@ public class MusicRunnerDBMetaData {
 
     public static abstract class MusicRunnerSongNameDB implements BaseColumns {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/SongName");
-        public static final String TABLE_NAME           = "SongName";
-        public static final String COLUMN_NAME_ID       = "id";
-        public static final String COLUMN_NAME_SONG_NAME= "song_name";
+        public static final String TABLE_NAME               = "SongName";
+        public static final String COLUMN_NAME_ID           = "id";
+        public static final String COLUMN_NAME_SONG_REAL_ID = "song_id";
+        public static final String COLUMN_NAME_SONG_NAME    = "song_name";
+        public static final String COLUMN_NAME_ARTIST_ID    = "artist_id";
+    }
+
+    public static abstract class MusicRunnerArtistDB implements BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/Artist");
+        public static final String TABLE_NAME               = "Artist";
+        public static final String COLUMN_NAME_ID           = "id";
+        public static final String COLUMN_NAME_ARTIST    = "artist";
     }
 }
