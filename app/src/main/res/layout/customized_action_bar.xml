@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingRight="@dimen/action_bar_padding_left_right"
+    android:paddingLeft="@dimen/action_bar_padding_left_right">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,11 +14,12 @@
         android:textColor="@color/action_bar_title_text_color"
         android:layout_centerInParent="true"/>
 
-    <Button
+    <ImageView
         android:id="@+id/setting_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/setting_button_width_height"
+        android:layout_height="@dimen/setting_button_width_height"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:text="Setting"/>
+        android:src="@drawable/setting_button_icon_selector"/>
 
 </RelativeLayout>

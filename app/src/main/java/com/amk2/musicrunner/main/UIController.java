@@ -22,7 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TabHost;
 
 /**
@@ -39,7 +39,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private final MusicRunnerActivity mMainActivity;
 
     private ActionBar mActionBar;
-    private Button mSettingButton;
+    private ImageView mSettingButton;
 
     private FragmentManager mFragmentManager;
     private SwipeControllableViewPager mViewPager;
@@ -99,7 +99,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     private void initActionBar() {
         View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
-        mSettingButton = (Button)actionBarView.findViewById(R.id.setting_button);
+        mSettingButton = (ImageView)actionBarView.findViewById(R.id.setting_button);
         mSettingButton.setOnClickListener(this);
 
         mActionBar.setDisplayShowCustomEnabled(true);

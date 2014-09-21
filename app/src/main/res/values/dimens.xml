@@ -6,6 +6,8 @@
 
     <!-- Action bar -->
     <dimen name="action_bar_title_text_size">28dp</dimen>
+    <dimen name="action_bar_padding_left_right">10dp</dimen>
+    <dimen name="setting_button_width_height">30dp</dimen>
 
     <!-- Main Activity tab view -->
     <dimen name="tab_widget_height">58dp</dimen>
