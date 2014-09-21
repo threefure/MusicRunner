@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -13,8 +15,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
-import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongNameDB;
-import com.amk2.musicrunner.utilities.SongPerformance;
+import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
@@ -26,10 +27,6 @@ import java.util.Locale;
  * Created by ktlee on 9/18/14.
  */
 public class MusicRankDetailActivity extends Activity {
-    private static String SONG_NAME = "songName";
-    private static String ARTIST_ID = "artistId";
-    private static String SONG_REAL_ID = "songRealId";
-
     public static final String SONG_ID = "music.id";
 
     private ContentResolver mContentResolver;
@@ -77,6 +74,7 @@ public class MusicRankDetailActivity extends Activity {
         timesTextView               = (TextView) findViewById(R.id.times);
         durationTextView            = (TextView) findViewById(R.id.duration);
         caloriesTextView            = (TextView) findViewById(R.id.calories);
+        albumPhotoImageView         = (ImageView) findViewById(R.id.album_photo);
     }
 
     private void setViews() {
@@ -122,9 +120,8 @@ public class MusicRankDetailActivity extends Activity {
             times ++;
         }
 
-        //songName = getSongName(songId);
-        songInfo = getSongInfo(songId);
-        artist   = getArtist(Long.parseLong(songInfo.get(ARTIST_ID)));
+        songInfo = MusicLib.getSongInfo(getApplicationContext(), songId);
+        artist   = MusicLib.getArtist(getApplicationContext(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
         averagePerformance = totalCalories*60/totalDuration.doubleValue();
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(totalDuration));
         pace = totalDuration/(totalDistance*60);
@@ -132,7 +129,7 @@ public class MusicRankDetailActivity extends Activity {
             calendar.setTimeInMillis(Long.parseLong(bestEpoch));
         }
 
-        songNameTextView.setText(songInfo.get(SONG_NAME));
+        songNameTextView.setText(songInfo.get(MusicLib.SONG_NAME));
         singerTextView.setText(artist);
         bestPerformanceTextView.setText(StringLib.truncateDoubleString(bestPerformance.toString(), 2));
         bestPerformanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
@@ -144,60 +141,10 @@ public class MusicRankDetailActivity extends Activity {
         durationTextView.setText(durationString);
         caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
 
-    }
-
-    private String getSongName (Integer songId) {
-        String[] projection = {
-                MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME
-        };
-        String songName = "";
-        String selection = MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
-        String[] selectionArgs = { songId.toString() };
-
-        Cursor cursor = mContentResolver.query(MusicRunnerSongNameDB.CONTENT_URI, projection, selection, selectionArgs, null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            songName = cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME));
-        }
-        return songName;
-    }
-
-    private HashMap<String, String> getSongInfo (Integer songId) {
-        HashMap<String, String> songInfo = new HashMap<String, String>();
-        String[] projection = {
-                MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME,
-                MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID,
-                MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID
-        };
-        String selection = MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
-        String[] selectionArgs = { songId.toString() };
-
-        Cursor cursor = mContentResolver.query(MusicRunnerSongNameDB.CONTENT_URI, projection, selection, selectionArgs, null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            Long artistId   = cursor.getLong(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID));
-            Long songRealId = cursor.getLong(cursor.getColumnIndex(MusgiticRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID));
-            songInfo.put(SONG_NAME, cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME)));
-            songInfo.put(ARTIST_ID, artistId.toString());
-            songInfo.put(SONG_REAL_ID, songRealId.toString());
-        }
-        return songInfo;
-    }
-
-    private String getArtist (Long artistId) {
-        String[] projection = {
-                MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ARTIST
-        };
-        String artist = "";
-        String selection = MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ID + " = ?";
-        String[] selectionArgs = { artistId.toString() };
-
-        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerArtistDB.CONTENT_URI, projection, selection, selectionArgs, null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            artist = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ARTIST));
-        }
-        return artist;
+        Uri songUri = MusicLib.getMusicUri(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
+        String songPath = MusicLib.getMusicFilePath(getApplicationContext(), songUri);
+        Bitmap albumPhoto = MusicLib.getMusicAlbumArt(songPath);
+        albumPhotoImageView.setImageBitmap(albumPhoto);
     }
 
     @Override
