@@ -9,7 +9,7 @@ public class Comparators {
     public static class SongPerformanceComparators implements Comparator <SongPerformance> {
         @Override
         public int compare(SongPerformance song1, SongPerformance song2) {
-            return song2.performance.compareTo(song1.performance);
+            return song2.calories.compareTo(song1.calories);
         }
     }
 }

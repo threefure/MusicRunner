@@ -16,4 +16,8 @@
         <attr name="mtext" format="string"></attr>
     </declare-styleable>
 
+    <declare-styleable name="GifView">
+        <attr name="gif_src" format="reference" />
+    </declare-styleable>
+
 </resources>
