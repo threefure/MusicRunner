@@ -100,7 +100,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
         TextView rankTagTextView      = (TextView) songRankTemplate.findViewById(R.id.rank_tag);
         ImageView albumPhotoImageView = (ImageView) songRankTemplate.findViewById(R.id.album_photo);
 
-        songNameTextView.setText(sp.name);
+        songNameTextView.setText(StringLib.truncate(sp.name, 20));
         singerTextView.setText(sp.artist);
         caloriesTextView.setText(StringLib.truncateDoubleString(sp.calories.toString(), 1));
         distanceTextView.setText(StringLib.truncateDoubleString(sp.distance.toString(), 1));

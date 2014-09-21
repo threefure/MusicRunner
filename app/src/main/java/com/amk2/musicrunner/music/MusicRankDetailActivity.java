@@ -129,7 +129,7 @@ public class MusicRankDetailActivity extends Activity {
             calendar.setTimeInMillis(Long.parseLong(bestEpoch));
         }
 
-        songNameTextView.setText(songInfo.get(MusicLib.SONG_NAME));
+        songNameTextView.setText(StringLib.truncate(songInfo.get(MusicLib.SONG_NAME), 20));
         singerTextView.setText(artist);
         bestPerformanceTextView.setText(StringLib.truncateDoubleString(bestPerformance.toString(), 2));
         bestPerformanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +

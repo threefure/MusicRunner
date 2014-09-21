@@ -108,7 +108,7 @@ public class MusicRunnerLineMapView extends View{
                 kms += songPerformanceJoints.get(i).distance;
                 canvas.drawCircle(toX, toY, radius, mPointPaint);
                 canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
-                canvas.drawText(songPerformanceJoints.get(i).name + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
+                canvas.drawText(StringLib.truncate(songPerformanceJoints.get(i).name, 15) + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
                         toX + offsetRight.intValue(), toY, mTextPaint);
             }
             canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);

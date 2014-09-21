@@ -25,4 +25,17 @@ public class StringLib {
     public static boolean hasValue(String str){
         return str != null && str.length() > 0;
     }
+
+    /*
+     * truncateDoubleString: truncate double number to 小數點後兩位
+     * str: string of double number
+     * allowedDigits: 小數點後幾位
+     */
+    public static String truncate (String str, int allowedChars) {
+        if (str.length() > allowedChars) {
+            str = str.substring(0, allowedChars);
+            str = str + "...";
+        }
+        return str;
+    };
 }
