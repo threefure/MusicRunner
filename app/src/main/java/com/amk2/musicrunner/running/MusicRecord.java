@@ -1,5 +1,7 @@
 package com.amk2.musicrunner.running;
 
+import android.graphics.Bitmap;
+
 /**
  * Record the music information during running.
  *

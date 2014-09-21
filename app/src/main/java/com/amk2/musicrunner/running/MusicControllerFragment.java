@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService.MusicBinder;
 import com.amk2.musicrunner.running.DistanceFragment.OnBackToDistanceListener;
+import com.amk2.musicrunner.utilities.MusicLib;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,26 +119,24 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         mMusicService.setOnPlayingSongCompletionListener(new MusicService.OnPlayingSongCompletionListener() {
             @Override
             public void onPlayingSongCompletion(int duration) {
-                setMusicText();
-                setMusicAlbumArt();
-                mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,duration));
-                //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
+                mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong, duration));
+                setAndSaveCurrentMusicInfo();
             }
         });
         if (!mMusicService.isMusicPlayerStartRunning()) {
             mMusicService.setMusicList(mMusicSongList);
             mMusicService.setSong(mCurrentMusicIndex);
             mMusicService.playSong();
-            mPreviousSong = mMusicService.getPlayingSong();
+
         }
         mCurrentMusicIndex = mMusicService.getCurrentSongIndex();
-        setMusicText();
-        setMusicAlbumArt();
+        setAndSaveCurrentMusicInfo();
         setPlayPauseIcon();
         setAllViewsVisible();
     }
 
-    private void setMusicText() {
+    private void setAndSaveCurrentMusicInfo() {
+        // Title and artist
         String artist = mMusicService.getPlayingSong().mArtist;
         String title = mMusicService.getPlayingSong().mTitle;
         if(TextUtils.isEmpty(artist)) {
@@ -145,6 +144,14 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         }
         mMusicArtist.setText(artist);
         mMusicTitle.setText(title);
+
+        // Album art
+        long id = mMusicService.getPlayingSong().mId;
+        Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
+        String musicFilePath = MusicLib.getMusicFilePath(mActivity,musicUri);
+        Bitmap musicAlbumArt = MusicLib.getMusicAlbumArt(musicFilePath);
+
+        mPreviousSong = mMusicService.getPlayingSong();
     }
 
     private void setAllViewsVisible() {
@@ -241,7 +248,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 String title = data.getString(MUSIC_TITLE);
                 String artist = data.getString(MUSIC_ARTIST);
                 Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
-                String musicFilePath = getMusicFilePath(musicUri);
+                String musicFilePath = MusicLib.getMusicFilePath(mActivity, musicUri);
                 if(isMusicFile(musicFilePath)) {
                     //Log.d("danny","Add music file path = " + musicFilePath);
                     songList.add(new MusicSong(id, title, artist));
@@ -259,35 +266,6 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         }
     }
 
-    private String getMusicFilePath(Uri uri) {
-        String filePath = null;
-        if(uri != null) {
-            Cursor cursor = null;
-            try {
-                cursor = mActivity.getContentResolver().query(uri, new String[]{
-                        MediaStore.Audio.AudioColumns.DATA
-                }, null, null, null);
-                cursor.moveToFirst();
-                filePath = cursor.getString(0);
-
-                if(filePath == null || filePath.trim().isEmpty()) {
-                    filePath = uri.toString();
-                }
-            } catch(Exception e) {
-                e.printStackTrace();
-                filePath = uri.toString();
-            } finally {
-                if(cursor != null) {
-                    cursor.close();
-                }
-            }
-        } else {
-            filePath = uri.toString();
-        }
-
-        return filePath;
-    }
-
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
@@ -303,19 +281,15 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
                 mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,mMusicService.getMusicPositionWhenChangeSong()));
                 mMusicService.playPreviousSong();
-                setMusicText();
-                setMusicAlbumArt();
+                setAndSaveCurrentMusicInfo();
                 setPlayPauseIcon();
-                mPreviousSong = mMusicService.getPlayingSong();
                 break;
             case R.id.next_button:
                 //Toast.makeText(mActivity, "Music duration = " + mMusicService.getMusicPositionWhenChangeSong(), Toast.LENGTH_SHORT).show();
                 mOnChangeSongListener.onChangeMusicSong(new MusicRecord(mPreviousSong,mMusicService.getMusicPositionWhenChangeSong()));
                 mMusicService.playNextSong();
-                setMusicText();
-                setMusicAlbumArt();
+                setAndSaveCurrentMusicInfo();
                 setPlayPauseIcon();
-                mPreviousSong = mMusicService.getPlayingSong();
                 break;
             case R.id.play_pause_button:
                 if(mMusicService.isPlaying()) {
@@ -329,42 +303,6 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 mOnBackToDistanceListener.onBackToDistance();
                 break;
         }
-    }
-
-    private void setMusicAlbumArt() {
-        long id = mMusicService.getPlayingSong().mId;
-        Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
-        String musicFilePath = getMusicFilePath(musicUri);
-    }
-
-    private Bitmap getMusicAlbumArt(String filePath) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            Log.d("danny","setDataSource before");
-            retriever.setDataSource(filePath);
-            Log.d("danny","setDataSource after");
-            byte[] data = retriever.getEmbeddedPicture();
-            Log.d("danny","Data size = " + data.length);
-            if (data != null) {
-                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-            }
-            if (bitmap == null) {
-                Log.d("danny","Bitmap is null");
-                return null;
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        } catch(NoSuchMethodError ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return bitmap;
     }
 
     private void setShuffleIcon() {
