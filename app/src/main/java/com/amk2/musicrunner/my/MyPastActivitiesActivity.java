@@ -147,7 +147,6 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.my_past_activity:
                 Integer eventId = (Integer) v.getTag();
-                Log.d(TAG, "eventid = " + eventId);
                 Intent intent = new Intent(getApplicationContext(), MyPastActivityDetailsActivity.class);
                 intent.putExtra(MyPastActivityDetailsActivity.EVENT_ID, eventId);
                 startActivity(intent);

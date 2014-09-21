@@ -12,6 +12,8 @@
     <color name="darkgray">#AAAAAA</color>
     <color name="yellow">#FFD700</color>
     <color name="darkblue">#104E8B</color>
+    <color name="light_gray">#EEEEEE</color>
+    <color name="rice_white">#FCFDFC</color>
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>
@@ -53,6 +55,12 @@
     <!-- Music Controller fragment -->
     <color name="music_info_text_color">#FFFFFF</color>
     <color name="music_controller_background_color">#686761</color>
+    <color name="music_info_best_song_tag">#F39019</color>
+    <color name="music_info_up_song_tag">#FA513D</color>
+    <color name="music_info_keep_song_tag">#51A7F9</color>
+    <color name="music_info_easy_song_tag">#70BF41</color>
+    <color name="music_info_red_title">#9D6A64</color>
+    <color name="music_info_green_title">#7A8681</color>
 
     <!-- Past Record fragment -->
     <color name="light_yellow">#F3F781</color>

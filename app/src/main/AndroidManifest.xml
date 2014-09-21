@@ -24,7 +24,7 @@
         android:required="true" />
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <application
@@ -102,6 +102,9 @@
         <activity
             android:name=".my.MyPastActivityDetailsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.amk2.musicrunner.music.MusicRankDetailActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name=".running.MusicService" />
 
@@ -117,9 +120,7 @@
             </intent-filter
             -->
         </activity>
-        <activity
-            android:name=".my.MyPastActivityDetailsActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".login.FBLogin"
             android:label="@string/title_activity_fblogin" >
