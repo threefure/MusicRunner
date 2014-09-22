@@ -84,5 +84,6 @@
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
+    <string name="title_activity_running_dotted_line">RunningDottedLine</string>
 
 </resources>

@@ -3,6 +3,9 @@ package com.amk2.musicrunner.running;
 import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.views.MusicRunnerLineRunningView;
 
 import java.util.AbstractMap;
 
@@ -18,7 +22,8 @@ import java.util.AbstractMap;
  */
 public class DistanceFragment extends Fragment {
 
-    //WebView animation;
+    private MusicRunnerLineRunningView dottedLineView;
+    private int p_speed = 50;
 
     public interface OnBackToDistanceListener {
         void onBackToDistance();
@@ -32,7 +37,23 @@ public class DistanceFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //AnimationDrawable am = (AnimationDrawable) getView().getResources().getDrawable(R.drawable.running_animation);
+        dottedLineView = (MusicRunnerLineRunningView) getView().findViewById(R.id.music_runner_line_running_view);
+        distanceFragmentThread.start();
     }
+
+    Thread distanceFragmentThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    dottedLineView.postInvalidate();
+                    Thread.sleep(p_speed);
+                } catch (Exception e) {
+                    e.getLocalizedMessage();
+                }
+            }
+        }
+    });
+
 
 }
