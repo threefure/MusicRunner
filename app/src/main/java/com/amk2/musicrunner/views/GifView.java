@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Movie;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -13,31 +12,21 @@ import android.webkit.WebView;
 
 import com.amk2.musicrunner.R;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Modifier;
 
 /**
  * Created by ktlee on 9/16/14.
  */
-public class GifView extends WebView {
-    public GifView(Context context) {
-        super(context);
-        //Uri path = Uri.parse("android.resource://" + context.getPackageName() + "/running_gif.gif");
-        String path = "file:///android_asset/running_gif.gif";
-        loadUrl(path.toString());
-    }
-    public GifView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        //Uri path = Uri.parse("android.resource://" + context.getPackageName() + "/running_gif.gif");
-        String path = "file:///android_asset/running_gif.gif";
-        loadUrl(path);
-    }
-    /*
+public class GifView extends View {
+    Integer duration;
+    Integer movieDuration;
     Integer gifSrcId;
-    long movieTime;
+    Integer movieWidth;
+    Integer movieHeight;
+    Long movieStart;
 
-    Movie movie;
+
+    Movie gifMovie;
     public GifView(Context context) {
         super(context);
     }
@@ -46,44 +35,55 @@ public class GifView extends WebView {
         super(context, attrs);
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GifView, 0, 0);
         try {
-            gifSrcId = ta.getIndex(R.styleable.GifView_gif_src);
+            gifSrcId = ta.getResourceId(R.styleable.GifView_gif_src, 0);
         } finally {
             ta.recycle();
         }
-
-        init();
+        if (!isInEditMode()) {
+            init();
+        }
     }
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(movieWidth, movieHeight);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.TRANSPARENT);
         super.onDraw(canvas);
 
+        if (!isInEditMode()) {
+            canvas.drawColor(Color.TRANSPARENT);
+            long now = android.os.SystemClock.uptimeMillis();
+            if (gifMovie != null) {
+                if (movieStart == 0) {
+                    movieStart = now;
+                }
 
-        long now = android.os.SystemClock.uptimeMillis();
-        if (movieTime == 0) {
-            movieTime = now;
-        }
-        if (movie != null) {
-            int relTime = (int) ((now - movieTime) % movie.duration());
-            movie.setTime(relTime);
-            movie.draw(canvas, 10, 10);
-            this.invalidate();
+                duration = gifMovie.duration();
+                if (duration == 0) {
+                    duration = 1000;
+                }
+                int relTime = (int) ((now - movieStart) % duration);
+                gifMovie.setTime(relTime);
+                gifMovie.draw(canvas, 0, 0);
+                this.invalidate();
+            }
         }
     }
 
     public void init() {
-        Log.d("dadfaasdf", "Adfafsdfadfasdf");
-        movieTime = 0;
-        InputStream is = getContext().getResources().openRawResource(R.raw.running_gif);
-        movie = Movie.decodeStream(is);
-
-    }*/
-
-
+        if (gifSrcId != 0) {
+            InputStream is = getContext().getResources().openRawResource(gifSrcId);
+            gifMovie = Movie.decodeStream(is);
+            movieWidth = gifMovie.width();
+            movieHeight = gifMovie.height();
+            movieDuration = gifMovie.duration();
+            movieStart = Long.valueOf(0);
+        } else {
+            movieWidth = 0;
+            movieHeight = 0;
+        }
+    }
 }
