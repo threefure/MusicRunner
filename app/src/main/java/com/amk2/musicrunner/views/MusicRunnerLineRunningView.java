@@ -22,7 +22,7 @@ import static java.lang.Thread.sleep;
 public class MusicRunnerLineRunningView extends View {
 
 
-    private int p_rectColor         = Color.BLACK;
+    private int p_rectColor         = Color.WHITE;
     private int p_backGroundColor   = Color.GRAY;
     private int p_viewWidth         = 0;
     private int p_viewHeight        = 0;
