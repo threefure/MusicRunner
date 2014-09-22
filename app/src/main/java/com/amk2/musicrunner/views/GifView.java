@@ -39,9 +39,7 @@ public class GifView extends View {
         } finally {
             ta.recycle();
         }
-        if (!isInEditMode()) {
-            init();
-        }
+        init();
     }
 
     @Override

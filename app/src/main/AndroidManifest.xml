@@ -45,8 +45,7 @@
         <activity
             android:name=".main.MusicRunnerActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:hardwareAccelerated="false">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,7 +92,8 @@
 
         <activity
             android:name=".running.RunningActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="false" />
         <activity
             android:name=".finish.FinishRunningActivity"
             android:screenOrientation="portrait" />
