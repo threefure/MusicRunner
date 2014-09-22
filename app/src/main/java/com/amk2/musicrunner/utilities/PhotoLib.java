@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.utilities;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,6 +28,26 @@ public class PhotoLib {
         bmOptions.inPurgeable = true;
 
         return BitmapFactory.decodeFile(photoPath, bmOptions);
+    }
+
+    public static Bitmap resizeToFitTarget (Resources res, int id, int targetWidth, int targetHeight) {
+        Log.d("target", targetWidth + " " + targetHeight + "");
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeResource(res, id, bmOptions);
+        int photoWidth  = bmOptions.outWidth;
+        int photoHeight = bmOptions.outHeight;
+        Log.d("source", photoWidth + " " + photoWidth + "");
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoWidth/targetWidth, photoHeight/targetHeight);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        return BitmapFactory.decodeResource(res, id, bmOptions);
     }
     /*
     private void setPic() {

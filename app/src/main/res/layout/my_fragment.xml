@@ -108,105 +108,131 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:text="Duration"
-                        style="@style/My.Subtitle"/>
-                    <TextView
-                        android:id="@+id/my_weekly_duration"
-                        android:text="00 : 00 : 12"
-                        style="@style/My.Number"/>
-                    <TextView
-                        android:text=""
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp">
+                    <LinearLayout
+                        style="@style/Music.RankGeneralBox">
+                        <TextView
+                            android:text="Pace"
+                            android:textStyle="bold"
+                            style="@style/Music.RangGeneralBoxText" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/my_weekly_speed"
+                                android:text="0"
+                                android:layout_marginRight="4dp"
+                                style="@style/Music.RangGeneralBoxText" />
+                            <TextView
+                                android:text="min/km"
+                                style="@style/Music.RangGeneralBoxText"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Music.RankGeneralBox">
+                        <TextView
+                            android:text="Distance"
+                            android:textStyle="bold"
+                            style="@style/Music.RangGeneralBoxText" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/my_weekly_distance"
+                                android:text="0.0"
+                                android:layout_marginRight="4dp"
+                                style="@style/Music.RangGeneralBoxText"/>
+                            <TextView
+                                android:text="km"
+                                style="@style/Music.RangGeneralBoxText"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:text="Times"
-                        style="@style/My.Subtitle" />
-                    <TextView
-                        android:id="@+id/my_weekly_times"
-                        android:text="3"
-                        style="@style/My.Number" />
-                    <TextView
-                        android:text="times"
-                        style="@style/My.Subtitle" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:text="Distance"
-                        style="@style/My.Subtitle" />
-                    <TextView
-                        android:id="@+id/my_weekly_distance"
-                        android:text="3"
-                        style="@style/My.Number" />
-                    <TextView
-                        android:text="km"
-                        style="@style/My.Subtitle" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:text="Calories"
-                        style="@style/My.Subtitle" />
-                    <TextView
-                        android:id="@+id/my_weekly_calories"
-                        android:text="333"
-                        style="@style/My.Number" />
-                    <TextView
-                        android:text="kcal"
-                        style="@style/My.Subtitle" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-                    <TextView
-                        android:text="Speed"
-                        style="@style/My.Subtitle" />
-                    <TextView
-                        android:id="@+id/my_weekly_speed"
-                        android:text="11"
-                        style="@style/My.Number" />
-                    <TextView
-                        android:text="min/km"
-                        style="@style/My.Subtitle" />
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp">
+                    <LinearLayout
+                        style="@style/Music.RankGeneralBox">
+                        <ImageView
+                            android:src="@drawable/times"
+                            style="@style/Music.RankGeneralBoxIcon"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/my_weekly_times"
+                                android:text="0"
+                                android:layout_marginRight="4dp"
+                                style="@style/Music.RangGeneralBoxText" />
+                            <TextView
+                                android:text="times"
+                                style="@style/Music.RangGeneralBoxText"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Music.RankGeneralBox">
+                        <ImageView
+                            android:src="@drawable/clock"
+                            style="@style/Music.RankGeneralBoxIcon" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/my_weekly_duration"
+                                android:text="00 : 00 : 00"
+                                style="@style/Music.RangGeneralBoxText"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Music.RankGeneralBox">
+                        <ImageView
+                            android:src="@drawable/burning"
+                            style="@style/Music.RankGeneralBoxIcon" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/my_weekly_calories"
+                                android:text="0.0"
+                                android:layout_marginRight="4dp"
+                                style="@style/Music.RangGeneralBoxText" />
+                            <TextView
+                                android:text="@string/kcal"
+                                style="@style/Music.RangGeneralBoxText"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
             <RelativeLayout
                 android:id="@+id/my_past_activities"
                 android:background="@drawable/music_runner_clickable_card"
                 style="@style/My.Card">
+                <ImageView
+                    android:src="@drawable/calendar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"/>
                 <TextView
                     android:text="Past Activities"
                     android:textSize="20dp"
                     android:textStyle="bold"
                     android:layout_marginTop="14dp"
                     android:layout_marginBottom="14dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_centerInParent="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <TextView
-                    android:text=">"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
+
+                <ImageView
+                    android:src="@drawable/right_arrow"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginRight="15dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
             <RelativeLayout
                 style="@style/My.Card"

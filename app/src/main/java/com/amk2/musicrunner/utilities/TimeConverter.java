@@ -10,9 +10,13 @@ import java.util.Locale;
  * Created by daz on 2014/6/24.
  */
 public class TimeConverter {
-    public static String SECOND = "sec";
-    public static String MINUTE = "min";
-    public static String HOUR   = "hr";
+    public static final String SECOND = "sec";
+    public static final String MINUTE = "min";
+    public static final String HOUR   = "hr";
+    public static final int MIDNIGHT  = 0;
+    public static final int MORNING   = 1;
+    public static final int AFTERNOON = 2;
+    public static final int NIGHT     = 3;
     public static HashMap<String, Integer> getReadableTimeFormatFromSeconds(int seconds) {
         int actualSec  = 0;
         int actualMin  = 0;
@@ -71,16 +75,16 @@ public class TimeConverter {
         return dateString;
     }
 
-    public static String getDayPeriod (int hour) {
-        String dayPeriod;
+    public static int getDayPeriod (int hour) {
+        int dayPeriod;
         if (hour < 6) {
-            dayPeriod = "Midnight";
+            dayPeriod = MIDNIGHT;
         } else if (hour >= 6 && hour < 12) {
-            dayPeriod = "Morning";
+            dayPeriod = MORNING;
         } else if (hour >= 12 && hour < 18) {
-            dayPeriod = "Afternoon";
+            dayPeriod = AFTERNOON;
         } else {
-            dayPeriod = "Night";
+            dayPeriod = NIGHT;
         }
         return dayPeriod;
     }

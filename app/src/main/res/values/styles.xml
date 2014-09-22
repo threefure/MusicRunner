@@ -108,18 +108,18 @@
         <item name="android:textStyle">bold</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">10dp</item>
+        <item name="android:layout_margin">20dp</item>
     </style>
 
     <style name="My.BarTitle">
         <item name="android:textColor">@color/my_subtitle</item>
-        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="My.Bar" parent="android:Widget.ProgressBar.Horizontal">
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">20dp</item>
     </style>
@@ -128,7 +128,7 @@
         <item name="android:textColor">@color/my_subtitle</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:layout_gravity">right</item>
     </style>
@@ -152,7 +152,7 @@
     <style name="My.Card">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/music_runner_green_border</item>
+        <item name="android:background">@drawable/music_runner_green_border_with_gray_bg</item>
     </style>
 
     <style name="Music"></style>

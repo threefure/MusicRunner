@@ -160,9 +160,26 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         calendar = Calendar.getInstance();
         timeInMillis = calendar.getTimeInMillis();
 
-        String dayPeriod, dateString, timeString;
+        String dayPeriodString, dateString, timeString;
+        Integer dayPeriod;
         dayPeriod = TimeConverter.getDayPeriod(calendar.get(Calendar.HOUR_OF_DAY));
-        timeString = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US) + " " + dayPeriod;
+        switch (dayPeriod) {
+            case TimeConverter.MIDNIGHT:
+                dayPeriodString = "Midnight";
+                break;
+            case TimeConverter.NIGHT:
+                dayPeriodString = "Night";
+                break;
+            case TimeConverter.MORNING:
+                dayPeriodString = "Morning";
+                break;
+            case TimeConverter.AFTERNOON:
+                dayPeriodString = "Afternoon";
+                break;
+            default:
+                dayPeriodString = "";
+        }
+        timeString = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US) + " " + dayPeriodString;
         dateString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " + calendar.get(Calendar.DAY_OF_MONTH);
         finishDateTextView.setText(dateString);
         finishTimeTextView.setText(timeString);

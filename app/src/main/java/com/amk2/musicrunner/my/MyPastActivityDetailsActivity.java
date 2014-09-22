@@ -116,7 +116,8 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         long timeInMillis;
         String timeInMillisString, durationString;
         String distance, calories, speed, route;
-        String dayPeriod, dateString, timeString;
+        String dayPeriodString, dateString, timeString;
+        Integer dayPeriod;
         Calendar calendar = Calendar.getInstance();
 
         String[] projection = {
@@ -144,8 +145,24 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
 
         calendar.setTimeInMillis(timeInMillis);
         dayPeriod = TimeConverter.getDayPeriod(calendar.get(Calendar.HOUR_OF_DAY));
+        switch (dayPeriod) {
+            case TimeConverter.MIDNIGHT:
+                dayPeriodString = "Midnight";
+                break;
+            case TimeConverter.NIGHT:
+                dayPeriodString = "Night";
+                break;
+            case TimeConverter.MORNING:
+                dayPeriodString = "Morning";
+                break;
+            case TimeConverter.AFTERNOON:
+                dayPeriodString = "Afternoon";
+                break;
+            default:
+                dayPeriodString = "";
+        }
         dateString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " + calendar.get(Calendar.DAY_OF_MONTH);
-        timeString = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US) + " " + dayPeriod;
+        timeString = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US) + " " + dayPeriodString;
         dateTextView.setText(dateString);
         timeTextView.setText(timeString);
 

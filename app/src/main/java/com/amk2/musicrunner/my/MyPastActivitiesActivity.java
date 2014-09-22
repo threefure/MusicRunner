@@ -86,9 +86,12 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
     private void addPastActivity(Integer eventId, Integer duration, String distance, String currentEpoch, String photoPath) {
         View pastActivity = inflater.inflate(R.layout.my_past_activity_template, null);
         ImageView photoImageView = (ImageView) pastActivity.findViewById(R.id.my_past_activity_photo);
-        TextView summaryTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_summary);
-        TextView dateTextView    = (TextView) pastActivity.findViewById(R.id.my_past_activity_date);
-        String summaryString, dateString, dayPeriod;
+        ImageView dayConditionImageView = (ImageView) pastActivity.findViewById(R.id.my_past_activity_day_condition);
+        TextView dateTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_date);
+        TextView durationTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_duration);
+        TextView distanceTextView = (TextView) pastActivity.findViewById(R.id.my_past_activity_distance);
+        String dateString;
+        Integer dayPeriod, dayConditionId;
 
         Calendar date = Calendar.getInstance();
 
@@ -97,14 +100,30 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
             photoImageView.setImageBitmap(resizedPhoto);
         }
 
-        summaryString = distance + " km  |  " + TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
-        summaryTextView.setText(summaryString);
+        durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration)));
+        distanceTextView.setText(distance);
 
         date.setTimeInMillis(Long.parseLong(currentEpoch));
-        dayPeriod = TimeConverter.getDayPeriod(date.get(Calendar.HOUR_OF_DAY));
-
-        dateString = date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US) + " " + dayPeriod + ", " + date.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US) + " " + date.get(Calendar.DAY_OF_MONTH);
+        dateString = (date.get(Calendar.MONTH) + 1) + "/" + date.get(Calendar.DAY_OF_MONTH) + " " + date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
         dateTextView.setText(dateString);
+
+        dayPeriod = TimeConverter.getDayPeriod(date.get(Calendar.HOUR_OF_DAY));
+        switch (dayPeriod) {
+            case TimeConverter.MIDNIGHT:
+            case TimeConverter.NIGHT:
+                dayConditionId = R.drawable.night;
+                break;
+            case TimeConverter.MORNING:
+                dayConditionId = R.drawable.morning;
+                break;
+            case TimeConverter.AFTERNOON:
+                dayConditionId = R.drawable.afternoon;
+                break;
+            default:
+                dayConditionId = 0;
+        }
+        Bitmap resizedPhoto2 = PhotoLib.resizeToFitTarget(getResources(), dayConditionId, dayConditionImageView.getLayoutParams().width, dayConditionImageView.getLayoutParams().height);
+        dayConditionImageView.setImageBitmap(resizedPhoto2);
 
         pastActivity.setTag(eventId);
         pastActivity.setOnClickListener(this);
