@@ -23,7 +23,16 @@ import java.util.AbstractMap;
 public class DistanceFragment extends Fragment {
 
     private MusicRunnerLineRunningView dottedLineView;
-    private int p_speed = 50;
+
+    public int getP_speed() {
+        return p_speed;
+    }
+
+    public void setP_speed(int p_speed) {
+        this.p_speed = p_speed;
+    }
+
+    private int p_speed = 10;
 
     public interface OnBackToDistanceListener {
         void onBackToDistance();
@@ -39,6 +48,12 @@ public class DistanceFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         dottedLineView = (MusicRunnerLineRunningView) getView().findViewById(R.id.music_runner_line_running_view);
         distanceFragmentThread.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        dottedLineView.clearState();
     }
 
     Thread distanceFragmentThread = new Thread(new Runnable() {
