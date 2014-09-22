@@ -144,7 +144,9 @@ public class MusicRankDetailActivity extends Activity {
         Uri songUri = MusicLib.getMusicUri(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
         String songPath = MusicLib.getMusicFilePath(getApplicationContext(), songUri);
         Bitmap albumPhoto = MusicLib.getMusicAlbumArt(songPath);
-        albumPhotoImageView.setImageBitmap(albumPhoto);
+        if (albumPhoto != null) {
+            albumPhotoImageView.setImageBitmap(albumPhoto);
+        }
     }
 
     @Override

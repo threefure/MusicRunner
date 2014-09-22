@@ -123,7 +123,9 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
         Uri songUri = MusicLib.getMusicUri(sp.realSongId);
         String songPath = MusicLib.getMusicFilePath(getActivity(), songUri);
         Bitmap albumPhoto = MusicLib.getMusicAlbumArt(songPath);
-        albumPhotoImageView.setImageBitmap(albumPhoto);
+        if (albumPhoto != null) {
+            albumPhotoImageView.setImageBitmap(albumPhoto);
+        }
 
         songRankTemplate.setTag(sp.songId);
         songRankTemplate.setOnClickListener(this);

@@ -42,7 +42,7 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/album_photo"
-                android:src="@drawable/maroon5"
+                android:src="@drawable/initial_photo"
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_marginLeft="20dp"/>
