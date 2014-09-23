@@ -3,12 +3,12 @@ package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.RunningTabContentFactory;
-import com.amk2.musicrunner.music.MusicFragment;
+import com.amk2.musicrunner.music.MusicRankFragment;
+import com.amk2.musicrunner.musiclist.MusicListFragment;
 import com.amk2.musicrunner.my.MyFragment;
 //import com.amk2.musicrunner.my.PastRecordFragment;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.start.StartFragment;
-import com.amk2.musicrunner.weather.WeatherFragment;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -49,8 +49,9 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private StartFragment mStartFragment;
     private MyFragment mMyFragment;
     //private PastRecordFragment mPastRecordFragment;
-    private MusicFragment mMusicFragment;
-    private WeatherFragment mWeatherFragment;
+    private MusicListFragment mMusicListFragment;
+    private MusicRankFragment mMusicRankFragment;
+    //private WeatherFragment mWeatherFragment;
     //private DiscoverFragment mDiscoverFragment;
     //private SettingFragment mSettingFragment;
 
@@ -59,23 +60,24 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     public static class TabState {
         public static final int START = 0;
         public static final int MY = 1;
-        public static final int MUSIC = 2;
-        public static final int WEATHER = 3;
+        public static final int MUSIC_LIST = 2;
+        public static final int MUSIC_RANK = 3;
     }
 
     public static class TabTag {
         public static final String START_TAB_TAG = "start_tab_tag";
         public static final String MY_TAB_TAG = "my_tab_tag";
-        public static final String MUSIC_TAB_TAG = "setting_tab_tag";
-        public static final String WEATHER_TAB_TAG = "music_tab_tag";
+        public static final String MUSIC_LIST_TAB_TAG = "music_list_tab_tag";
+        public static final String MUSIC_RANK_TAB_TAG = "setting_tab_tag";
     }
 
     public static class FragmentTag {
         public static final String START_FRAGMENT_TAG = "start_fragment";
         public static final String MY_FRAGMENT_TAG = "my_fragment";
-        public static final String PAST_RECORD_FRAGMENT_TAG = "past_record_fragment";
-        public static final String MUSIC_FRAGMENT_TAG = "music_fragment";
-        public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
+        //public static final String PAST_RECORD_FRAGMENT_TAG = "past_record_fragment";
+        public static final String MUSIC_LIST_FRAGMENT_TAG = "music_list_fragment";
+        public static final String MUSIC_RANK_FRAGMENT_TAG = "music_rank_fragment";
+        //public static final String WEATHER_FRAGMENT_TAG = "weather_fragment";
         //public static final String DISCOVER_FRAGMENT_TAG = "discover_fragment";
     }
 
@@ -106,13 +108,69 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
         mActionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(Gravity.CENTER));
     }
 
+    /**
+     * Create all fragments and add as children of the view pager. The pager
+     * adapter will only change the visibility(show/hide). It'll never
+     * create/destroy fragments. If it's after screen rotation, the fragment
+     * have been recreated by the FragmentManager. So first see if there're
+     * already the target fragment existing.
+     */
+    private void initFragments() {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+        // Init StartFragment
+        mStartFragment = (StartFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.START_FRAGMENT_TAG);
+        if (mStartFragment == null) {
+            mStartFragment = new StartFragment();
+            transaction.add(R.id.tab_pager, mStartFragment, FragmentTag.START_FRAGMENT_TAG);
+        }
+
+        // Init MyFragment
+        mMyFragment = (MyFragment) mFragmentManager.findFragmentByTag(FragmentTag.MY_FRAGMENT_TAG);
+        if (mMyFragment == null) {
+            mMyFragment = new MyFragment();
+            transaction.add(R.id.tab_pager, mMyFragment, FragmentTag.MY_FRAGMENT_TAG);
+        }
+
+        // Init MusicListFragment
+        mMusicListFragment = (MusicListFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.MUSIC_LIST_FRAGMENT_TAG);
+        if (mMusicListFragment == null) {
+            mMusicListFragment = new MusicListFragment();
+            transaction.add(R.id.tab_pager, mMusicListFragment, FragmentTag.MUSIC_LIST_FRAGMENT_TAG);
+        }
+
+        // Init MusicRankFragment
+        mMusicRankFragment = (MusicRankFragment) mFragmentManager
+                .findFragmentByTag(FragmentTag.MUSIC_RANK_FRAGMENT_TAG);
+        if (mMusicRankFragment == null) {
+            mMusicRankFragment = new MusicRankFragment();
+            transaction.add(R.id.tab_pager, mMusicRankFragment, FragmentTag.MUSIC_RANK_FRAGMENT_TAG);
+        }
+
+        transaction.hide(mStartFragment);
+        transaction.hide(mMyFragment);
+        transaction.hide(mMusicListFragment);
+        transaction.hide(mMusicRankFragment);
+        transaction.commit();
+    }
+
+    private void initViewPager() {
+        mViewPager = (SwipeControllableViewPager) mMainActivity.findViewById(R.id.tab_pager);
+        mMainPagerAdapter = new MainTabViewPagerAdapter(mFragmentManager,TAB_SIZE);
+        mViewPager.setAdapter(mMainPagerAdapter);
+        mViewPager.setSwipeable(true);
+        mViewPager.setOnPageChangeListener(this);
+    }
+
     private void initTabs() {
         mTabHost = (TabHost)mMainActivity.findViewById(android.R.id.tabhost);
         mTabHost.setup();
         addTab(TabTag.START_TAB_TAG);
         addTab(TabTag.MY_TAB_TAG);
-        addTab(TabTag.MUSIC_TAB_TAG);
-        addTab(TabTag.WEATHER_TAB_TAG);
+        addTab(TabTag.MUSIC_LIST_TAB_TAG);
+        addTab(TabTag.MUSIC_RANK_TAB_TAG);
         mTabHost.setOnTabChangedListener(this);
         setTabClickListener();
     }
@@ -140,20 +198,20 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 }
             });
 
-            // Music
-            mTabHost.getTabWidget().getChildTabViewAt(TabState.MUSIC).setOnClickListener(new View.OnClickListener() {
+            // Music list
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.MUSIC_LIST).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mViewPager.setCurrentItem(TabState.MUSIC);
+                    mViewPager.setCurrentItem(TabState.MUSIC_LIST);
                     Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
                 }
             });
 
-            // Weather
-            mTabHost.getTabWidget().getChildTabViewAt(TabState.WEATHER).setOnClickListener(new View.OnClickListener() {
+            // Music rank
+            mTabHost.getTabWidget().getChildTabViewAt(TabState.MUSIC_RANK).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mViewPager.setCurrentItem(TabState.WEATHER);
+                    mViewPager.setCurrentItem(TabState.MUSIC_RANK);
                     Log.d(TAG, "Set current position = " + mTabHost.getCurrentTab());
                 }
             });
@@ -173,70 +231,12 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             tabView = layoutInflater.inflate(R.layout.start_tab, null);
         } else if(TabTag.MY_TAB_TAG.equals(tag)) {
             tabView = layoutInflater.inflate(R.layout.my_tab, null);
-
-        } else if(TabTag.MUSIC_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.music_tab, null);
-
-        } else if(TabTag.WEATHER_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.weather_tab, null);
+        } else if(TabTag.MUSIC_LIST_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.music_list_tab, null);
+        } else if(TabTag.MUSIC_RANK_TAB_TAG.equals(tag)) {
+            tabView = layoutInflater.inflate(R.layout.music_rank_tab, null);
         }
         return tabView;
-    }
-
-    /**
-     * Create all fragments and add as children of the view pager. The pager
-     * adapter will only change the visibility(show/hide). It'll never
-     * create/destroy fragments. If it's after screen rotation, the fragment
-     * have been recreated by the FragmentManager. So first see if there're
-     * already the target fragment existing.
-     */
-    private void initFragments() {
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-
-        // Init StartFragment
-        mStartFragment = (StartFragment) mFragmentManager
-                .findFragmentByTag(FragmentTag.START_FRAGMENT_TAG);
-        if (mStartFragment == null) {
-            mStartFragment = new StartFragment();
-            transaction.add(R.id.tab_pager, mStartFragment, FragmentTag.START_FRAGMENT_TAG);
-        }
-
-        // Init MyFragment
-        mMyFragment = (MyFragment) mFragmentManager.findFragmentByTag(FragmentTag.MY_FRAGMENT_TAG);
-        if (mMyFragment == null) {
-            mMyFragment = new MyFragment();
-            transaction.add(R.id.tab_pager, mMyFragment, FragmentTag.MY_FRAGMENT_TAG);
-        }
-
-        // Init MusicFragment
-        mMusicFragment = (MusicFragment) mFragmentManager
-                .findFragmentByTag(FragmentTag.MUSIC_FRAGMENT_TAG);
-        if (mMusicFragment == null) {
-            mMusicFragment = new MusicFragment();
-            transaction.add(R.id.tab_pager, mMusicFragment, FragmentTag.MUSIC_FRAGMENT_TAG);
-        }
-
-        // Init WeatherFragment
-        mWeatherFragment = (WeatherFragment) mFragmentManager
-                .findFragmentByTag(FragmentTag.WEATHER_FRAGMENT_TAG);
-        if (mWeatherFragment == null) {
-            mWeatherFragment = new WeatherFragment();
-            transaction.add(R.id.tab_pager, mWeatherFragment, FragmentTag.WEATHER_FRAGMENT_TAG);
-        }
-
-        transaction.hide(mStartFragment);
-        transaction.hide(mMyFragment);
-        transaction.hide(mMusicFragment);
-        transaction.hide(mWeatherFragment);
-        transaction.commit();
-    }
-
-    private void initViewPager() {
-        mViewPager = (SwipeControllableViewPager) mMainActivity.findViewById(R.id.tab_pager);
-        mMainPagerAdapter = new MainTabViewPagerAdapter(mFragmentManager,TAB_SIZE);
-        mViewPager.setAdapter(mMainPagerAdapter);
-        mViewPager.setSwipeable(true);
-        mViewPager.setOnPageChangeListener(this);
     }
 
     public void onActivityRestoreInstanceState(Bundle savedInstanceState) {
@@ -272,10 +272,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                     mViewPager.setCurrentItem(TabState.START);
                 //}
                 break;
-            case TabState.WEATHER:
+            case TabState.MUSIC_LIST:
                 mViewPager.setCurrentItem(TabState.START);
                 break;
-            case TabState.MUSIC:
+            case TabState.MUSIC_RANK:
                 mViewPager.setCurrentItem(TabState.START);
                 break;
         }
@@ -311,10 +311,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                         mFragmentAtMyTab = mMyFragment;
                     }
                     return mFragmentAtMyTab;
-                case TabState.WEATHER:
-                    return mWeatherFragment;
-                case TabState.MUSIC:
-                    return mMusicFragment;
+                case TabState.MUSIC_LIST:
+                    return mMusicListFragment;
+                case TabState.MUSIC_RANK:
+                    return mMusicRankFragment;
             }
             return null;
         }

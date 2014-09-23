@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Created by logicmelody on 2014/8/30.
  */
-public class MusicFragment extends Fragment implements View.OnClickListener{
+public class MusicRankFragment extends Fragment implements View.OnClickListener{
     private double performanceRangeOffset = 0.0001;
 
     private Double totalCalories;
@@ -45,7 +45,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.music_fragment, container, false);
+        View v = inflater.inflate(R.layout.music_rank_fragment, container, false);
         return v;
     }
 

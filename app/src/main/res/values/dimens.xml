@@ -11,7 +11,7 @@
 
     <!-- Main Activity tab view -->
     <dimen name="tab_widget_height">58dp</dimen>
-    <dimen name="tab_icon_width_height">35dp</dimen>
+    <dimen name="tab_icon_width_height">40dp</dimen>
     <dimen name="tab_text_size">10dp</dimen>
     <dimen name="tab_content_mpadding_top_bottom">3dp</dimen>
 

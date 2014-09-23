@@ -6,6 +6,6 @@
     <ImageView
         android:layout_width="@dimen/tab_icon_width_height"
         android:layout_height="@dimen/tab_icon_width_height"
-        android:src="@drawable/main_music_tab_icon_selector"/>
+        android:src="@drawable/main_music_rank_tab_icon_selector"/>
 
 </LinearLayout>
