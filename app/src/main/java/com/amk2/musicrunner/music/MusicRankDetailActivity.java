@@ -108,7 +108,7 @@ public class MusicRankDetailActivity extends Activity {
             speed        = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
 
             tempCalories = Double.parseDouble(calories);
-            performance  = tempCalories*60/duration.doubleValue();
+            performance  = tempCalories*60*1000/duration.doubleValue();
             if (performance > bestPerformance) {
                 bestPerformance = performance;
                 bestEpoch = currentEpoch;
@@ -116,7 +116,7 @@ public class MusicRankDetailActivity extends Activity {
 
             totalCalories += tempCalories;
             totalDistance += Double.parseDouble(distance);
-            totalDuration += duration;
+            totalDuration += (duration/1000);
             times ++;
         }
 

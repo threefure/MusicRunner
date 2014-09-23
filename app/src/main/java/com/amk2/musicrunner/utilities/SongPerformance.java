@@ -10,7 +10,7 @@ import java.util.Comparator;
  */
 public class SongPerformance implements Parcelable, Comparator<SongPerformance>, Comparable<SongPerformance>{
 
-    public Integer duration;
+    public Integer duration; // in ms
     public Integer times;
     public Integer songId;
     public Long realSongId;
@@ -44,8 +44,8 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         duration    = dur;
         distance    = dis;
         calories    = cal;
-        performance = calories*60 / duration;
-        speed       = distance*60 / duration;
+        performance = calories*60000 / duration;
+        speed       = distance*60000 / duration;
         name        = n;
         artist      = ar;
     }
@@ -55,7 +55,7 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         duration    = dur;
         distance    = dis;
         calories    = cal;
-        performance = calories*60 / duration;
+        performance = calories*60000 / duration;
         speed       = sp;
         name        = n;
         artist      = ar;
@@ -66,7 +66,7 @@ public class SongPerformance implements Parcelable, Comparator<SongPerformance>,
         duration += dur;
         distance += dis;
         calories += cal;
-        speed     = distance*60 / duration;
+        speed     = distance*60000 / duration;
     }
 
     public void setSongId (Integer id) {
