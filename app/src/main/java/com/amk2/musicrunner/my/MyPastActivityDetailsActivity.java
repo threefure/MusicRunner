@@ -121,24 +121,26 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         Calendar calendar = Calendar.getInstance();
 
         String[] projection = {
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH
+                MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND,
+                MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
+                MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
+                MusicRunnerRunningEventDB.COLUMN_NAME_SPEED,
+                MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH,
+                MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE
         };
-        String selection = MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_ID + " = ?";
+        String selection = MusicRunnerRunningEventDB.COLUMN_NAME_ID + " = ?";
         String[] selectionArgs = { eventId.toString() };
 
-        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, projection, selection, selectionArgs, null);
+        Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, selection, selectionArgs, null);
         cursor.moveToFirst();
-        duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
-        timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-        distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
-        calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
-        speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
-        photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
+        duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
+        timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+        distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+        calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
+        speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
+        photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
+        route              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE));
 
         timeInMillis   = Long.parseLong(timeInMillisString);
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
@@ -182,6 +184,11 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         if (songPerformanceArrayList != null) {
             musicRunnerLineMapView.setMusicJoints(songPerformanceArrayList);
         }
+
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mLocationList = LocationUtils.parseRouteToLocation(route);
+        mColorList = LocationUtils.parseRouteColor(route);
+        mDrawRoute();
     }
 
     private void fetchSongPerformance() {
@@ -281,7 +288,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
     private void mDrawRoute() {
         if(mLocationList == null)
             return;
-        
+
         if(mLocationList.size() > 0) {
             LatLng lastPosition = null;
 

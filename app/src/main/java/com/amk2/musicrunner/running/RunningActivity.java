@@ -93,6 +93,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private boolean isRunning = true;
     private int totalSec   = 0;
     private int actualSec  = 0;
+    private int actualMin  = 0;
     private Integer previousSongStartTime    = 0;
     private Double previousSongStartCalories = 0.0;
     private Double previousSongEndDistance = 0.0;
@@ -253,16 +254,16 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     durationTextView.setText(durationString);
 
                     //update distance
-                    distance += 0.1;
-                    //distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    //distance += 0.1;
+                    distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     distanceString = distance.toString();
                     distanceString = StringLib.truncateDoubleString(distanceString, 2);
                     distanceTextView.setText(distanceString);
 
                     //update calorie
                     //calorie += 0.1;
-                    //calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
-                    calorie = calculateCalories(totalSec, distance);
+                    calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
+                    //calorie = calculateCalories(totalSec, distance);
                     calorieString = calorie.toString();
                     calorieString = StringLib.truncateDoubleString(calorieString, 2);
                     calorieTextView.setText(calorieString);
@@ -270,6 +271,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     //update ratio
                     //running_speed += 0.01;
                     if (distance > 0) {
+                        //speed = ((double) totalSec / 60)/distance;//MapFragmentRun.getmSpeed();
                         speed = ((double) totalSec / 60)/distance;//MapFragmentRun.getmSpeed();
                     }
                     speedString = speed.toString();
@@ -277,8 +279,9 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     speedTextView.setText(speedString);
 
                     actualSec = totalSec % 60;
+                    actualMin = totalSec / 60;
                     if (actualSec % Constant.ONE_MINUTE == 0) {
-                        //notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
+                        notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;
             }

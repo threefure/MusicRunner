@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"/>
 
     <com.amk2.musicrunner.views.GifView
-        custom:gif_src="@raw/running_gif"
+        custom:gif_src="@raw/running_noturn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>

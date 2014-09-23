@@ -76,7 +76,13 @@ public class MusicRunnerLineMapView extends View{
         int length = songPerformanceJoints.size();
         Double km = 0.0;
         for (int i = 0; i < length; i ++ ) {
-            km += songPerformanceJoints.get(i).distance;
+            if (songPerformanceJoints.get(i).distance < 1.3) {
+                km += 1.3;
+            } else {
+                km += songPerformanceJoints.get(i).distance;
+            }
+
+
         }
         lineLength = km * 100;
         height = UnitConverter.getPixelsFromDP(context, lineLength.intValue() + startY.intValue()*2);
@@ -104,12 +110,18 @@ public class MusicRunnerLineMapView extends View{
             canvas.drawCircle(toX, toY, radius, mPointPaint);
             for (int i = 0; i < length; i++) {
                 temp = UnitConverter.getPixelsFromDP(context, songPerformanceJoints.get(i).distance * 100);
-                toY = toY + temp.intValue();
+                if (temp.intValue() < 130) {
+                    toY = toY + 130;
+                } else {
+                    toY = toY + temp.intValue();
+                }
+
                 kms += songPerformanceJoints.get(i).distance;
                 canvas.drawCircle(toX, toY, radius, mPointPaint);
                 canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
-                canvas.drawText(StringLib.truncate(songPerformanceJoints.get(i).name, 15) + " " + StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
-                        toX + offsetRight.intValue(), toY, mTextPaint);
+                canvas.drawText(StringLib.truncate(songPerformanceJoints.get(i).name, 20), toX + offsetRight.intValue(), toY, mTextPaint);
+                canvas.drawText(StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
+                        toX + offsetRight.intValue(), toY + 50, mTextPaint);
             }
             canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
         }
