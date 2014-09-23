@@ -5,7 +5,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:background="@drawable/music_runner_green_border_with_gray_bg"
+        android:background="@drawable/music_runner_clickable_card"
         android:layout_width="match_parent"
         android:layout_height="135dp"
         android:orientation="vertical">
@@ -48,11 +48,12 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"/>
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="70dp"
                 android:layout_centerHorizontal="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
                 android:gravity="right"
-                android:paddingRight="20dp"
                 android:orientation="horizontal">
                 <LinearLayout
                     style="@style/Music.StatisticBox">
@@ -112,6 +113,13 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+            <ImageView
+                android:src="@drawable/right_arrow"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_alignParentRight="true" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
