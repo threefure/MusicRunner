@@ -2,148 +2,335 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <TextView
-        android:layout_weight="5"
-        android:text="Profile"
-        android:gravity="center_vertical"
-        android:background="#00000000"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     <LinearLayout
-        android:orientation="vertical"
         android:layout_weight="1"
-        android:background="@color/white"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
         <LinearLayout
             android:orientation="horizontal"
+            android:layout_weight="3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
             <TextView
-                android:layout_weight="1"
                 android:text="Account"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/setting_account"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
                 android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
         </LinearLayout>
         <ImageView
-            android:layout_gravity="left"
-            android:scaleType="fitStart"
-            android:src="@drawable/setting_separate_line"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="20dp" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:text="Full Name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/setting_fullName"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <ImageView
-            android:layout_gravity="left"
-            android:scaleType="fitStart"
-            android:src="@drawable/setting_separate_line"
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:text="Birthday"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/setting_birthday"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <ImageView
-            android:layout_gravity="left"
-            android:scaleType="fitStart"
-            android:src="@drawable/setting_separate_line"
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:text="Weight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/setting_weight"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <ImageView
-            android:layout_gravity="left"
-            android:scaleType="fitStart"
-            android:src="@drawable/setting_separate_line"
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="1"
-                android:text="Height"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <EditText
-                android:id="@+id/setting_height"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <LinearLayout
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_weight="1"
-                android:id="@+id/setting_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_weight="1"
-                android:id="@+id/setting_update"
-                android:text="Update"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:layout_weight="1"
-                android:id="@+id/setting_logout"
-                android:text="Log Out"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            android:layout_height="0dp" />
     </LinearLayout>
-    <TextView
-        android:layout_weight="5"
-        android:background="#00000000"
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Facebook"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Height"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Weight"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Audio Cue"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="12"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:text="On"
+                android:textStyle="bold"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Language"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:text="Eng"
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+            <EditText
+                android:text="中文"
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+            <EditText
+                android:text="日文"
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <TextView
+                android:text="Location"
+                android:gravity="center"
+                android:textColor="#9D6A64"
+                android:textStyle="bold"
+                android:textSize="12pt"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <EditText
+                android:textColor="#7A8681"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:background="@drawable/textlines"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
+
 </LinearLayout>
