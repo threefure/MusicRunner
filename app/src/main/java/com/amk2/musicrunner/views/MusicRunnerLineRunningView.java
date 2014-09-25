@@ -79,7 +79,7 @@ public class MusicRunnerLineRunningView extends View {
         } else {
             drawVerticalDottedLine((p_initial - (p_rectHeight + p_space)));
         }
-        p_canvas.drawBitmap(makeBitmap(R.drawable.fox),((p_viewWidth / 2) - (p_rectWidth * 2)), p_foxYPos, null);
+        //p_canvas.drawBitmap(makeBitmap(R.drawable.fox),((p_viewWidth / 2) - (p_rectWidth * 2)), p_foxYPos, null);
     }
 
     public void clearState () {

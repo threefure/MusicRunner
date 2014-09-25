@@ -14,6 +14,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.media.MediaCodec;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -33,7 +38,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public interface OnPlayingSongCompletionListener {
         void onPlayingSongCompletion(int duration);
     }
-
     private MediaPlayer mMusicPlayer;
     private ArrayList<MusicSong> mMusicSongList;
     private int mCurrentSongIndex = -1;
@@ -44,6 +48,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private Random mRand;
 
     private final IBinder mMusicBind = new MusicBinder();
+
+    private Visualizer mVisualizer;
 
     public class MusicBinder extends Binder {
         public MusicService getService() {
@@ -107,6 +113,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currSongId);
         try {
             mMusicPlayer.setDataSource(getApplicationContext(), songUri);
+            /*MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(getApplicationContext(), songUri);
+            String bitrate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
+            Log.d("Musicservice", "bitrate=" + bitrate);
+            Log.d("Musicservice", "title=" + retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+*/
+            /*MediaPlayer.TrackInfo[] ti = mMusicPlayer.getTrackInfo();
+            Log.d("Trackinfo", "length = " + ti.length);
+            for (int i = 0 ; i < ti.length; i++) {
+                Log.d("Trackinfo", "lang = " + ti[i].getLanguage());
+                Log.d("Trackinfo", "bpm = " + ti[i].getFormat().getInteger(MediaFormat.KEY_BIT_RATE));
+            }*/
         } catch (Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
@@ -245,6 +263,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mMusicPlayer.release();
         mIsPlaying = false;
         stopForeground(true);
+
+        //mVisualizer.setEnabled(false);
+        //mVisualizer.release();
     }
 
     @Override
@@ -284,6 +305,30 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        /*Log.d("dafdfadfadf", "MediaPlayer audio session ID1: " + mp.getAudioSessionId());
+        Log.d("dafdfadfadf", "visualizer rate " + Visualizer.getMaxCaptureRate());
+        if (mVisualizer!= null) {
+            mVisualizer.setEnabled(false);
+            mVisualizer.release();
+        }
+        mVisualizer=new Visualizer(mMusicPlayer.getAudioSessionId());
+        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
+        mVisualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
+            @Override
+            public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes, int i) {
+                //Log.d("daada", "waveform " + visualizer.getWaveForm(bytes));
+                int length = bytes.length;
+                for (int j = 0; j < length; j ++) {
+                    Log.d("type", j + " = " + bytes[j] + " with length=" + length);
+                }
+            }
+
+            @Override
+            public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int i) {
+
+            }
+        }, 10000, true, false);
+        mVisualizer.setEnabled(true);*/
         //setNotification();
     }
 

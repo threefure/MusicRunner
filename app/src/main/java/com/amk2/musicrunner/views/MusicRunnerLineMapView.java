@@ -28,14 +28,15 @@ public class MusicRunnerLineMapView extends View{
     private Double offsetRight;
     private Double offsetTopX;
     private Double offsetTopY;
-    private float textSize = 50;
+    private Double minimalOffsetInDP = 45.0;
+    private float textSizeInDP = 16;
     private float radius = 10;
-    private int startXInDP = 400;
-    private int startYInDP = 200;
-    private int offsetLeftInDP  = 210;
-    private int offsetRightInDP = 50;
-    private int offsetXTopInDP = 50;
-    private int offsetYTopInDP = 30;
+    private int startXInDP = 130;
+    private int startYInDP = 60;
+    private int offsetLeftInDP  = 70;
+    private int offsetRightInDP = 20;
+    private int offsetXTopInDP = 10;
+    private int offsetYTopInDP = 10;
     private Paint mTextPaint;
     private Paint mLinePaint;
     private Paint mPointPaint;
@@ -51,7 +52,7 @@ public class MusicRunnerLineMapView extends View{
     private void initialize () {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.BLACK);
-        mTextPaint.setTextSize(textSize);
+        mTextPaint.setTextSize((float)UnitConverter.getPixelsFromDP(context, textSizeInDP));
 
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mLinePaint.setColor(Color.BLACK);
@@ -74,18 +75,16 @@ public class MusicRunnerLineMapView extends View{
 
         //compute view height
         int length = songPerformanceJoints.size();
-        Double km = 0.0;
+        Double temp;
+        lineLength = 0.0;
         for (int i = 0; i < length; i ++ ) {
-            if (songPerformanceJoints.get(i).distance < 1.3) {
-                km += 1.3;
-            } else {
-                km += songPerformanceJoints.get(i).distance;
+            temp = songPerformanceJoints.get(i).distance*100;
+            if (temp < minimalOffsetInDP) {
+                temp = minimalOffsetInDP;
             }
-
-
+            lineLength += temp;
         }
-        lineLength = km * 100;
-        height = UnitConverter.getPixelsFromDP(context, lineLength.intValue() + startY.intValue()*2);
+        height = UnitConverter.getPixelsFromDP(context, lineLength.intValue() + startYInDP*2);
 
     }
 
@@ -109,19 +108,18 @@ public class MusicRunnerLineMapView extends View{
             canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
             canvas.drawCircle(toX, toY, radius, mPointPaint);
             for (int i = 0; i < length; i++) {
-                temp = UnitConverter.getPixelsFromDP(context, songPerformanceJoints.get(i).distance * 100);
-                if (temp.intValue() < 130) {
-                    toY = toY + 130;
-                } else {
-                    toY = toY + temp.intValue();
+                temp = songPerformanceJoints.get(i).distance*100;
+                if (temp < minimalOffsetInDP) {
+                    temp = UnitConverter.getPixelsFromDP(context, minimalOffsetInDP.intValue());
                 }
+                toY = toY + temp.intValue();
 
                 kms += songPerformanceJoints.get(i).distance;
                 canvas.drawCircle(toX, toY, radius, mPointPaint);
                 canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
                 canvas.drawText(StringLib.truncate(songPerformanceJoints.get(i).name, 20), toX + offsetRight.intValue(), toY, mTextPaint);
                 canvas.drawText(StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
-                        toX + offsetRight.intValue(), toY + 50, mTextPaint);
+                        toX + offsetRight.intValue(), toY + 55, mTextPaint);
             }
             canvas.drawLine(fromX, fromY, toX, toY, mLinePaint);
         }

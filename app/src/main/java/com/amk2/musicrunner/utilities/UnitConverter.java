@@ -30,7 +30,7 @@ public class UnitConverter {
     }
 
     public static double getPixelsFromDP(Context context, double dp) {
-        double pixels;
+        /*double pixels;
         DisplayMetrics metrics = new DisplayMetrics();
         WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         wm.getDefaultDisplay().getMetrics(metrics);
@@ -46,7 +46,9 @@ public class UnitConverter {
                 break;
             default:
                 pixels = dp;
-        }
+        }*/
+        final float scale = context.getResources().getDisplayMetrics().density;
+        float pixels = (int) (dp * scale + 0.5f);
         return pixels;
     }
 

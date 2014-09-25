@@ -22,7 +22,11 @@ public class MusicLib {
     public static final String ARTIST_ID = "artistId";
     public static final String SONG_REAL_ID = "songRealId";
 
-    public static Uri getMusicUri (Long id) {
+    public static Uri getMusicUri() {
+        return MUSIC_URI;
+    }
+
+    public static Uri getMusicUriWithId(Long id) {
         Uri musicUri = ContentUris.withAppendedId(MUSIC_URI, id);
         return musicUri;
     }

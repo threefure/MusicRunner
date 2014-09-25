@@ -141,7 +141,7 @@ public class MusicRankDetailActivity extends Activity {
         durationTextView.setText(durationString);
         caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
 
-        Uri songUri = MusicLib.getMusicUri(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
+        Uri songUri = MusicLib.getMusicUriWithId(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
         String songPath = MusicLib.getMusicFilePath(getApplicationContext(), songUri);
         Bitmap albumPhoto = MusicLib.getMusicAlbumArt(songPath);
         if (albumPhoto != null) {

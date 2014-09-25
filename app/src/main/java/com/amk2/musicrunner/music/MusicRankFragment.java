@@ -120,7 +120,7 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-        Uri songUri = MusicLib.getMusicUri(sp.realSongId);
+        Uri songUri = MusicLib.getMusicUriWithId(sp.realSongId);
         String songPath = MusicLib.getMusicFilePath(getActivity(), songUri);
         Bitmap albumPhoto = MusicLib.getMusicAlbumArt(songPath);
         if (albumPhoto != null) {
