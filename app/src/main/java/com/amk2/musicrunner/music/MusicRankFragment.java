@@ -175,6 +175,7 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener{
                 sp.addSongRecord(duration, Double.parseDouble(distance), Double.parseDouble(calories));
             }
         }
+        cursor.close();
         Collections.sort(songPerformanceList);
         averagePerformance = totalCalories*60/totalDuration.doubleValue();
     }

@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -68,6 +69,51 @@ public class RestfulUtility {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+            return result;
+        }
+    }
+
+    public static class PostRequest extends AsyncTask<String, Integer, String> {
+
+        private String body;
+        public PostRequest (String b) {
+            body = b;
+        }
+        @Override
+        protected String doInBackground(String... urlStrings) {
+            OutputStream outputStream = null;
+            InputStream inputStream = null;
+            String result = null;
+            HttpURLConnection conn = null;
+            if (urlStrings[0] != null) {
+                try {
+                    URL url = new URL(urlStrings[0]);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setReadTimeout(3000);
+                    conn.setConnectTimeout(5000);
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+
+                    outputStream = conn.getOutputStream();
+                    outputStream.write(body.getBytes("UTF-8"));
+
+                    conn.connect();
+                    int responseCode = conn.getResponseCode();
+                    Log.d("Restful api", "Response Code is : " + responseCode);
+                    inputStream = conn.getInputStream();
+
+                    result = getStringFromInputStream(inputStream);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    conn.disconnect();
                 }
             }
             return result;

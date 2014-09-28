@@ -329,7 +329,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         };
         String songNameSelection = MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME + " = ?";
         String[] songNameSelectionArgs = new String[1];
-        Cursor cursor;
+        Cursor cursor = null;
         for (int i = 0; i < length; i ++) {
             currentSP = songPerformanceArrayList.get(i);
             songNameSelectionArgs[0] = currentSP.name;
@@ -355,6 +355,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             Uri uri = mContentResolver.insert(MusicRunnerSongPerformanceDB.CONTENT_URI, values);
             Log.d(TAG, "Saved song performance: " + currentSP.name + " into DB, id=" + ContentUris.parseId(uri));
         }
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     private long saveSongName (String name, String artist, long realSongId) {
@@ -375,6 +378,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
             cursor.moveToFirst();
             artistId = cursor.getLong(cursor.getColumnIndex(MusicRunnerArtistDB.COLUMN_NAME_ID));
         }
+        cursor.close();
 
         values.put(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME, name);
         values.put(MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID, artistId);

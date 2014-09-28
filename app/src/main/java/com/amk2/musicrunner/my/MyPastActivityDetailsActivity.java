@@ -141,6 +141,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
         photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
         route              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE));
+        cursor.close();
 
         timeInMillis   = Long.parseLong(timeInMillisString);
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
@@ -219,6 +220,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), Double.parseDouble(calories), Double.parseDouble(speed), songName, null);
             songPerformanceArrayList.add(sp);
         }
+        cursor.close();
     }
 
     private String getSongName (Integer songId) {
@@ -234,6 +236,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             cursor.moveToFirst();
             songName = cursor.getString(cursor.getColumnIndex(MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME));
         }
+        cursor.close();
         return songName;
     }
 

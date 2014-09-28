@@ -36,6 +36,7 @@ public class Constant {
     public static final String WEATHER_CONDITION_API_URL = HOST + PORT + "/getWeatherConditions";
     public static final String WEATHER_HOURLY_API_URL    = HOST + PORT + "/getWeatherHourly";
     public static final String WEATHER_5DAYS_API_URL     = HOST + PORT + "/getWeatherForecast5Day";
+    public static final String TRACK_INFO_API_URL        = HOST + PORT + "/getTrackInfo";
 
     //----------DEPRECATED-------------
     public static final String baseWeatherUrlString = HOST + PORT + "/weatherDailyJSON";//TODO need to append city query behind

@@ -49,7 +49,8 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + MusicRunnerDBMetaData.MusicRunnerSongNameDB.TABLE_NAME + " (" +
                     MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                     MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID               + INTEGER_TYPE + COMMA_SEP +
-                    MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID               + INTEGER_TYPE + COMMA_SEP +
+                    MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID                  + INTEGER_TYPE + COMMA_SEP +
+                    MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM                        + TEXT_TYPE + COMMA_SEP +
                     MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME                  + TEXT_TYPE +
                     " )";
 
@@ -64,7 +65,7 @@ public class MusicRunnerDBHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_SONG_NAME_TABLE        = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerSongNameDB.TABLE_NAME;
     private static final String SQL_DELETE_ARTIST_TABLE           = "DROP TABLE IF EXISTS " + MusicRunnerDBMetaData.MusicRunnerArtistDB.TABLE_NAME;
 
-    public static final int DATA_VERSION = 6;
+    public static final int DATA_VERSION = 7;
     public static final String DATABASE_NAME = "MusicRunner.db";
 
     public MusicRunnerDBHelper(Context context) {

@@ -186,13 +186,16 @@ public class MusicRunnerProvider extends ContentProvider {
         Uri updatedUri = null;
         switch (uriMatcher.match(uri)) {
             case COMMON_DATA_DIR_INDICATOR:
-                cnt = writableDB.update(MusicRunnerDBMetaData.MusicTrackCommonDataDB.TABLE_NAME, contentValues, selection, selectionArgs);
+                cnt = writableDB.update(MusicTrackCommonDataDB.TABLE_NAME, contentValues, selection, selectionArgs);
                 updatedUri = ContentUris.withAppendedId(MusicTrackCommonDataDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
-                //this.getContext().getContentResolver().notifyChange(updatedUri, null);
                 break;
             case RUNNING_EVENT_DATA_DIR_INDICATOR:
                 cnt = writableDB.update(MusicRunnerRunningEventDB.TABLE_NAME, contentValues, selection, selectionArgs);
-                updatedUri = ContentUris.withAppendedId(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
+                updatedUri = ContentUris.withAppendedId(MusicRunnerRunningEventDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
+                break;
+            case SONG_NAME_DATA_DIR_INDICATOR:
+                cnt = writableDB.update(MusicRunnerSongNameDB.TABLE_NAME, contentValues, selection, selectionArgs);
+                updatedUri = ContentUris.withAppendedId(MusicRunnerSongNameDB.CONTENT_URI, Integer.parseInt(selectionArgs[0]));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI - " + uri);

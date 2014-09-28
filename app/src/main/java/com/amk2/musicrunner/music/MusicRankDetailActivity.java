@@ -119,6 +119,7 @@ public class MusicRankDetailActivity extends Activity {
             totalDuration += (duration/1000);
             times ++;
         }
+        cursor.close();
 
         songInfo = MusicLib.getSongInfo(getApplicationContext(), songId);
         artist   = MusicLib.getArtist(getApplicationContext(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));

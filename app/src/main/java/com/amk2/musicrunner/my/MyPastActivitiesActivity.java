@@ -81,6 +81,7 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
 
             addPastActivity(eventId, duration, distance, currentEpoch, photoPath);
         }
+        cursor.close();
     }
 
     private void addPastActivity(Integer eventId, Integer duration, String distance, String currentEpoch, String photoPath) {

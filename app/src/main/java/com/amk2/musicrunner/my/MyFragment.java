@@ -225,6 +225,7 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
                 weeklySpeed     = (weeklySpeed > Double.parseDouble(speed))? Double.parseDouble(speed) : weeklySpeed;
             }
         }
+        cursor.close();
     }
 
     public void setProgressBar () {
