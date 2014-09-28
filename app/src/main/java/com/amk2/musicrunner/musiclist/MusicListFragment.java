@@ -214,9 +214,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
                 updatePlaylistInfo(MusicLib.FAST_PLAYLIST, ms.mDuration);
             }
         }
-        calories.put(MusicLib.FAST_PLAYLIST, calculateCalories(duration.get(MusicLib.FAST_PLAYLIST), 325.0*tracks.get(MusicLib.FAST_PLAYLIST)));
-        calories.put(MusicLib.MEDIUM_PLAYLIST, calculateCalories(duration.get(MusicLib.MEDIUM_PLAYLIST), 325.0*tracks.get(MusicLib.MEDIUM_PLAYLIST)));
-        calories.put(MusicLib.SLOW_PLAYLIST, calculateCalories(duration.get(MusicLib.SLOW_PLAYLIST), 325.0*tracks.get(MusicLib.SLOW_PLAYLIST)));
+        calories.put(MusicLib.FAST_PLAYLIST, calculateCalories(duration.get(MusicLib.FAST_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.FAST_PLAYLIST)));
+        calories.put(MusicLib.MEDIUM_PLAYLIST, calculateCalories(duration.get(MusicLib.MEDIUM_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.MEDIUM_PLAYLIST)));
+        calories.put(MusicLib.SLOW_PLAYLIST, calculateCalories(duration.get(MusicLib.SLOW_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.SLOW_PLAYLIST)));
     }
 
     private void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
