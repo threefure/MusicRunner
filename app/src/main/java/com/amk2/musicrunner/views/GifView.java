@@ -25,7 +25,6 @@ public class GifView extends View {
     Integer movieHeight;
     Long movieStart;
 
-
     Movie gifMovie;
     public GifView(Context context) {
         super(context);

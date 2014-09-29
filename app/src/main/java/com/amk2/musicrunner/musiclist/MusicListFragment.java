@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -41,7 +42,8 @@ import java.util.zip.Inflater;
 /**
  * Created by logicmelody on 2014/9/23.
  */
-public class MusicListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+public class MusicListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     private static final String TAG = "MusicListFragment";
     private static final String TRACK_LIST = "trackList";
     private static final int MUSIC_LOADER_ID = 1;
@@ -73,6 +75,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
     private HashMap<String, Integer> duration;
     private HashMap<String, Double> calories;
 
+    private Long fastPlaylistId;
+    private Long mediumPlaylistId;
+    private Long slowPlaylistId;
     private Uri fastPlaylistUri;
     private Uri fastPlaylistMemberUri;
     private Uri mediumPlaylistUri;
@@ -102,13 +107,15 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         // and http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
         // but....not work!
         super.onResume();
-        getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
+        if (fastPlaylistUri == null || mediumPlaylistUri == null || slowPlaylistUri == null) {
+            getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
+        }
     }
 
     @Override
     public void onStop () {
         super.onStop();
-        playlistContainer.removeAllViewsInLayout();
+        //playlistContainer.removeAllViewsInLayout();
     }
 
     private void initViews() {
@@ -129,7 +136,6 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
             try {
                 RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(mTrackListWrapper.toString());
                 String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
-                Log.d(TAG,trackListArrayString);
                 JSONArray trackListArray = new JSONArray(trackListArrayString);
                 saveBpmForEachSong(trackListArray);
             } catch (InterruptedException e) {
@@ -148,13 +154,13 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
     }
 
-    private void setViews () {
-        addPlaylistTemplate(MusicLib.FAST_PLAYLIST);
-        addPlaylistTemplate(MusicLib.MEDIUM_PLAYLIST);
-        addPlaylistTemplate(MusicLib.SLOW_PLAYLIST);
+    private void setViews() {
+        addPlaylistTemplate(MusicLib.FAST_PLAYLIST, fastPlaylistId);
+        addPlaylistTemplate(MusicLib.MEDIUM_PLAYLIST, mediumPlaylistId);
+        addPlaylistTemplate(MusicLib.SLOW_PLAYLIST, slowPlaylistId);
     }
 
-    private void addPlaylistTemplate(String type) {
+    private void addPlaylistTemplate(String type, Long playlistMemberId) {
         View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
         TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
         TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
@@ -166,6 +172,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         tracksTextView.setText(tracks.get(type).toString());
         durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration.get(type)/1000)));
         caloriesTextView.setText(StringLib.truncateDoubleString(calories.get(type).toString(),2));
+
+        musicListTemplate.setTag(playlistMemberId);
+        musicListTemplate.setOnClickListener(this);
         playlistContainer.addView(musicListTemplate);
     }
 
@@ -184,10 +193,15 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         calories.put(MusicLib.SLOW_PLAYLIST, 0.0);
 
         fastPlaylistUri         = getPlaylistUri(MusicLib.FAST_PLAYLIST_NAME);
+        fastPlaylistId          = getPlaylistId(fastPlaylistUri);
         fastPlaylistMemberUri   = getPlaylistMemberUri(fastPlaylistUri);
+
         mediumPlaylistUri       = getPlaylistUri(MusicLib.MEDIUM_PLAYLIST_NAME);
+        mediumPlaylistId        = getPlaylistId(mediumPlaylistUri);
         mediumPlaylistMemberUri = getPlaylistMemberUri(mediumPlaylistUri);
+
         slowPlaylistUri         = getPlaylistUri(MusicLib.SLOW_PLAYLIST_NAME);
+        slowPlaylistId          = getPlaylistId(slowPlaylistUri);
         slowPlaylistMemberUri   = getPlaylistMemberUri(slowPlaylistUri);
     }
 
@@ -229,6 +243,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         duration.put(type, duration.get(type) + dur);
     }
 
+    private Long getPlaylistId (Uri playlistUri) {
+        return ContentUris.parseId(playlistUri);
+    }
 
     private Uri getPlaylistUri (String playlistName) {
         Uri playlistUri = MusicLib.getPlaylistUri(getActivity(), playlistName);
@@ -348,5 +365,16 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.playlist:
+                Intent intent = new Intent(getActivity().getApplicationContext(), MusicListDetailActivity.class);
+                intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, (Long) view.getTag());
+                startActivity(intent);
+                break;
+        }
     }
 }

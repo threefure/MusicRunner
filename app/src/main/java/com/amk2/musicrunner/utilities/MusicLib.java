@@ -38,9 +38,9 @@ public class MusicLib {
     public static final String FAST_PLAYLIST   = "fast";
     public static final String MEDIUM_PLAYLIST = "medium";
     public static final String SLOW_PLAYLIST   = "slow";
-    public static final String FAST_PLAYLIST_NAME   = "music_runner_fast_music";
-    public static final String MEDIUM_PLAYLIST_NAME = "music_runner_medium_music";
-    public static final String SLOW_PLAYLIST_NAME   = "music_runner_slow_music";
+    public static final String FAST_PLAYLIST_NAME   = "Ninja";
+    public static final String MEDIUM_PLAYLIST_NAME = "Human";
+    public static final String SLOW_PLAYLIST_NAME   = "Turtle";
 
     public static Uri getMusicUri() {
         return MUSIC_URI;
@@ -296,6 +296,19 @@ public class MusicLib {
             playlistUri = ContentUris.withAppendedId(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, playlistId);
         }
         return playlistUri;
+    }
+
+    public static Uri getPlaylistUriFromId (Long id) {
+        return ContentUris.withAppendedId(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, id);
+    }
+
+    public static Uri getPlaylistMemberUri (Uri playlistUri) {
+        Long id = ContentUris.parseId(playlistUri);
+        return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
+    }
+
+    public static Uri getPlaylistMemberUriFromId (Long id) {
+        return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
     }
 
     public static Uri insertPlaylistId (Context context, String playlistTitle) {

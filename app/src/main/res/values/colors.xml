@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="music_runner_green">#9CCEA1</color>
+    <color name="music_runner_red">#FA513D</color>
+    <color name="music_runner_blue">#51A7F9</color>
+    <color name="music_runner_grass">#70BF41</color>
 
     <color name="music_runner_green_button">#00A174</color>
     <color name="music_runner_green_button_is_clicked">#22C396</color>
