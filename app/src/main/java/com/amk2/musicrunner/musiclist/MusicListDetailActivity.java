@@ -103,8 +103,6 @@ public class MusicListDetailActivity extends Activity {
         Cursor cursor = mContentResolver.query(playlistMemberUri, projection, null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-
-
                 audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
                 musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
                 filePath = MusicLib.getMusicFilePath(getApplicationContext(), musicUri);

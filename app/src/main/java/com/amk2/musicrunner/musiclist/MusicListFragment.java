@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -70,6 +71,7 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
     private LinearLayout playlistContainer;
     private ArrayList<MusicSong> mMusicSongList;
     private JSONObject mTrackListWrapper;
+    SharedPreferences playlistPreferences;
 
     private HashMap<String, Integer> tracks;
     private HashMap<String, Integer> duration;
@@ -96,6 +98,7 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         super.onActivityCreated(savedInstanceState);
         mContentResolver = getActivity().getContentResolver();
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        playlistPreferences = getActivity().getSharedPreferences("playlist", 0);
 
         initViews();
     }
@@ -149,6 +152,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         initPlaylists();
         setPlaylists();
         setViews();
+
+        // temporarily setting the playlist to slow one
+        playlistPreferences.edit().putLong("id", slowPlaylistId).commit();
 
         //need to destroy loader so that onLoadFinished won't be called twice
         getLoaderManager().destroyLoader(MUSIC_LOADER_ID);

@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -76,6 +78,10 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     private Intent mPlayIntent;
     private int mCurrentMusicIndex = 0;
     private ArrayList<MusicSong> mMusicSongList;
+    private SharedPreferences mPlaylistPreference;
+    private Long mPlaylistId;
+    private ContentResolver mContentResolver;
+    private MediaMetadataRetriever retriever;
 
     // Record music information during running.
     private MusicSong mPreviousSong;
@@ -174,6 +180,9 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
         mFragmentView = getView();
+        mPlaylistPreference = mActivity.getSharedPreferences("playlist", 0);
+        mContentResolver = mActivity.getContentResolver();
+        retriever = new MediaMetadataRetriever();
         initialize();
     }
 
@@ -187,7 +196,13 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         mMusicSongList = new ArrayList<MusicSong>();
         mPlayIntent = new Intent(mActivity, MusicService.class);
         setViews();
-        getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
+        mPlaylistId = mPlaylistPreference.getLong("id", -1);
+        if (mPlaylistId != -1) {
+            mMusicSongList = loadMusicSongListFromPlaylist();
+            bindToMusicService();
+        } else {
+            getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
+        }
     }
 
     private void setViews() {
@@ -253,6 +268,29 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                     //Log.d("danny","Add music file path = " + musicFilePath);
                     songList.add(new MusicSong(id, title, artist));
                 }
+            }
+        }
+        return songList;
+    }
+
+    private ArrayList<MusicSong> loadMusicSongListFromPlaylist () {
+        ArrayList<MusicSong> songList = new ArrayList<MusicSong>();
+        Long audio_id;
+        Uri musicUri;
+        String title, artist;
+        Uri playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(mPlaylistId);
+        String[] projection = {
+                MediaStore.Audio.Playlists.Members.AUDIO_ID
+        };
+        Cursor cursor = mContentResolver.query(playlistMemberUri, projection, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
+                musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
+                retriever.setDataSource(mActivity, musicUri);
+                title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                songList.add(new MusicSong(audio_id, title, artist));
             }
         }
         return songList;
