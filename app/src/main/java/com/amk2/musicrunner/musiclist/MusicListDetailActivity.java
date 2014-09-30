@@ -112,6 +112,7 @@ public class MusicListDetailActivity extends Activity {
                 addSongToList(filePath);
             }
         }
+        cursor.close();
         String[] playlistProjection = {
                 MediaStore.Audio.Playlists.NAME
         };
@@ -120,7 +121,8 @@ public class MusicListDetailActivity extends Activity {
             cursor.moveToFirst();
             playlistTitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
         }
-        playlistTitleTextView.setText(playlistTitle);
+        cursor.close();
+        playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
         tracksTextView.setText(tracks.toString());
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration/1000));
         durationTextView.setText(durationString);
@@ -146,8 +148,8 @@ public class MusicListDetailActivity extends Activity {
         ImageView albumPhotoImageView = (ImageView) musicListItemTemplate.findViewById(R.id.album_photo);
         LinearLayout typeContainer = (LinearLayout) musicListItemTemplate.findViewById(R.id.type_container);
 
-        titleTextView.setText(title);
-        artistTextView.setText(artist);
+        titleTextView.setText(StringLib.truncate(title, 18));
+        artistTextView.setText(StringLib.truncate(artist, 18));
 
         if (bpm < 110.0) {
             type = "Slow";

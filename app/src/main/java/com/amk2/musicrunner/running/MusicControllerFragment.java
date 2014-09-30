@@ -293,6 +293,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 songList.add(new MusicSong(audio_id, title, artist));
             }
         }
+        cursor.close();
         return songList;
     }
 

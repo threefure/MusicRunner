@@ -6,7 +6,7 @@
     android:background="@color/light_gray">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="215dp"
+        android:layout_height="135dp"
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <LinearLayout
+            <!--LinearLayout
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                             style="@style/Music.RangGeneralBoxText"/>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout-->
             <LinearLayout
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
