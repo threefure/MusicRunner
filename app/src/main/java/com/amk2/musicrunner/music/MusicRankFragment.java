@@ -161,18 +161,24 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener{
             caloriesTemp = Double.parseDouble(calories);
             totalCalories += caloriesTemp;
             totalDuration += duration;
-
-            if (lastSongId != songId) {
-                songInfo = MusicLib.getSongInfo(getActivity(), songId);
-                artist   = MusicLib.getArtist(getActivity(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
-                SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), caloriesTemp, Double.parseDouble(speed), songInfo.get(MusicLib.SONG_NAME), artist);
-                sp.setSongId(songId);
-                sp.setRealSongId(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
-                songPerformanceList.add(sp);
-                lastSongId = songId;
-            } else {
-                SongPerformance sp = songPerformanceList.get(songPerformanceList.size() - 1);
-                sp.addSongRecord(duration, Double.parseDouble(distance), Double.parseDouble(calories));
+            /*
+                this exception should be removed since the divided by zero should be handled in FinishRunning page
+             */
+            try {
+                if (lastSongId != songId) {
+                    songInfo = MusicLib.getSongInfo(getActivity(), songId);
+                    artist = MusicLib.getArtist(getActivity(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
+                    SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distance), caloriesTemp, Double.parseDouble(speed), songInfo.get(MusicLib.SONG_NAME), artist);
+                    sp.setSongId(songId);
+                    sp.setRealSongId(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
+                    songPerformanceList.add(sp);
+                    lastSongId = songId;
+                } else {
+                    SongPerformance sp = songPerformanceList.get(songPerformanceList.size() - 1);
+                    sp.addSongRecord(duration, Double.parseDouble(distance), Double.parseDouble(calories));
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
         cursor.close();

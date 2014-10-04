@@ -4,83 +4,97 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/playlist">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/music_runner_clickable_card">
-        <TextView
-            android:id="@+id/playlist_title"
-            android:text="Playlist 1"
-            android:textSize="30dp"
-            android:textColor="@color/music_info_red_title"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/playlist_type"
-            android:text="Fast Music"
-            android:textSize="26dp"
-            android:textStyle="bold"
-            android:layout_marginTop="-5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="85dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/music_runner_clickable_card">
+            <TextView
+                android:id="@+id/playlist_title"
+                android:text="Playlist 1"
+                android:textSize="30dp"
+                android:textColor="@color/music_info_red_title"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/playlist_type"
+                android:text="Fast Music"
+                android:textSize="26dp"
+                android:textStyle="bold"
+                android:layout_marginTop="-5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <LinearLayout
-                style="@style/Music.RankGeneralBox">
-                <ImageView
-                    android:src="@drawable/music_track"
-                    style="@style/Music.RankGeneralBoxIcon"/>
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/playlist_tracks"
-                        android:text="0"
-                        android:layout_marginRight="4dp"
-                        style="@style/Music.RangGeneralBoxText" />
-                    <TextView
-                        android:text="tracks"
-                        style="@style/Music.RangGeneralBoxText"/>
+                    style="@style/Music.RankGeneralBox">
+                    <ImageView
+                        android:src="@drawable/music_track"
+                        style="@style/Music.RankGeneralBoxIcon"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/playlist_tracks"
+                            android:text="0"
+                            android:layout_marginRight="4dp"
+                            style="@style/Music.RangGeneralBoxText" />
+                        <TextView
+                            android:text="tracks"
+                            style="@style/Music.RangGeneralBoxText"/>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                style="@style/Music.RankGeneralBox">
-                <ImageView
-                    android:src="@drawable/clock"
-                    style="@style/Music.RankGeneralBoxIcon" />
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/playlist_duration"
-                        android:text="00 : 00 : 00"
-                        style="@style/Music.RangGeneralBoxText"/>
+                    style="@style/Music.RankGeneralBox">
+                    <ImageView
+                        android:src="@drawable/clock"
+                        style="@style/Music.RankGeneralBoxIcon" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/playlist_duration"
+                            android:text="00 : 00 : 00"
+                            style="@style/Music.RangGeneralBoxText"/>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                style="@style/Music.RankGeneralBox">
-                <ImageView
-                    android:src="@drawable/burning"
-                    style="@style/Music.RankGeneralBoxIcon" />
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/playlist_calories"
-                        android:text="0.0"
-                        android:layout_marginRight="4dp"
-                        style="@style/Music.RangGeneralBoxText" />
-                    <TextView
-                        android:text="@string/kcal"
-                        style="@style/Music.RangGeneralBoxText"/>
+                    style="@style/Music.RankGeneralBox">
+                    <ImageView
+                        android:src="@drawable/burning"
+                        style="@style/Music.RankGeneralBoxIcon" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/playlist_calories"
+                            android:text="0.0"
+                            android:layout_marginRight="4dp"
+                            style="@style/Music.RangGeneralBoxText" />
+                        <TextView
+                            android:text="@string/kcal"
+                            style="@style/Music.RangGeneralBoxText"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/choose_playlist"
+            android:text="Listen"
+            android:background="@drawable/music_runner_clickable_grass_round_border"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"/>
+    </RelativeLayout>
 </LinearLayout>

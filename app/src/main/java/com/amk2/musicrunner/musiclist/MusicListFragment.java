@@ -50,6 +50,7 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
     private static final int MUSIC_LOADER_ID = 1;
     private static final HashMap<String, String> PlaylistTitle = new HashMap<String, String>();
     private static final HashMap<String, String> PlaylistType = new HashMap<String, String>();
+    private HashMap<Long, View> playlistViews;
     static {
         PlaylistTitle.put(MusicLib.FAST_PLAYLIST, "Fast Playlist");
         PlaylistTitle.put(MusicLib.MEDIUM_PLAYLIST, "Regular Playlist");
@@ -99,6 +100,7 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         mContentResolver = getActivity().getContentResolver();
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         playlistPreferences = getActivity().getSharedPreferences("playlist", 0);
+        playlistViews = new HashMap<Long, View>();
 
         initViews();
     }
@@ -154,7 +156,9 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         setViews();
 
         // temporarily setting the playlist to slow one
-        playlistPreferences.edit().putLong("id", slowPlaylistId).commit();
+        playlistPreferences.edit().putLong("id", fastPlaylistId).commit();
+        TextView choosePlaylistTextView = (TextView) playlistViews.get(fastPlaylistId).findViewById(R.id.choose_playlist);
+        choosePlaylistTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
 
         //need to destroy loader so that onLoadFinished won't be called twice
         getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
@@ -166,22 +170,26 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
         addPlaylistTemplate(MusicLib.SLOW_PLAYLIST, slowPlaylistId);
     }
 
-    private void addPlaylistTemplate(String type, Long playlistMemberId) {
+    private void addPlaylistTemplate(String type, Long playlistId) {
         View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
         TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
         TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
         TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
         TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
         TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
+        TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
         titleTextView.setText(PlaylistTitle.get(type));
         typeTextView.setText(PlaylistType.get(type));
         tracksTextView.setText(tracks.get(type).toString());
         durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration.get(type)/1000)));
         caloriesTextView.setText(StringLib.truncateDoubleString(calories.get(type).toString(),2));
 
-        musicListTemplate.setTag(playlistMemberId);
+        musicListTemplate.setTag(playlistId);
         musicListTemplate.setOnClickListener(this);
+        choosePlaylistTextView.setTag(playlistId);
+        choosePlaylistTextView.setOnClickListener(this);
         playlistContainer.addView(musicListTemplate);
+        playlistViews.put(playlistId, musicListTemplate);
     }
 
     private void initPlaylists () {
@@ -380,6 +388,14 @@ public class MusicListFragment extends Fragment implements LoaderManager.LoaderC
                 Intent intent = new Intent(getActivity().getApplicationContext(), MusicListDetailActivity.class);
                 intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, (Long) view.getTag());
                 startActivity(intent);
+                break;
+            case R.id.choose_playlist:
+                Long oldPlaylistId = playlistPreferences.getLong("id", 0);
+                Long newPlaylistId = (Long) view.getTag();
+                playlistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
+                playlistViews.get(oldPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                playlistViews.get(newPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+
                 break;
         }
     }
