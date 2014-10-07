@@ -51,6 +51,7 @@ public class LoginActivity extends Activity {
     }
 
     public void registerAccount(View view) {
+        /*
         // Do something in response to button
         EditText accountEditText = (EditText) findViewById(R.id.account_info);
         String account = accountEditText.getText().toString();
@@ -70,10 +71,11 @@ public class LoginActivity extends Activity {
             pairs.add(new BasicNameValuePair("password",password));
             HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
             setStatusToEditText(response);
-        }
+        }*/
     }
 
     public void loginAccount(View view) {
+        /*
         EditText accountEditText = (EditText) findViewById(R.id.account_info);
         String account = accountEditText.getText().toString().trim();
 
@@ -92,7 +94,7 @@ public class LoginActivity extends Activity {
             preferences.edit().putString(Constant.ACCOUNT_PARAMS, account).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             startActivityForResult(intent,MUSIC_RUNNER_MAIN_REQUEST);
-        }
+        }*/
 
     }
 
