@@ -12,12 +12,13 @@ import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 public class MusicMetaData {
 
     public String mTitle, mArtist, mType;
-    Integer typeContainerBackgroundId;
+    Integer typeContainerBackgroundId, mDuration;
     public Double mBpm;
     public Bitmap mAlbumPhoto;
-    public MusicMetaData (String title, String artist, Double bpm, Bitmap albumPhoto) {
+    public MusicMetaData (String title, String artist, Integer duration, Double bpm, Bitmap albumPhoto) {
         mTitle = title;
         mArtist = artist;
+        mDuration = duration;
         mBpm = bpm;
         if (bpm < 110.0) {
             mType = "Slow";

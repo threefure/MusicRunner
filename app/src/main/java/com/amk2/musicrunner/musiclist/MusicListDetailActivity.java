@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.*;
 import android.os.Process;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -36,6 +34,11 @@ public class MusicListDetailActivity extends Activity {
     private static final String TAG = "MusicListDetailActivity";
     public static final String PLAYLIST_MEMBER_ID = "playlist_member_id";
 
+    private static final int ADD_MUSIC = 1;
+    private static final int UPDATE_INFO = 2;
+
+    private Integer tracks;
+    private Integer duration;
     private Long playlistId;
     private Uri playlistUri;
     private Uri playlistMemberUri;
@@ -70,13 +73,15 @@ public class MusicListDetailActivity extends Activity {
 
     private void init () {
         Intent intent = getIntent();
-        playlistId = intent.getExtras().getLong(PLAYLIST_MEMBER_ID);
-        playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
+        playlistId        = intent.getExtras().getLong(PLAYLIST_MEMBER_ID);
+        playlistUri       = MusicLib.getPlaylistUriFromId(playlistId);
         playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(playlistId);
-        mContentResolver = getContentResolver();
-        retriever = new MediaMetadataRetriever();
-        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mActionBar = getActionBar();
+        mContentResolver  = getContentResolver();
+        retriever         = new MediaMetadataRetriever();
+        inflater          = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mActionBar        = getActionBar();
+        tracks = 0;
+        duration = 0;
     }
 
     private void initActionBar() {
@@ -95,54 +100,23 @@ public class MusicListDetailActivity extends Activity {
     }
 
     private void setViews () {
-        Handler handler = new Handler(Looper.getMainLooper());
-        /*Thread loader = new Thread() {
-            public void run () {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new SongLoader(getApplicationContext()));
-            }
-        };
-        loader.start();*/
-        //handler.post(new SongLoader(getApplicationContext()));
-        SongLoader loader = new SongLoader(getApplicationContext());
+        //create another thread to load music in the background
+        PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(getApplicationContext(), mPlaylistUiHandler);
         Thread loaderThread = new Thread(loader);
         loaderThread.start();
-        /*Integer tracks = 0, duration = 0;
-        Double calories = 0.0;
-        Long audio_id;
-        Uri musicUri;
-        String filePath, durationString, playlistTitle = "Init title";
-        String[] projection = {
-                MediaStore.Audio.Playlists.Members.AUDIO_ID
-        };
-        Cursor cursor = mContentResolver.query(playlistMemberUri, projection, null, null, null);
-        if (cursor != null && cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
-                musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
-                filePath = MusicLib.getMusicFilePath(getApplicationContext(), musicUri);
-                retriever.setDataSource(getApplicationContext(), musicUri);
-                tracks ++;
-                duration += Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                addSongToList(filePath);
-            }
-        }
-        cursor.close();
+
+        // set playlist title
         String[] playlistProjection = {
                 MediaStore.Audio.Playlists.NAME
         };
-        cursor = mContentResolver.query(playlistUri, playlistProjection, null, null, null);
+        String playlistTitle = "";
+        Cursor cursor = mContentResolver.query(playlistUri, playlistProjection, null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             playlistTitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
         }
         cursor.close();
         playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
-        tracksTextView.setText(tracks.toString());
-        durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration/1000));
-        durationTextView.setText(durationString);
-        calories = calculateCalories(duration/1000, 325.0*tracks);
-        caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));*/
     }
 
     private void addSongToList (String filePath) {
@@ -203,6 +177,16 @@ public class MusicListDetailActivity extends Activity {
         songContainer.addView(musicListItemTemplate);
     }
 
+    private void updateSummary () {
+        String durationString;
+        Double calories;
+        tracksTextView.setText(tracks.toString());
+        durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration / 1000));
+        durationTextView.setText(durationString);
+        calories = calculateCalories(duration/1000, 325.0*tracks);
+        caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));
+    }
+
     private Double calculateCalories (int timeInSec, Double distanceInMeter) {
         if (distanceInMeter == 0.0) {
             return 0.0;
@@ -217,36 +201,40 @@ public class MusicListDetailActivity extends Activity {
         return calories;
     }
 
-    private static final int ADD_MUSIC = 1;
-    private static final int UPDATE_INFO = 1;
-    private Handler handler = new Handler() {
+    private Handler mPlaylistUiHandler = new Handler() {
         @Override
         public void handleMessage (Message message) {
             switch (message.what) {
                 case ADD_MUSIC:
                     MusicMetaData musicMetaData = (MusicMetaData) message.obj;
                     addSongToList(musicMetaData);
+
+                    duration += musicMetaData.mDuration;
+                    tracks ++;
+                    updateSummary();
                     break;
             }
         }
     };
 
-    public class SongLoader implements Runnable{
+    public class PlaylistLoaderRunnable implements Runnable{
         Context context;
         ContentResolver contentResolver;
+        Handler handler;
 
-        public SongLoader (Context c) {
+        public PlaylistLoaderRunnable(Context c, Handler h) {
             context = c;
+            handler = h;
             contentResolver = context.getContentResolver();
         }
         @Override
         public void run() {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            Integer tracks = 0, duration = 0;
-            Double calories = 0.0, bpm;
+            Double bpm;
             Long audio_id;
+            String title, artist, filePath;
+            Bitmap albumPhoto;
             Uri musicUri;
-            String title, artist, filePath, durationString, playlistTitle = "Init title";
             String[] projection = {
                     MediaStore.Audio.Playlists.Members.AUDIO_ID
             };
@@ -256,38 +244,21 @@ public class MusicListDetailActivity extends Activity {
                     audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
                     musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
                     filePath = MusicLib.getMusicFilePath(context, musicUri);
-                    retriever.setDataSource(context, musicUri);
-                    tracks ++;
-                    duration += Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 
+                    retriever.setDataSource(context, musicUri);
                     title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                     artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                    HashMap<String, String> songInfo = MusicLib.getSongInfo(getApplicationContext(), title);
-                    Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
+                    duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                    HashMap<String, String> songInfo = MusicLib.getSongInfo(context, title);
                     bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-                    MusicMetaData metaData = new MusicMetaData(title, artist, bpm, albumPhoto);
+                    albumPhoto = MusicLib.getMusicAlbumArt(filePath);
+
+                    MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
                     Message completeMessage = handler.obtainMessage(ADD_MUSIC, metaData);
                     completeMessage.sendToTarget();
                 }
             }
             cursor.close();
-            String[] playlistProjection = {
-                    MediaStore.Audio.Playlists.NAME
-            };
-            cursor = contentResolver.query(playlistUri, playlistProjection, null, null, null);
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                playlistTitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
-            }
-            cursor.close();
-
-            /*
-            playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
-            tracksTextView.setText(tracks.toString());
-            durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration/1000));
-            durationTextView.setText(durationString);
-            calories = calculateCalories(duration/1000, 325.0*tracks);
-            caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));*/
         }
     }
 }
