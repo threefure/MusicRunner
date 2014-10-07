@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -103,6 +105,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         playlistViews = new HashMap<Long, View>();
 
         initViews();
+
+        //PlaylistManager playlistManager = PlaylistManager.getInstance();
     }
 
     @Override
@@ -401,6 +405,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                 break;
         }
     }
+
+    private Handler mPlaylistUIHandler = new Handler();
 
     public class SongLoader implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
         Fragment fragment;

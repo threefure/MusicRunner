@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.utilities.HealthLib;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
@@ -183,22 +184,8 @@ public class MusicListDetailActivity extends Activity {
         tracksTextView.setText(tracks.toString());
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration / 1000));
         durationTextView.setText(durationString);
-        calories = calculateCalories(duration/1000, 325.0*tracks);
+        calories = HealthLib.calculateCalories(duration / 1000, 325.0 * tracks);
         caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));
-    }
-
-    private Double calculateCalories (int timeInSec, Double distanceInMeter) {
-        if (distanceInMeter == 0.0) {
-            return 0.0;
-        }
-        double mins  = (double) timeInSec / 60;
-        double hours = (double) timeInSec / 3600;
-        double per400meters = distanceInMeter / 400;
-        double speed = mins / per400meters;
-        double K = 30 / speed;
-        double calories = 70*hours*K;
-
-        return calories;
     }
 
     private Handler mPlaylistUiHandler = new Handler() {
