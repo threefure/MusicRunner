@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +31,18 @@ import java.util.concurrent.ExecutionException;
  * Created by daz on 10/7/14.
  */
 public class PlaylistManager{
+    public static final int MEDIUM_PACE_PLAYLIST = 0;
+    public static final int SLOW_PACE_PLAYLIST   = 1;
+    public static final int HALF_HOUR_PLAYLIST   = 2;
+    public static final int ONE_HOUR_PLAYLIST    = 4;
+    public static final String HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "30mins Medium";
+    public static final String HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE = "30mins Slow";
+    public static final String ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "1hour Medium";
+    public static final String ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE = "1hour Slow";
     private static final String TAG = "PlaylistManager";
     private static final String TRACK_LIST = "trackList";
+    private static final int HALF_HOUR_IN_MILLI = 1800000;
+    private static final int ONE_HOUR_IN_MILLI  = 3600000;
     static PlaylistManager instance;
     static {
         instance = new PlaylistManager();
@@ -40,6 +51,9 @@ public class PlaylistManager{
     private Context mContext;
     private Cursor mCursor;
     private ArrayList<MusicSong> mMusicSongList;
+    private ArrayList<MusicSong> mFastPaceMusicSongList;
+    private ArrayList<MusicSong> mMediumPaceMusicSongList;
+    private ArrayList<MusicSong> mSlowPaceMusicSongList;
     private JSONObject mTrackListWrapper;
     private PlaylistManager () {
 
@@ -58,7 +72,10 @@ public class PlaylistManager{
     }
 
     public void init() {
-        mMusicSongList = new ArrayList<MusicSong>();
+        mMusicSongList           = new ArrayList<MusicSong>();
+        mFastPaceMusicSongList   = new ArrayList<MusicSong>();
+        mMediumPaceMusicSongList = new ArrayList<MusicSong>();
+        mSlowPaceMusicSongList   = new ArrayList<MusicSong>();
     }
 
     public void scan () {
@@ -78,14 +95,72 @@ public class PlaylistManager{
                 e.printStackTrace();
             }
         }
+        categorizePlaylists();
     }
 
-    public void generate30MinsPlaylist (String type) {
-
+    public PlaylistMetaData generate30MinsPlaylist (Integer type) {
+        PlaylistMetaData playlistMetaData = null;
+        switch (type) {
+            case MEDIUM_PACE_PLAYLIST:
+                playlistMetaData = generatePlaylist(mMediumPaceMusicSongList, HALF_HOUR_IN_MILLI, HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE);
+                break;
+            case SLOW_PACE_PLAYLIST:
+                playlistMetaData = generatePlaylist(mSlowPaceMusicSongList, HALF_HOUR_IN_MILLI, HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE);
+                break;
+        }
+        return playlistMetaData;
     }
 
-    public void generate1HrPlaylist () {
+    public PlaylistMetaData generate1HrPlaylist (Integer type) {
+        PlaylistMetaData playlistMetaData = null;
+        switch (type) {
+            case MEDIUM_PACE_PLAYLIST:
+                playlistMetaData = generatePlaylist(mMediumPaceMusicSongList, ONE_HOUR_IN_MILLI, ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE);
+                break;
+            case SLOW_PACE_PLAYLIST:
+                playlistMetaData = generatePlaylist(mSlowPaceMusicSongList, ONE_HOUR_IN_MILLI, ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE);
+                break;
+        }
+        return playlistMetaData;
+    }
 
+    private PlaylistMetaData generatePlaylist(ArrayList<MusicSong> musicSongList, Integer targetDuration, String playlistName) {
+        int length = musicSongList.size(), duration = 0, tracks;
+        Uri playlistUri = getPlaylistUri(playlistName);
+        Uri playlistMemberUri = getPlaylistMemberUri(playlistUri);
+        MusicSong ms;
+        PlaylistMetaData playlistMetaData;
+        for (tracks = 0; tracks < length; tracks ++ ){
+            ms = musicSongList.get(tracks);
+            addToPlaylist(playlistMemberUri, ms.mId, tracks);
+            duration += ms.mDuration;
+            if (duration > targetDuration) {
+                break;
+            }
+        }
+        playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks + 1);
+        return playlistMetaData;
+    }
+
+    private Uri getPlaylistUri (String playlistName) {
+        Uri playlistUri = MusicLib.getPlaylistUri(mContext, playlistName);
+        if (playlistUri == null) {
+            playlistUri = MusicLib.insertPlaylistId(mContext, playlistName);
+            Log.d(TAG, "playlist has been created, uri=" + playlistUri.toString());
+        } else {
+            Integer cnt = MusicLib.cleanPlaylist(mContext, playlistUri);
+            Log.d(TAG, "playlist has been cleaned, cnt=" + cnt);
+        }
+        return playlistUri;
+    }
+
+    private Uri getPlaylistMemberUri (Uri playlistUri) {
+        Long id = ContentUris.parseId(playlistUri);
+        return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
+    }
+
+    private void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
+        Uri uri = MusicLib.insertSongToPlaylist(mContext, playlistMemberUri, songRealId, playOrder);
     }
 
     private ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
@@ -110,8 +185,8 @@ public class PlaylistManager{
     private JSONObject checkBpmForEachSong () {
         MusicSong mMusicSong;
         HashMap<String, String> songInfo;
-        JSONObject trackListWrapper = new JSONObject();
-        JSONArray trackList        = new JSONArray();
+        JSONObject trackListWrapper   = new JSONObject();
+        JSONArray trackListWithoutBPM = new JSONArray();
         int length = mMusicSongList.size();
         try {
             for (int i = 0; i < length; i++) {
@@ -123,7 +198,7 @@ public class PlaylistManager{
                     trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
                     trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
                     trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
-                    trackList.put(trackInfo);
+                    trackListWithoutBPM.put(trackInfo);
                 } else if (songInfo.get(MusicLib.BPM) == null) {
                     JSONObject trackInfo = new JSONObject();
                     trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
@@ -131,11 +206,11 @@ public class PlaylistManager{
                     trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
                     trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
                     trackInfo.put(MusicLib.ID, songInfo.get(MusicLib.ID));
-                    trackList.put(trackInfo);
+                    trackListWithoutBPM.put(trackInfo);
                 }
             }
-            if (trackList.length() > 0) {
-                trackListWrapper.put(TRACK_LIST, trackList);
+            if (trackListWithoutBPM.length() > 0) {
+                trackListWrapper.put(TRACK_LIST, trackListWithoutBPM);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -159,6 +234,28 @@ public class PlaylistManager{
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void categorizePlaylists () {
+        int length = mMusicSongList.size();
+        Double bpm;
+        MusicSong ms;
+        HashMap<String, String> songInfo;
+
+        for (int i = 0; i < length; i ++) {
+            ms = mMusicSongList.get(i);
+            songInfo = MusicLib.getSongInfo(mContext, ms.mTitle);
+            bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+            if (bpm == null || bpm == -1.0) {
+                //do nothing
+            } else if (bpm < 110.0) {
+                mSlowPaceMusicSongList.add(ms);
+            } else if (bpm >= 110.0 && bpm < 130.0) {
+                mMediumPaceMusicSongList.add(ms);
+            } else {
+                mFastPaceMusicSongList.add(ms);
+            }
         }
     }
 

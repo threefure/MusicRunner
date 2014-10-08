@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,20 +49,10 @@ import java.util.zip.Inflater;
 
 public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener {
     private static final String TAG = "MusicListFragment";
-    private static final String TRACK_LIST = "trackList";
     private static final int MUSIC_LOADER_ID = 1;
-    private static final HashMap<String, String> PlaylistTitle = new HashMap<String, String>();
-    private static final HashMap<String, String> PlaylistType = new HashMap<String, String>();
+    private static final int PLAYLIST_PREPARED = 0;
     private HashMap<Long, View> playlistViews;
-    static {
-        PlaylistTitle.put(MusicLib.FAST_PLAYLIST, "Fast Playlist");
-        PlaylistTitle.put(MusicLib.MEDIUM_PLAYLIST, "Regular Playlist");
-        PlaylistTitle.put(MusicLib.SLOW_PLAYLIST, "Slow Playlist");
 
-        PlaylistType.put(MusicLib.FAST_PLAYLIST, "Ninja");
-        PlaylistType.put(MusicLib.MEDIUM_PLAYLIST, "Human");
-        PlaylistType.put(MusicLib.SLOW_PLAYLIST, "Turtle");
-    }
     private static final String[] MUSIC_SELECT_PROJECTION = new String[] {
             android.provider.MediaStore.Audio.Media._ID,
             android.provider.MediaStore.Audio.Media.TITLE,
@@ -69,26 +60,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             android.provider.MediaStore.Audio.Media.DURATION
     };
 
-    private ContentResolver mContentResolver;
-
     private LinearLayout playlistContainer;
-    private ArrayList<MusicSong> mMusicSongList;
-    private JSONObject mTrackListWrapper;
     SharedPreferences playlistPreferences;
 
-    private HashMap<String, Integer> tracks;
-    private HashMap<String, Integer> duration;
-    private HashMap<String, Double> calories;
-
-    private Long fastPlaylistId;
-    private Long mediumPlaylistId;
-    private Long slowPlaylistId;
-    private Uri fastPlaylistUri;
-    private Uri fastPlaylistMemberUri;
-    private Uri mediumPlaylistUri;
-    private Uri mediumPlaylistMemberUri;
-    private Uri slowPlaylistUri;
-    private Uri slowPlaylistMemberUri;
+    HashMap<Integer, PlaylistMetaData> mPlaylistMetaData;
 
     private LayoutInflater inflater;
     @Override
@@ -99,14 +74,11 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mContentResolver = getActivity().getContentResolver();
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         playlistPreferences = getActivity().getSharedPreferences("playlist", 0);
         playlistViews = new HashMap<Long, View>();
 
         initViews();
-
-        //PlaylistManager playlistManager = PlaylistManager.getInstance();
     }
 
     @Override
@@ -116,10 +88,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         // and http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
         // but....not work!
         super.onResume();
-        if (fastPlaylistUri == null || mediumPlaylistUri == null || slowPlaylistUri == null) {
-            SongLoader loader = new SongLoader(this);
-            loader.run();
-            //getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
+        if (mPlaylistMetaData == null) {
+            SongLoaderRunnable loader = new SongLoaderRunnable(this, mPlaylistUIHandler);
+            Thread loaderThread = new Thread(loader);
+            loaderThread.start();
         }
     }
 
@@ -133,50 +105,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         View thisView = getView();
         playlistContainer = (LinearLayout) thisView.findViewById(R.id.playlist_container);
     }
-/*
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity(), MusicLib.getMusicUri(), MUSIC_SELECT_PROJECTION, null, null, null);
-    }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-        mMusicSongList = convertCursorToMusicSongList(data);
-        mTrackListWrapper = checkBpmForEachSong();
-        if (mTrackListWrapper.has(TRACK_LIST)) {
-            try {
-                RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(mTrackListWrapper.toString());
-                String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
-                JSONArray trackListArray = new JSONArray(trackListArrayString);
-                saveBpmForEachSong(trackListArray);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        initPlaylists();
-        setPlaylists();
-        setViews();
-
-        // temporarily setting the playlist to slow one
-        playlistPreferences.edit().putLong("id", fastPlaylistId).commit();
-        TextView choosePlaylistTextView = (TextView) playlistViews.get(fastPlaylistId).findViewById(R.id.choose_playlist);
-        choosePlaylistTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-
-        //need to destroy loader so that onLoadFinished won't be called twice
-        getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
-    }
-
-    private void setViews() {
-        addPlaylistTemplate(MusicLib.FAST_PLAYLIST, fastPlaylistId);
-        addPlaylistTemplate(MusicLib.MEDIUM_PLAYLIST, mediumPlaylistId);
-        addPlaylistTemplate(MusicLib.SLOW_PLAYLIST, slowPlaylistId);
-    }
-
-    private void addPlaylistTemplate(String type, Long playlistId) {
+    private void addPlaylistTemplate(PlaylistMetaData playlistMetaData) {
         View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
         TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
         TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
@@ -184,209 +114,20 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
         TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
         TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
-        titleTextView.setText(PlaylistTitle.get(type));
-        typeTextView.setText(PlaylistType.get(type));
-        tracksTextView.setText(tracks.get(type).toString());
-        durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration.get(type)/1000)));
-        caloriesTextView.setText(StringLib.truncateDoubleString(calories.get(type).toString(),2));
+        titleTextView.setText(playlistMetaData.mTitle);
+        //typeTextView.setText(PlaylistType.get(type));
+        tracksTextView.setText(playlistMetaData.mTracks.toString());
+        durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(playlistMetaData.mDuration/1000)));
+        caloriesTextView.setText(StringLib.truncateDoubleString(playlistMetaData.mCalories.toString(),2));
 
-        musicListTemplate.setTag(playlistId);
+        musicListTemplate.setTag(playlistMetaData.mId);
         musicListTemplate.setOnClickListener(this);
-        choosePlaylistTextView.setTag(playlistId);
+        choosePlaylistTextView.setTag(playlistMetaData.mId);
         choosePlaylistTextView.setOnClickListener(this);
         playlistContainer.addView(musicListTemplate);
-        playlistViews.put(playlistId, musicListTemplate);
+        playlistViews.put(playlistMetaData.mId, musicListTemplate);
     }
 
-    private void initPlaylists () {
-        tracks = new HashMap<String, Integer>();
-        tracks.put(MusicLib.FAST_PLAYLIST, 0);
-        tracks.put(MusicLib.MEDIUM_PLAYLIST, 0);
-        tracks.put(MusicLib.SLOW_PLAYLIST, 0);
-        duration = new HashMap<String, Integer>();
-        duration.put(MusicLib.FAST_PLAYLIST, 0);
-        duration.put(MusicLib.MEDIUM_PLAYLIST, 0);
-        duration.put(MusicLib.SLOW_PLAYLIST, 0);
-        calories = new HashMap<String, Double>();
-        calories.put(MusicLib.FAST_PLAYLIST, 0.0);
-        calories.put(MusicLib.MEDIUM_PLAYLIST, 0.0);
-        calories.put(MusicLib.SLOW_PLAYLIST, 0.0);
-
-        fastPlaylistUri         = getPlaylistUri(MusicLib.FAST_PLAYLIST_NAME);
-        fastPlaylistId          = getPlaylistId(fastPlaylistUri);
-        fastPlaylistMemberUri   = getPlaylistMemberUri(fastPlaylistUri);
-
-        mediumPlaylistUri       = getPlaylistUri(MusicLib.MEDIUM_PLAYLIST_NAME);
-        mediumPlaylistId        = getPlaylistId(mediumPlaylistUri);
-        mediumPlaylistMemberUri = getPlaylistMemberUri(mediumPlaylistUri);
-
-        slowPlaylistUri         = getPlaylistUri(MusicLib.SLOW_PLAYLIST_NAME);
-        slowPlaylistId          = getPlaylistId(slowPlaylistUri);
-        slowPlaylistMemberUri   = getPlaylistMemberUri(slowPlaylistUri);
-    }
-
-    private void setPlaylists () {
-        int length = mMusicSongList.size();
-        Double bpm;
-        MusicSong ms;
-        HashMap<String, String> songInfo;
-
-        for (int i = 0; i < length; i ++) {
-            ms = mMusicSongList.get(i);
-            songInfo = MusicLib.getSongInfo(getActivity(), ms.mTitle);
-            bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-            if (bpm == null || bpm == -1.0) {
-                //do nothing
-            } else if (bpm < 110.0) {
-                addToPlaylist(slowPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.SLOW_PLAYLIST));
-                updatePlaylistInfo(MusicLib.SLOW_PLAYLIST, ms.mDuration);
-            } else if (bpm >= 110.0 && bpm < 130.0) {
-                addToPlaylist(mediumPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.MEDIUM_PLAYLIST));
-                updatePlaylistInfo(MusicLib.MEDIUM_PLAYLIST, ms.mDuration);
-            } else {
-                addToPlaylist(fastPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.FAST_PLAYLIST));
-                updatePlaylistInfo(MusicLib.FAST_PLAYLIST, ms.mDuration);
-            }
-        }
-        calories.put(MusicLib.FAST_PLAYLIST, calculateCalories(duration.get(MusicLib.FAST_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.FAST_PLAYLIST)));
-        calories.put(MusicLib.MEDIUM_PLAYLIST, calculateCalories(duration.get(MusicLib.MEDIUM_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.MEDIUM_PLAYLIST)));
-        calories.put(MusicLib.SLOW_PLAYLIST, calculateCalories(duration.get(MusicLib.SLOW_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.SLOW_PLAYLIST)));
-    }
-
-    private void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
-        Uri uri = MusicLib.insertSongToPlaylist(getActivity(), playlistMemberUri, songRealId, playOrder);
-        Log.d(TAG, "song is add to playlist, uri = " + uri.toString());
-    }
-
-    private void updatePlaylistInfo (String type, Integer dur) {
-        tracks.put(type, tracks.get(type) + 1);
-        duration.put(type, duration.get(type) + dur);
-    }
-
-    private Long getPlaylistId (Uri playlistUri) {
-        return ContentUris.parseId(playlistUri);
-    }
-
-    private Uri getPlaylistUri (String playlistName) {
-        Uri playlistUri = MusicLib.getPlaylistUri(getActivity(), playlistName);
-        if (playlistUri == null) {
-            playlistUri = MusicLib.insertPlaylistId(getActivity(), playlistName);
-            Log.d(TAG, "playlist has been created, uri=" + playlistUri.toString());
-        } else {
-            Integer cnt = MusicLib.cleanPlaylist(getActivity(), playlistUri);
-            Log.d(TAG, "playlist has been cleaned, cnt=" + cnt);
-        }
-        return playlistUri;
-    }
-
-    private Uri getPlaylistMemberUri (Uri playlistUri) {
-        Long id = ContentUris.parseId(playlistUri);
-        return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
-    }
-
-    private ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
-        ArrayList<MusicSong> songList = new ArrayList<MusicSong>();
-        if (cursor != null) {
-            cursor.moveToPosition(-1);
-            while (cursor.moveToNext()) {
-                long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
-                String musicFilePath = MusicLib.getMusicFilePath(getActivity(), musicUri);
-                if(isMusicFile(musicFilePath)) {
-                    songList.add(new MusicSong(id, title, artist, trackDuration));
-                }
-            }
-        }
-        return songList;
-    }
-
-    private JSONObject checkBpmForEachSong () {
-        MusicSong mMusicSong;
-        HashMap<String, String> songInfo;
-        JSONObject trackListWrapper = new JSONObject();
-        JSONArray  trackList        = new JSONArray();
-        int length = mMusicSongList.size();
-        try {
-            for (int i = 0; i < length; i++) {
-                mMusicSong = mMusicSongList.get(i);
-                songInfo = MusicLib.getSongInfo(getActivity(), mMusicSong.mTitle);
-                if (songInfo == null){
-                    //get song bpm
-                    JSONObject trackInfo = new JSONObject();
-                    trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
-                    trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
-                    trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
-                    trackList.put(trackInfo);
-                } else if (songInfo.get(MusicLib.BPM) == null) {
-                    JSONObject trackInfo = new JSONObject();
-                    trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
-                    trackInfo.put(MusicLib.ARTIST_ID, URLEncoder.encode(songInfo.get(MusicLib.ARTIST_ID), "UTF-8"));
-                    trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
-                    trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
-                    trackInfo.put(MusicLib.ID, songInfo.get(MusicLib.ID));
-                    trackList.put(trackInfo);
-                }
-            }
-            if (trackList.length() > 0) {
-                trackListWrapper.put(TRACK_LIST, trackList);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return trackListWrapper;
-    }
-
-    private void saveBpmForEachSong (JSONArray trackListArray) {
-        JSONObject trackInfo;
-        int length = trackListArray.length();
-        try {
-            for (int i = 0; i < length; i ++) {
-                trackInfo = trackListArray.getJSONObject(i);
-                Log.d(TAG, trackInfo.getString(MusicLib.ARTIST));
-                Log.d(TAG, trackInfo.getString(MusicLib.BPM));
-                if (trackInfo.has(MusicLib.ID)) {
-                    MusicLib.updateSongInfoBPM(getActivity(), trackInfo);
-                } else {
-                    MusicLib.insertSongInfo(getActivity(), trackInfo);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean isMusicFile(String filePath) {
-        if (!TextUtils.isEmpty(filePath) && (filePath.endsWith("mp3") || filePath.endsWith("MP3"))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private Double calculateCalories (int timeInSec, Double distanceInMeter) {
-        if (distanceInMeter == 0.0) {
-            return 0.0;
-        }
-        double mins  = (double) timeInSec / 60;
-        double hours = (double) timeInSec / 3600;
-        double per400meters = distanceInMeter / 400;
-        double speed = mins / per400meters;
-        double K = 30 / speed;
-        double calories = 70*hours*K;
-
-        return calories;
-    }*/
-/*
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-*/
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -401,276 +142,83 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                 playlistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
                 playlistViews.get(oldPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
                 playlistViews.get(newPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-
                 break;
         }
     }
 
-    private Handler mPlaylistUIHandler = new Handler();
+    private Handler mPlaylistUIHandler = new Handler() {
+        @Override
+        public void handleMessage (Message message) {
+            switch (message.what) {
+                case PLAYLIST_PREPARED:
+                    mPlaylistMetaData = (HashMap<Integer, PlaylistMetaData>) message.obj;
+                    updatePlaylistUI();
+                    Long id = playlistPreferences.getLong("id", 0);
+                    if (id != null) {
+                        Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
+                        playlistPreferences.edit().putLong("id", initId).commit();
+                        playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                    }
+                    break;
+            }
+        }
+    };
 
-    public class SongLoader implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
+    private void updatePlaylistUI () {
+        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST));
+        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST));
+        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST));
+        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST));
+    }
+
+    public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
         Fragment fragment;
+        Handler mHandler;
 
-        public SongLoader (Fragment f) {
+        public SongLoaderRunnable (Fragment f, Handler handler) {
             fragment = f;
+            mHandler = handler;
         }
 
         @Override
         public void run() {
+            Looper.prepare();
             getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return new CursorLoader(getActivity(), MusicLib.getMusicUri(), MUSIC_SELECT_PROJECTION, null, null, null);
+            return new CursorLoader(fragment.getActivity(), MusicLib.getMusicUri(), MUSIC_SELECT_PROJECTION, null, null, null);
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            mMusicSongList = convertCursorToMusicSongList(cursor);
-            mTrackListWrapper = checkBpmForEachSong();
-            if (mTrackListWrapper.has(TRACK_LIST)) {
-                try {
-                    RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(mTrackListWrapper.toString());
-                    String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
-                    JSONArray trackListArray = new JSONArray(trackListArrayString);
-                    saveBpmForEachSong(trackListArray);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            initPlaylists();
-            setPlaylists();
-            setViews();
+            PlaylistManager playlistManager = PlaylistManager.getInstance();
+            playlistManager.init();
+            playlistManager.setContext(fragment.getActivity());
+            playlistManager.setCursor(cursor);
+            playlistManager.scan();
+            HashMap<Integer, PlaylistMetaData> playlistMetaDatas = new HashMap<Integer, PlaylistMetaData>();
+            PlaylistMetaData halfHourSlowPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
+            PlaylistMetaData halfHourMediumPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
+            PlaylistMetaData oneHourSlowPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
+            PlaylistMetaData oneHourMediumPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
+            playlistMetaDatas.put(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST, halfHourSlowPlaylistMetaData);
+            playlistMetaDatas.put(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST, halfHourMediumPlaylistMetaData);
+            playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST, oneHourSlowPlaylistMetaData);
+            playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST, oneHourMediumPlaylistMetaData);
 
-            // temporarily setting the playlist to slow one
-            playlistPreferences.edit().putLong("id", fastPlaylistId).commit();
-            TextView choosePlaylistTextView = (TextView) playlistViews.get(fastPlaylistId).findViewById(R.id.choose_playlist);
-            choosePlaylistTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+            Message completeMessage = mHandler.obtainMessage(PLAYLIST_PREPARED, playlistMetaDatas);
+            completeMessage.sendToTarget();
 
             //need to destroy loader so that onLoadFinished won't be called twice
             getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
+            Thread.interrupted();
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
-        }
-
-        private JSONObject checkBpmForEachSong () {
-            MusicSong mMusicSong;
-            HashMap<String, String> songInfo;
-            JSONObject trackListWrapper = new JSONObject();
-            JSONArray  trackList        = new JSONArray();
-            int length = mMusicSongList.size();
-            try {
-                for (int i = 0; i < length; i++) {
-                    mMusicSong = mMusicSongList.get(i);
-                    songInfo = MusicLib.getSongInfo(getActivity(), mMusicSong.mTitle);
-                    if (songInfo == null){
-                        //get song bpm
-                        JSONObject trackInfo = new JSONObject();
-                        trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
-                        trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
-                        trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
-                        trackList.put(trackInfo);
-                    } else if (songInfo.get(MusicLib.BPM) == null) {
-                        JSONObject trackInfo = new JSONObject();
-                        trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
-                        trackInfo.put(MusicLib.ARTIST_ID, URLEncoder.encode(songInfo.get(MusicLib.ARTIST_ID), "UTF-8"));
-                        trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
-                        trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
-                        trackInfo.put(MusicLib.ID, songInfo.get(MusicLib.ID));
-                        trackList.put(trackInfo);
-                    }
-                }
-                if (trackList.length() > 0) {
-                    trackListWrapper.put(TRACK_LIST, trackList);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return trackListWrapper;
-        }
-
-        private ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
-            ArrayList<MusicSong> songList = new ArrayList<MusicSong>();
-            if (cursor != null) {
-                cursor.moveToPosition(-1);
-                while (cursor.moveToNext()) {
-                    long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                    String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                    String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                    Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
-                    String musicFilePath = MusicLib.getMusicFilePath(fragment.getActivity(), musicUri);
-                    if(isMusicFile(musicFilePath)) {
-                        songList.add(new MusicSong(id, title, artist, trackDuration));
-                    }
-                }
-            }
-            return songList;
-        }
-
-        private void setViews() {
-            addPlaylistTemplate(MusicLib.FAST_PLAYLIST, fastPlaylistId);
-            addPlaylistTemplate(MusicLib.MEDIUM_PLAYLIST, mediumPlaylistId);
-            addPlaylistTemplate(MusicLib.SLOW_PLAYLIST, slowPlaylistId);
-        }
-
-        private void addPlaylistTemplate(String type, Long playlistId) {
-            View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
-            TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
-            TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
-            TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
-            TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
-            TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
-            TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
-            titleTextView.setText(PlaylistTitle.get(type));
-            typeTextView.setText(PlaylistType.get(type));
-            tracksTextView.setText(tracks.get(type).toString());
-            durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration.get(type)/1000)));
-            caloriesTextView.setText(StringLib.truncateDoubleString(calories.get(type).toString(),2));
-
-            musicListTemplate.setTag(playlistId);
-            musicListTemplate.setOnClickListener((View.OnClickListener) fragment);
-            choosePlaylistTextView.setTag(playlistId);
-            choosePlaylistTextView.setOnClickListener((View.OnClickListener) fragment);
-            playlistContainer.addView(musicListTemplate);
-            playlistViews.put(playlistId, musicListTemplate);
-        }
-
-        private void initPlaylists () {
-            tracks = new HashMap<String, Integer>();
-            tracks.put(MusicLib.FAST_PLAYLIST, 0);
-            tracks.put(MusicLib.MEDIUM_PLAYLIST, 0);
-            tracks.put(MusicLib.SLOW_PLAYLIST, 0);
-            duration = new HashMap<String, Integer>();
-            duration.put(MusicLib.FAST_PLAYLIST, 0);
-            duration.put(MusicLib.MEDIUM_PLAYLIST, 0);
-            duration.put(MusicLib.SLOW_PLAYLIST, 0);
-            calories = new HashMap<String, Double>();
-            calories.put(MusicLib.FAST_PLAYLIST, 0.0);
-            calories.put(MusicLib.MEDIUM_PLAYLIST, 0.0);
-            calories.put(MusicLib.SLOW_PLAYLIST, 0.0);
-
-            fastPlaylistUri         = getPlaylistUri(MusicLib.FAST_PLAYLIST_NAME);
-            fastPlaylistId          = getPlaylistId(fastPlaylistUri);
-            fastPlaylistMemberUri   = getPlaylistMemberUri(fastPlaylistUri);
-
-            mediumPlaylistUri       = getPlaylistUri(MusicLib.MEDIUM_PLAYLIST_NAME);
-            mediumPlaylistId        = getPlaylistId(mediumPlaylistUri);
-            mediumPlaylistMemberUri = getPlaylistMemberUri(mediumPlaylistUri);
-
-            slowPlaylistUri         = getPlaylistUri(MusicLib.SLOW_PLAYLIST_NAME);
-            slowPlaylistId          = getPlaylistId(slowPlaylistUri);
-            slowPlaylistMemberUri   = getPlaylistMemberUri(slowPlaylistUri);
-        }
-
-        private void setPlaylists () {
-            int length = mMusicSongList.size();
-            Double bpm;
-            MusicSong ms;
-            HashMap<String, String> songInfo;
-
-            for (int i = 0; i < length; i ++) {
-                ms = mMusicSongList.get(i);
-                songInfo = MusicLib.getSongInfo(fragment.getActivity(), ms.mTitle);
-                bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-                if (bpm == null || bpm == -1.0) {
-                    //do nothing
-                } else if (bpm < 110.0) {
-                    addToPlaylist(slowPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.SLOW_PLAYLIST));
-                    updatePlaylistInfo(MusicLib.SLOW_PLAYLIST, ms.mDuration);
-                } else if (bpm >= 110.0 && bpm < 130.0) {
-                    addToPlaylist(mediumPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.MEDIUM_PLAYLIST));
-                    updatePlaylistInfo(MusicLib.MEDIUM_PLAYLIST, ms.mDuration);
-                } else {
-                    addToPlaylist(fastPlaylistMemberUri, Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)), tracks.get(MusicLib.FAST_PLAYLIST));
-                    updatePlaylistInfo(MusicLib.FAST_PLAYLIST, ms.mDuration);
-                }
-            }
-            calories.put(MusicLib.FAST_PLAYLIST, calculateCalories(duration.get(MusicLib.FAST_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.FAST_PLAYLIST)));
-            calories.put(MusicLib.MEDIUM_PLAYLIST, calculateCalories(duration.get(MusicLib.MEDIUM_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.MEDIUM_PLAYLIST)));
-            calories.put(MusicLib.SLOW_PLAYLIST, calculateCalories(duration.get(MusicLib.SLOW_PLAYLIST)/1000, 325.0*tracks.get(MusicLib.SLOW_PLAYLIST)));
-        }
-
-        private void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
-            Uri uri = MusicLib.insertSongToPlaylist(fragment.getActivity(), playlistMemberUri, songRealId, playOrder);
-            Log.d(TAG, "song is add to playlist, uri = " + uri.toString());
-        }
-
-        private void updatePlaylistInfo (String type, Integer dur) {
-            tracks.put(type, tracks.get(type) + 1);
-            duration.put(type, duration.get(type) + dur);
-        }
-
-        private Long getPlaylistId (Uri playlistUri) {
-            return ContentUris.parseId(playlistUri);
-        }
-
-        private Uri getPlaylistUri (String playlistName) {
-            Uri playlistUri = MusicLib.getPlaylistUri(fragment.getActivity(), playlistName);
-            if (playlistUri == null) {
-                playlistUri = MusicLib.insertPlaylistId(fragment.getActivity(), playlistName);
-                Log.d(TAG, "playlist has been created, uri=" + playlistUri.toString());
-            } else {
-                Integer cnt = MusicLib.cleanPlaylist(fragment.getActivity(), playlistUri);
-                Log.d(TAG, "playlist has been cleaned, cnt=" + cnt);
-            }
-            return playlistUri;
-        }
-
-        private Uri getPlaylistMemberUri (Uri playlistUri) {
-            Long id = ContentUris.parseId(playlistUri);
-            return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
-        }
-
-        private void saveBpmForEachSong (JSONArray trackListArray) {
-            JSONObject trackInfo;
-            int length = trackListArray.length();
-            try {
-                for (int i = 0; i < length; i ++) {
-                    trackInfo = trackListArray.getJSONObject(i);
-                    Log.d(TAG, trackInfo.getString(MusicLib.ARTIST));
-                    Log.d(TAG, trackInfo.getString(MusicLib.BPM));
-                    if (trackInfo.has(MusicLib.ID)) {
-                        MusicLib.updateSongInfoBPM(getActivity(), trackInfo);
-                    } else {
-                        MusicLib.insertSongInfo(getActivity(), trackInfo);
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private Double calculateCalories (int timeInSec, Double distanceInMeter) {
-            if (distanceInMeter == 0.0) {
-                return 0.0;
-            }
-            double mins  = (double) timeInSec / 60;
-            double hours = (double) timeInSec / 3600;
-            double per400meters = distanceInMeter / 400;
-            double speed = mins / per400meters;
-            double K = 30 / speed;
-            double calories = 70*hours*K;
-
-            return calories;
-        }
-
-        private boolean isMusicFile(String filePath) {
-            if (!TextUtils.isEmpty(filePath) && (filePath.endsWith("mp3") || filePath.endsWith("MP3"))) {
-                return true;
-            } else {
-                return false;
-            }
         }
     }
 }
