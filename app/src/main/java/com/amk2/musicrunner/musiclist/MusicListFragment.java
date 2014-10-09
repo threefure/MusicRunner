@@ -147,23 +147,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         }
     }
 
-    private Handler mPlaylistUIHandler = new Handler() {
-        @Override
-        public void handleMessage (Message message) {
-            switch (message.what) {
-                /*case PLAYLIST_PREPARED:
-                    mPlaylistMetaData = (HashMap<Integer, PlaylistMetaData>) message.obj;
-                    updatePlaylistUI();
-                    Long id = playlistPreferences.getLong("id", 0);
-                    if (id != null) {
-                        Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
-                        playlistPreferences.edit().putLong("id", initId).commit();
-                        playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                    }
-                    break;*/
-            }
-        }
-    };
+    private Handler mPlaylistUIHandler = new Handler();
 
     private void updatePlaylistUI () {
         addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST));
@@ -175,13 +159,18 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     @Override
     public void OnPlaylistPrepared(HashMap<Integer, PlaylistMetaData> playlistMetaDataHashMap) {
         mPlaylistMetaData = playlistMetaDataHashMap;
-        updatePlaylistUI();
-        Long id = playlistPreferences.getLong("id", 0);
-        if (id != null) {
-            Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
-            playlistPreferences.edit().putLong("id", initId).commit();
-            playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-        }
+        mPlaylistUIHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                updatePlaylistUI();
+                Long id = playlistPreferences.getLong("id", 0);
+                if (id != null) {
+                    Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
+                    playlistPreferences.edit().putLong("id", initId).commit();
+                    playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                }
+            }
+        });
     }
 
     public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {

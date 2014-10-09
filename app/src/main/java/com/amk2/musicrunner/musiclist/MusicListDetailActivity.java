@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.utilities.HealthLib;
 import com.amk2.musicrunner.utilities.MusicLib;
+import com.amk2.musicrunner.utilities.OnSongPreparedListener;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
@@ -31,7 +32,7 @@ import java.util.HashMap;
 /**
  * Created by ktlee on 9/29/14.
  */
-public class MusicListDetailActivity extends Activity {
+public class MusicListDetailActivity extends Activity implements OnSongPreparedListener{
     private static final String TAG = "MusicListDetailActivity";
     public static final String PLAYLIST_MEMBER_ID = "playlist_member_id";
 
@@ -102,7 +103,7 @@ public class MusicListDetailActivity extends Activity {
 
     private void setViews () {
         //create another thread to load music in the background
-        PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(getApplicationContext(), mPlaylistUiHandler);
+        PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
         Thread loaderThread = new Thread(loader);
         loaderThread.start();
 
@@ -188,30 +189,35 @@ public class MusicListDetailActivity extends Activity {
         caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));
     }
 
-    private Handler mPlaylistUiHandler = new Handler() {
-        @Override
-        public void handleMessage (Message message) {
-            switch (message.what) {
-                case ADD_MUSIC:
-                    MusicMetaData musicMetaData = (MusicMetaData) message.obj;
-                    addSongToList(musicMetaData);
+    private Handler mPlaylistUiHandler = new Handler();
 
-                    duration += musicMetaData.mDuration;
-                    tracks ++;
-                    updateSummary();
-                    break;
-            }
+    @Override
+    public void OnSongPrepared(MusicMetaData musicMetaData) {
+        mPlaylistUiHandler.post(new AddSongRunnable(musicMetaData));
+    }
+
+    private class AddSongRunnable implements Runnable {
+        MusicMetaData mMusicMetaData;
+        public AddSongRunnable (MusicMetaData musicMetaData) {
+            mMusicMetaData = musicMetaData;
         }
-    };
+        @Override
+        public void run() {
+            addSongToList(mMusicMetaData);
+            duration += mMusicMetaData.mDuration;
+            tracks ++;
+            updateSummary();
+        }
+    }
 
     public class PlaylistLoaderRunnable implements Runnable{
         Context context;
         ContentResolver contentResolver;
-        Handler handler;
+        OnSongPreparedListener listener;
 
-        public PlaylistLoaderRunnable(Context c, Handler h) {
+        public PlaylistLoaderRunnable(Context c) {
             context = c;
-            handler = h;
+            listener = (OnSongPreparedListener) c;
             contentResolver = context.getContentResolver();
         }
         @Override
@@ -240,9 +246,9 @@ public class MusicListDetailActivity extends Activity {
                     bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
                     albumPhoto = MusicLib.getMusicAlbumArt(filePath);
 
+
                     MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
-                    Message completeMessage = handler.obtainMessage(ADD_MUSIC, metaData);
-                    completeMessage.sendToTarget();
+                    listener.OnSongPrepared(metaData);
                 }
             }
             cursor.close();

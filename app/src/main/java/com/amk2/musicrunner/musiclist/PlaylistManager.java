@@ -125,20 +125,21 @@ public class PlaylistManager{
     }
 
     private PlaylistMetaData generatePlaylist(ArrayList<MusicSong> musicSongList, Integer targetDuration, String playlistName) {
-        int length = musicSongList.size(), duration = 0, tracks;
+        int length = musicSongList.size(), duration = 0, tracks = 0;
         Uri playlistUri = getPlaylistUri(playlistName);
         Uri playlistMemberUri = getPlaylistMemberUri(playlistUri);
         MusicSong ms;
         PlaylistMetaData playlistMetaData;
-        for (tracks = 0; tracks < length; tracks ++ ){
-            ms = musicSongList.get(tracks);
-            addToPlaylist(playlistMemberUri, ms.mId, tracks);
+        for (int i = 0; i < length; i ++ ){
+            ms = musicSongList.get(i);
+            addToPlaylist(playlistMemberUri, ms.mId, i);
             duration += ms.mDuration;
+            tracks ++;
             if (duration > targetDuration) {
                 break;
             }
         }
-        playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks + 1);
+        playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks);
         return playlistMetaData;
     }
 
@@ -199,7 +200,7 @@ public class PlaylistManager{
                     trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
                     trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
                     trackListWithoutBPM.put(trackInfo);
-                } else if (songInfo.get(MusicLib.BPM) == null) {
+                } else if (songInfo.get(MusicLib.BPM) == null || Double.parseDouble(songInfo.get(MusicLib.BPM)) == -2) {
                     JSONObject trackInfo = new JSONObject();
                     trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
                     trackInfo.put(MusicLib.ARTIST_ID, URLEncoder.encode(songInfo.get(MusicLib.ARTIST_ID), "UTF-8"));
@@ -247,7 +248,7 @@ public class PlaylistManager{
             ms = mMusicSongList.get(i);
             songInfo = MusicLib.getSongInfo(mContext, ms.mTitle);
             bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-            if (bpm == null || bpm == -1.0) {
+            if (bpm == null || bpm < 0) {
                 //do nothing
             } else if (bpm < 110.0) {
                 mSlowPaceMusicSongList.add(ms);
