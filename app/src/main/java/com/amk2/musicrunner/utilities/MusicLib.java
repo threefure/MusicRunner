@@ -195,7 +195,7 @@ public class MusicLib {
             artist = URLDecoder.decode(songInfo.getString(ARTIST), "UTF-8");
             artistId = getArtistId(context, artist);
             if (artistId == null) {
-                artistId = insertArtist(context, songInfo.getString(ARTIST));
+                artistId = insertArtist(context, artist);
             }
             //if (bpm == -2) {
             //    bpm = null;
@@ -268,6 +268,7 @@ public class MusicLib {
         Cursor cursor = context.getContentResolver().query(MusicRunnerDBMetaData.MusicRunnerArtistDB.CONTENT_URI,
                 artistProjection, artistSelection, artistSelectionArgs, null);
         if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
             artistId = cursor.getLong(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerArtistDB.COLUMN_NAME_ID));
         }
         cursor.close();

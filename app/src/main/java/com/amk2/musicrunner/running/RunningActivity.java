@@ -457,22 +457,32 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     public void onChangeMusicSong(MusicRecord previousRecord) {
         Log.d(TAG, "Change song title = " + previousRecord.mMusicSong.mTitle);
         Log.d(TAG, "Change song duration = " + previousRecord.mPlayingDuration);
+        if (previousRecord.mPlayingDuration < 10000) {
+            // won't record this song if user play music less than 10 secs
+            return;
+        }
 
         String songName = previousRecord.mMusicSong.mTitle;
         String performanceString;
         Double timeDiff = ((double)totalSec - previousSongStartTime.doubleValue()) / 60;
         Double caloriesDiff = calorie - previousSongStartCalories;
+        Double distanceDiff = distance - previousSongEndDistance;
         Double performance = 0.0;
+        if (caloriesDiff < 0) {
+            caloriesDiff = 0.0;
+        }
+        if (distanceDiff < 0) {
+            distanceDiff = 0.0;
+        }
         if (timeDiff != 0) {
             performance = caloriesDiff/timeDiff;
         }
         performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
         songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
 
-
         mMapFragment.musicChangeCallback(previousRecord);
 
-        SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distance - previousSongEndDistance, calorie - previousSongStartCalories, previousRecord.mMusicSong.mTitle, previousRecord.mMusicSong.mArtist);
+        SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distanceDiff, caloriesDiff, previousRecord.mMusicSong.mTitle, previousRecord.mMusicSong.mArtist);
         mp.setRealSongId(previousRecord.mMusicSong.mId);
         songPerformanceArrayList.add(mp);
 
