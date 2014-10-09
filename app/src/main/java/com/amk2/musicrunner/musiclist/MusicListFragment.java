@@ -28,6 +28,7 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicSong;
 import com.amk2.musicrunner.utilities.MusicLib;
+import com.amk2.musicrunner.utilities.OnPlaylistPreparedListener;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
@@ -47,7 +48,7 @@ import java.util.zip.Inflater;
  * Created by logicmelody on 2014/9/23.
  */
 
-public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener {
+public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener {
     private static final String TAG = "MusicListFragment";
     private static final int MUSIC_LOADER_ID = 1;
     private static final int PLAYLIST_PREPARED = 0;
@@ -89,7 +90,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         // but....not work!
         super.onResume();
         if (mPlaylistMetaData == null) {
-            SongLoaderRunnable loader = new SongLoaderRunnable(this, mPlaylistUIHandler);
+            SongLoaderRunnable loader = new SongLoaderRunnable(this);
             Thread loaderThread = new Thread(loader);
             loaderThread.start();
         }
@@ -150,7 +151,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         @Override
         public void handleMessage (Message message) {
             switch (message.what) {
-                case PLAYLIST_PREPARED:
+                /*case PLAYLIST_PREPARED:
                     mPlaylistMetaData = (HashMap<Integer, PlaylistMetaData>) message.obj;
                     updatePlaylistUI();
                     Long id = playlistPreferences.getLong("id", 0);
@@ -159,7 +160,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                         playlistPreferences.edit().putLong("id", initId).commit();
                         playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
                     }
-                    break;
+                    break;*/
             }
         }
     };
@@ -171,13 +172,25 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST));
     }
 
+    @Override
+    public void OnPlaylistPrepared(HashMap<Integer, PlaylistMetaData> playlistMetaDataHashMap) {
+        mPlaylistMetaData = playlistMetaDataHashMap;
+        updatePlaylistUI();
+        Long id = playlistPreferences.getLong("id", 0);
+        if (id != null) {
+            Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
+            playlistPreferences.edit().putLong("id", initId).commit();
+            playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+        }
+    }
+
     public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
         Fragment fragment;
-        Handler mHandler;
+        OnPlaylistPreparedListener mPlaylistPreparedListener;
 
-        public SongLoaderRunnable (Fragment f, Handler handler) {
+        public SongLoaderRunnable (Fragment f) {
             fragment = f;
-            mHandler = handler;
+            mPlaylistPreparedListener = (OnPlaylistPreparedListener)f;
         }
 
         @Override
@@ -208,9 +221,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST, oneHourSlowPlaylistMetaData);
             playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST, oneHourMediumPlaylistMetaData);
 
-            Message completeMessage = mHandler.obtainMessage(PLAYLIST_PREPARED, playlistMetaDatas);
-            completeMessage.sendToTarget();
-
+            mPlaylistPreparedListener.OnPlaylistPrepared(playlistMetaDatas);
             //need to destroy loader so that onLoadFinished won't be called twice
             getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
             Thread.interrupted();

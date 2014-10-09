@@ -197,9 +197,9 @@ public class MusicLib {
             if (artistId == null) {
                 artistId = insertArtist(context, songInfo.getString(ARTIST));
             }
-            if (bpm == -2) {
-                bpm = null;
-            }
+            //if (bpm == -2) {
+            //    bpm = null;
+            //}
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
