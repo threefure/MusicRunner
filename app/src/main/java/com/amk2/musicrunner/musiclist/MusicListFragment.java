@@ -229,6 +229,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     isPlaylistInitialized = true;
                     choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
                     playlistPreferences.edit().remove("id").putLong("id", playlistMetaData.mId).commit();
+                    mSelectedPlaylist = choosePlaylistTextView;
                 }
             } else {
                 // section title
