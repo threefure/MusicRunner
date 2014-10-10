@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.musiclist;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.Button;
@@ -23,6 +25,7 @@ public class MusicCreatePlaylistActivity extends Activity implements View.OnClic
     private static final String TAG = "MusicCreatePlaylistActivity";
     private EditText mPlaylistNameEditText;
     private Button mCreatePlaylistButton;
+    private ActionBar mActionBar;
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +35,20 @@ public class MusicCreatePlaylistActivity extends Activity implements View.OnClic
 
     private void init () {
         initViews();
+        setActionBar();
         setViews();
+    }
+
+    private void setActionBar() {
+        View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        mActionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(Gravity.CENTER));
     }
 
     private void initViews() {
         mPlaylistNameEditText = (EditText) findViewById(R.id.edit_playlist_name);
         mCreatePlaylistButton = (Button) findViewById(R.id.create_playlist);
+        mActionBar        = getActionBar();
     }
 
     private void setViews() {
@@ -51,11 +62,8 @@ public class MusicCreatePlaylistActivity extends Activity implements View.OnClic
                 String playlistName = mPlaylistNameEditText.getText().toString();
                 boolean isPlaylistExisted = MusicLib.isPlaylistExisted(this, playlistName);
                 if (isPlaylistExisted) {
-                    Log.d(TAG, "playlist exists!");
                     Toast.makeText(this, "Playlist Exist! Please pick another name!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d(TAG, "playlist doesn't exists!");
-                    Toast.makeText(this, "Playlist doesn't Exist!", Toast.LENGTH_SHORT).show();
                     Uri uri = MusicLib.createPlaylist(this, playlistName);
                     Intent intent = new Intent(MusicListFragment.CREATE_PLAYLIST);
                     intent.putExtra(MusicListFragment.PLAYLIST_URI, ContentUris.parseId(uri));
