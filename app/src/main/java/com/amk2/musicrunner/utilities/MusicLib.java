@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.utilities;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.amk2.musicrunner.musiclist.MusicMetaData;
+import com.amk2.musicrunner.musiclist.PlaylistMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 
 import org.apache.http.client.utils.URIUtils;
@@ -299,6 +302,19 @@ public class MusicLib {
         return playlistUri;
     }
 
+    public static boolean isPlaylistExisted (Context context, String playlistTitle) {
+        String[] projection = {
+                MediaStore.Audio.Playlists._ID
+        };
+        String selection = MediaStore.Audio.Playlists.NAME + " = ?";
+        String[] selectionArgs = {playlistTitle};
+        Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public static Uri getPlaylistUriFromId (Long id) {
         return ContentUris.withAppendedId(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, id);
     }
@@ -312,7 +328,7 @@ public class MusicLib {
         return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
     }
 
-    public static Uri insertPlaylistId (Context context, String playlistTitle) {
+    public static Uri createPlaylist(Context context, String playlistTitle) {
         Calendar calendar = Calendar.getInstance();
         ContentValues values = new ContentValues();
         values.put(MediaStore.Audio.Playlists.NAME, playlistTitle);
@@ -335,5 +351,47 @@ public class MusicLib {
         values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, songRealId);
         Uri uri = context.getContentResolver().insert(playlistUri, values);
         return uri;
+    }
+
+    public static String getPlaylistName (Context context, Uri playlistUri) {
+        String playlistName = "";
+        ContentResolver contentResolver = context.getContentResolver();
+        String[] projection = {
+                MediaStore.Audio.Playlists.NAME
+        };
+        Cursor cursor = contentResolver.query(playlistUri, projection, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            playlistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
+        }
+        return playlistName;
+    }
+
+    public static PlaylistMetaData getPlaylistMetadata(Context context, Long playlistId) {
+        Uri playlistUri = getPlaylistUriFromId(playlistId);
+        Uri playlistMemberUri = getPlaylistMemberUri(playlistUri);
+        String playlistName = getPlaylistName(context, playlistUri);
+
+        ContentResolver contentResolver = context.getContentResolver();
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        Long audio_id;
+        Integer duration = 0, tracks = 0;
+        Uri musicUri;
+        String[] projection = {
+                MediaStore.Audio.Playlists.Members.AUDIO_ID
+        };
+        Cursor cursor = contentResolver.query(playlistMemberUri, projection, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
+                musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
+
+                retriever.setDataSource(context, musicUri);
+                duration += Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                tracks ++;
+            }
+        }
+        PlaylistMetaData playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks);
+        return playlistMetaData;
     }
 }

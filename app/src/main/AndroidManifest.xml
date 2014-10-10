@@ -110,6 +110,9 @@
         <activity
             android:name="com.amk2.musicrunner.musiclist.MusicListDetailActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.amk2.musicrunner.musiclist.MusicCreatePlaylistActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name=".running.MusicService" />
 

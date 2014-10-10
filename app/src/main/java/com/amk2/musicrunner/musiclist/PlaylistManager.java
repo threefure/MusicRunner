@@ -1,12 +1,10 @@
 package com.amk2.musicrunner.musiclist;
 
-import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,10 +142,39 @@ public class PlaylistManager{
         return playlistMetaData;
     }
 
+    public ArrayList<PlaylistMetaData> getUserGeneratedPlaylist () {
+        ArrayList<PlaylistMetaData> playlistMetaDatas = new ArrayList<PlaylistMetaData>();
+        Uri allPlaylistUri = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Long playlistId;
+        Uri playlistUri;
+        String playlistName;
+        String[] projection = {
+            MediaStore.Audio.Playlists._ID
+        };
+        Cursor cursor = contentResolver.query(allPlaylistUri, projection, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                playlistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
+                playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
+                playlistName = MusicLib.getPlaylistName(mContext, playlistUri);
+                if (playlistName != HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE &&
+                    playlistName != HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE&&
+                    playlistName != ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE&&
+                    playlistName != ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE) {
+                    //user generated playlist
+                    PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(mContext, playlistId);
+                    playlistMetaDatas.add(playlistMetaData);
+                }
+            }
+        }
+        return playlistMetaDatas;
+    }
+
     private Uri getPlaylistUri (String playlistName) {
         Uri playlistUri = MusicLib.getPlaylistUri(mContext, playlistName);
         if (playlistUri == null) {
-            playlistUri = MusicLib.insertPlaylistId(mContext, playlistName);
+            playlistUri = MusicLib.createPlaylist(mContext, playlistName);
             Log.d(TAG, "playlist has been created, uri=" + playlistUri.toString());
         } else {
             Integer cnt = MusicLib.cleanPlaylist(mContext, playlistUri);

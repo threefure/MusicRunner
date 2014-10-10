@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <ImageView
+        android:id="@+id/create_playlist_button"
         android:src="@drawable/add_playlist_clicked"
         android:layout_width="50dp"
         android:layout_height="50dp"

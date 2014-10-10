@@ -3,11 +3,13 @@ package com.amk2.musicrunner.musiclist;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -17,6 +19,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -56,10 +60,10 @@ import java.util.zip.Inflater;
  */
 
 public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener {
+    public static final String CREATE_PLAYLIST = "com.amk2.music.create_playlist";
+    public static final String PLAYLIST_URI    = "playlist_uri";
     private static final String TAG = "MusicListFragment";
     private static final int MUSIC_LOADER_ID = 1;
-    private static final int PLAYLIST_PREPARED = 0;
-    private HashMap<Long, View> playlistViews;
 
     private static final String[] MUSIC_SELECT_PROJECTION = new String[] {
             android.provider.MediaStore.Audio.Media._ID,
@@ -69,9 +73,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     };
 
     private PinnedSectionListView playlistContainer;
-    SharedPreferences playlistPreferences;
+    private ImageView createPlaylistButtonImageView;
 
-    ArrayList<Object> mPlaylistMetaData;
+    private ArrayList<Object> mPlaylistMetaData;
+    private PlaylistPinnedSectionListAdapter playlistPinnedSectionListAdapter;
 
     private LayoutInflater inflater;
     @Override
@@ -82,9 +87,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mCreatePlaylistReceiver, new IntentFilter(CREATE_PLAYLIST));
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        playlistPreferences = getActivity().getSharedPreferences("playlist", 0);
-        playlistViews = new HashMap<Long, View>();
         mPlaylistMetaData = new ArrayList<Object>();
 
         initViews();
@@ -113,29 +117,37 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     private void initViews() {
         View thisView = getView();
         playlistContainer = (PinnedSectionListView) thisView.findViewById(R.id.playlist_container);
+        createPlaylistButtonImageView = (ImageView) thisView.findViewById(R.id.create_playlist_button);
     }
     private void setViews() {
         playlistContainer.setAdapter(new PlaylistPinnedSectionListAdapter(getActivity(), R.layout.music_list_item_template, mPlaylistMetaData));
-        PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
+        playlistPinnedSectionListAdapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
+        createPlaylistButtonImageView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.playlist:
-                Intent intent = new Intent(getActivity().getApplicationContext(), MusicListDetailActivity.class);
-                intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, (Long) view.getTag());
+            case R.id.create_playlist_button:
+                Intent intent = new Intent(getActivity(), MusicCreatePlaylistActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.choose_playlist:
-                Long oldPlaylistId = playlistPreferences.getLong("id", 0);
-                Long newPlaylistId = (Long) view.getTag();
-                playlistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
-                playlistViews.get(oldPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
-                playlistViews.get(newPlaylistId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
                 break;
         }
     }
+
+    private BroadcastReceiver mCreatePlaylistReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            Long playlistId = (Long) extras.get(PLAYLIST_URI);
+            Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
+            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(getActivity(), playlistId);
+            mPlaylistMetaData.add(playlistMetaData);
+            playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
+            playlistPinnedSectionListAdapter.notifyDataSetChanged();
+            //Log.d(TAG, "playlist ID " + playlistId.toString());
+        }
+    };
 
     private Handler mPlaylistUIHandler = new Handler();
 
@@ -145,9 +157,9 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         mPlaylistUIHandler.post(new Runnable() {
             @Override
             public void run() {
-                PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
-                adapter.updatePlaylistArrayList(mPlaylistMetaData);
-                adapter.notifyDataSetChanged();
+                //PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
+                playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
+                playlistPinnedSectionListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -156,6 +168,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         private final int TYPE_SECTION  = 0;
         private final int TYPE_PLAYLIST = 1;
         private boolean isPlaylistInitialized = false;
+        SharedPreferences mPlaylistPreferences;
         private ArrayList<Object> mPlaylistArrayList;
         private View mSelectedPlaylist = null;
         private Context mContext;
@@ -163,6 +176,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         public PlaylistPinnedSectionListAdapter(Context context, int resource, ArrayList<Object> list) {
             super(context, resource, list);
             mContext = context;
+            mPlaylistPreferences = mContext.getSharedPreferences("playlist", 0);
             mPlaylistArrayList = list;
         }
 
@@ -228,7 +242,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                 if (!isPlaylistInitialized) {
                     isPlaylistInitialized = true;
                     choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                    playlistPreferences.edit().remove("id").putLong("id", playlistMetaData.mId).commit();
+                    mPlaylistPreferences.edit().remove("id").putLong("id", playlistMetaData.mId).commit();
                     mSelectedPlaylist = choosePlaylistTextView;
                 }
             } else {
@@ -251,7 +265,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     break;
                 case R.id.choose_playlist:
                     Long newPlaylistId = (Long) view.getTag();
-                    playlistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
+                    mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
 
                     view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
                     mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
@@ -293,12 +307,15 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             PlaylistMetaData halfHourMediumPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
             PlaylistMetaData oneHourSlowPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
             PlaylistMetaData oneHourMediumPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
-            playlistMetaDatas.add(new PlaylistSectionData("30 Mins Playlist"));
+            playlistMetaDatas.add(new PlaylistSectionData("30 Minutes Playlists"));
             playlistMetaDatas.add(halfHourSlowPlaylistMetaData);
             playlistMetaDatas.add(halfHourMediumPlaylistMetaData);
-            playlistMetaDatas.add(new PlaylistSectionData("1 Hr Playlist"));
+            playlistMetaDatas.add(new PlaylistSectionData("1 Hour Playlists"));
             playlistMetaDatas.add(oneHourSlowPlaylistMetaData);
             playlistMetaDatas.add(oneHourMediumPlaylistMetaData);
+            playlistMetaDatas.add(new PlaylistSectionData("Your Playlists"));
+            ArrayList<PlaylistMetaData> UGPlaylistMetaDatas = playlistManager.getUserGeneratedPlaylist();
+            playlistMetaDatas.addAll(UGPlaylistMetaDatas);
 
             mPlaylistPreparedListener.OnPlaylistPrepared(playlistMetaDatas);
             //need to destroy loader so that onLoadFinished won't be called twice
