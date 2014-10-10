@@ -110,16 +110,17 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     private void addPlaylistTemplate(PlaylistMetaData playlistMetaData) {
         View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
         TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
-        TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
+        //TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
         TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
-        TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
-        TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
+        //TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
+        //TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
         TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
         titleTextView.setText(playlistMetaData.mTitle);
         //typeTextView.setText(PlaylistType.get(type));
         tracksTextView.setText(playlistMetaData.mTracks.toString());
-        durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(playlistMetaData.mDuration/1000)));
-        caloriesTextView.setText(StringLib.truncateDoubleString(playlistMetaData.mCalories.toString(),2));
+        //durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(playlistMetaData.mDuration/1000)));
+        //
+        // caloriesTextView.setText(StringLib.truncateDoubleString(playlistMetaData.mCalories.toString(),2));
 
         musicListTemplate.setTag(playlistMetaData.mId);
         musicListTemplate.setOnClickListener(this);
