@@ -14,6 +14,7 @@ public class PlaylistMetaData {
     public String mTitle;
     public Integer mDuration;
     public Integer mTracks;
+    public Integer mType;
     public Double mCalories;
     public Long mId;
 
@@ -24,5 +25,9 @@ public class PlaylistMetaData {
         mTracks = tracks;
         mId = ContentUris.parseId(uri);
         mCalories = HealthLib.calculateCalories(duration/1000, tracks.doubleValue()*500);
+    }
+
+    public void setType (int type) {
+        mType = type;
     }
 }

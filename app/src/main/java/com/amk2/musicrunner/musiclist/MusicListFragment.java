@@ -1,6 +1,7 @@
 package com.amk2.musicrunner.musiclist;
 
 import android.app.Fragment;
+import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -21,6 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +36,9 @@ import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
+import com.hb.views.PinnedSectionListView;
+import com.hb.views.PinnedSectionListView.PinnedSectionListAdapter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.Inflater;
 
@@ -61,10 +68,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             android.provider.MediaStore.Audio.Media.DURATION
     };
 
-    private LinearLayout playlistContainer;
+    private PinnedSectionListView playlistContainer;
     SharedPreferences playlistPreferences;
 
-    HashMap<Integer, PlaylistMetaData> mPlaylistMetaData;
+    ArrayList<Object> mPlaylistMetaData;
 
     private LayoutInflater inflater;
     @Override
@@ -78,8 +85,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         playlistPreferences = getActivity().getSharedPreferences("playlist", 0);
         playlistViews = new HashMap<Long, View>();
+        mPlaylistMetaData = new ArrayList<Object>();
 
         initViews();
+        setViews();
     }
 
     @Override
@@ -89,7 +98,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         // and http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
         // but....not work!
         super.onResume();
-        if (mPlaylistMetaData == null) {
+        if (mPlaylistMetaData.size() == 0) {
             SongLoaderRunnable loader = new SongLoaderRunnable(this);
             Thread loaderThread = new Thread(loader);
             loaderThread.start();
@@ -99,35 +108,15 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     @Override
     public void onStop () {
         super.onStop();
-        //playlistContainer.removeAllViewsInLayout();
     }
 
     private void initViews() {
         View thisView = getView();
-        playlistContainer = (LinearLayout) thisView.findViewById(R.id.playlist_container);
+        playlistContainer = (PinnedSectionListView) thisView.findViewById(R.id.playlist_container);
     }
-
-    private void addPlaylistTemplate(PlaylistMetaData playlistMetaData) {
-        View musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
-        TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
-        //TextView typeTextView     = (TextView) musicListTemplate.findViewById(R.id.playlist_type);
-        TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
-        //TextView durationTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_duration);
-        //TextView caloriesTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_calories);
-        TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
-        titleTextView.setText(playlistMetaData.mTitle);
-        //typeTextView.setText(PlaylistType.get(type));
-        tracksTextView.setText(playlistMetaData.mTracks.toString());
-        //durationTextView.setText(TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(playlistMetaData.mDuration/1000)));
-        //
-        // caloriesTextView.setText(StringLib.truncateDoubleString(playlistMetaData.mCalories.toString(),2));
-
-        musicListTemplate.setTag(playlistMetaData.mId);
-        musicListTemplate.setOnClickListener(this);
-        choosePlaylistTextView.setTag(playlistMetaData.mId);
-        choosePlaylistTextView.setOnClickListener(this);
-        playlistContainer.addView(musicListTemplate);
-        playlistViews.put(playlistMetaData.mId, musicListTemplate);
+    private void setViews() {
+        playlistContainer.setAdapter(new PlaylistPinnedSectionListAdapter(getActivity(), R.layout.music_list_item_template, mPlaylistMetaData));
+        PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
     }
 
     @Override
@@ -150,28 +139,125 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
 
     private Handler mPlaylistUIHandler = new Handler();
 
-    private void updatePlaylistUI () {
-        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST));
-        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST));
-        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST));
-        addPlaylistTemplate(mPlaylistMetaData.get(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST));
-    }
-
     @Override
-    public void OnPlaylistPrepared(HashMap<Integer, PlaylistMetaData> playlistMetaDataHashMap) {
+    public void OnPlaylistPrepared(ArrayList<Object> playlistMetaDataHashMap) {
         mPlaylistMetaData = playlistMetaDataHashMap;
         mPlaylistUIHandler.post(new Runnable() {
             @Override
             public void run() {
-                updatePlaylistUI();
-                Long id = playlistPreferences.getLong("id", 0);
-                if (id != null) {
-                    Long initId = mPlaylistMetaData.get(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST).mId;
-                    playlistPreferences.edit().putLong("id", initId).commit();
-                    playlistViews.get(initId).findViewById(R.id.choose_playlist).setBackground(getActivity().getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                }
+                PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
+                adapter.updatePlaylistArrayList(mPlaylistMetaData);
+                adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    private class PlaylistPinnedSectionListAdapter extends ArrayAdapter<Object> implements PinnedSectionListAdapter, View.OnClickListener {
+        private final int TYPE_SECTION  = 0;
+        private final int TYPE_PLAYLIST = 1;
+        private boolean isPlaylistInitialized = false;
+        private ArrayList<Object> mPlaylistArrayList;
+        private View mSelectedPlaylist = null;
+        private Context mContext;
+
+        public PlaylistPinnedSectionListAdapter(Context context, int resource, ArrayList<Object> list) {
+            super(context, resource, list);
+            mContext = context;
+            mPlaylistArrayList = list;
+        }
+
+        public void updatePlaylistArrayList (ArrayList<Object> playlistArrayList) {
+            mPlaylistArrayList = playlistArrayList;
+        }
+
+        @Override
+        public int getItemViewType (int position) {
+            if (mPlaylistArrayList.get(position) instanceof PlaylistMetaData) {
+                return TYPE_PLAYLIST;
+            }
+            return TYPE_SECTION;
+        }
+
+        @Override
+        public boolean isItemViewTypePinned(int viewType) {
+            if (viewType == TYPE_SECTION) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public int getCount() {
+            return mPlaylistArrayList.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return mPlaylistArrayList.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            if (mPlaylistArrayList.get(i) instanceof PlaylistMetaData) {
+                return ((PlaylistMetaData) mPlaylistArrayList.get(i)).mId;
+            }
+            return -1;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View musicListTemplate;
+
+            if (mPlaylistArrayList.get(i) instanceof PlaylistMetaData) {
+                // playlist data
+                PlaylistMetaData playlistMetaData = (PlaylistMetaData) mPlaylistArrayList.get(i);
+                musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
+                TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
+                TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
+                TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
+                titleTextView.setText(playlistMetaData.mTitle);
+                tracksTextView.setText(playlistMetaData.mTracks.toString());
+
+                // set song id to tag and onClick event
+                musicListTemplate.setTag(playlistMetaData.mId);
+                musicListTemplate.setOnClickListener(this);
+
+                // set song id to tag and onClick event
+                choosePlaylistTextView.setTag(playlistMetaData.mId);
+                choosePlaylistTextView.setOnClickListener(this);
+                if (!isPlaylistInitialized) {
+                    isPlaylistInitialized = true;
+                    choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                    playlistPreferences.edit().remove("id").putLong("id", playlistMetaData.mId).commit();
+                }
+            } else {
+                // section title
+                PlaylistSectionData playlistSectionData = (PlaylistSectionData) mPlaylistArrayList.get(i);
+                musicListTemplate = inflater.inflate(R.layout.music_list_section_title_template, null);
+                TextView titleTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_section_title);
+                titleTextView.setText(playlistSectionData.mSectionTitle);
+            }
+            return musicListTemplate;
+        }
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.playlist:
+                    Intent intent = new Intent(mContext, MusicListDetailActivity.class);
+                    intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, (Long) view.getTag());
+                    startActivity(intent);
+                    break;
+                case R.id.choose_playlist:
+                    Long newPlaylistId = (Long) view.getTag();
+                    playlistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
+
+                    view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                    mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                    mSelectedPlaylist = view;
+                    break;
+            }
+        }
     }
 
     public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
@@ -201,15 +287,17 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             playlistManager.setContext(fragment.getActivity());
             playlistManager.setCursor(cursor);
             playlistManager.scan();
-            HashMap<Integer, PlaylistMetaData> playlistMetaDatas = new HashMap<Integer, PlaylistMetaData>();
+            ArrayList<Object> playlistMetaDatas = new ArrayList<Object>();
             PlaylistMetaData halfHourSlowPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
             PlaylistMetaData halfHourMediumPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
             PlaylistMetaData oneHourSlowPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
             PlaylistMetaData oneHourMediumPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
-            playlistMetaDatas.put(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST, halfHourSlowPlaylistMetaData);
-            playlistMetaDatas.put(PlaylistManager.HALF_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST, halfHourMediumPlaylistMetaData);
-            playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.SLOW_PACE_PLAYLIST, oneHourSlowPlaylistMetaData);
-            playlistMetaDatas.put(PlaylistManager.ONE_HOUR_PLAYLIST + PlaylistManager.MEDIUM_PACE_PLAYLIST, oneHourMediumPlaylistMetaData);
+            playlistMetaDatas.add(new PlaylistSectionData("30 Mins Playlist"));
+            playlistMetaDatas.add(halfHourSlowPlaylistMetaData);
+            playlistMetaDatas.add(halfHourMediumPlaylistMetaData);
+            playlistMetaDatas.add(new PlaylistSectionData("1 Hr Playlist"));
+            playlistMetaDatas.add(oneHourSlowPlaylistMetaData);
+            playlistMetaDatas.add(oneHourMediumPlaylistMetaData);
 
             mPlaylistPreparedListener.OnPlaylistPrepared(playlistMetaDatas);
             //need to destroy loader so that onLoadFinished won't be called twice

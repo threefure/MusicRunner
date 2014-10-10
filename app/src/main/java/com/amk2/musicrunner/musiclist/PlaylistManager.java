@@ -108,6 +108,7 @@ public class PlaylistManager{
                 playlistMetaData = generatePlaylist(mSlowPaceMusicSongList, HALF_HOUR_IN_MILLI, HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE);
                 break;
         }
+        playlistMetaData.setType(type + HALF_HOUR_PLAYLIST);
         return playlistMetaData;
     }
 
@@ -121,6 +122,7 @@ public class PlaylistManager{
                 playlistMetaData = generatePlaylist(mSlowPaceMusicSongList, ONE_HOUR_IN_MILLI, ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE);
                 break;
         }
+        playlistMetaData.setType(type + ONE_HOUR_PLAYLIST);
         return playlistMetaData;
     }
 

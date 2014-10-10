@@ -2,17 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ScrollView
+    <com.hb.views.PinnedSectionListView
+        android:id="@+id/playlist_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/playlist_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="90dp"
-            android:orientation="vertical">
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="wrap_content"/>
     <ImageView
         android:src="@drawable/add_playlist_clicked"
         android:layout_width="50dp"
