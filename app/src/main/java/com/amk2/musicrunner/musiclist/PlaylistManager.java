@@ -192,7 +192,7 @@ public class PlaylistManager{
         Uri uri = MusicLib.insertSongToPlaylist(mContext, playlistMemberUri, songRealId, playOrder);
     }
 
-    private ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
+    public ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
         ArrayList<MusicSong> songList = new ArrayList<MusicSong>();
         if (cursor != null) {
             cursor.moveToPosition(-1);
@@ -288,7 +288,7 @@ public class PlaylistManager{
         }
     }
 
-    private boolean isMusicFile(String filePath) {
+    public static boolean isMusicFile(String filePath) {
         if (!TextUtils.isEmpty(filePath) && (filePath.endsWith("mp3") || filePath.endsWith("MP3"))) {
             return true;
         } else {

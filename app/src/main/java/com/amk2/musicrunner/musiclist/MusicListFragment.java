@@ -117,6 +117,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     private void initViews() {
         View thisView = getView();
         playlistContainer = (PinnedSectionListView) thisView.findViewById(R.id.playlist_container);
+        //TODO set onItemClickListener here!!
+        //playlistContainer.setOnItemClickListener();
         createPlaylistButtonImageView = (ImageView) thisView.findViewById(R.id.create_playlist_button);
     }
     private void setViews() {

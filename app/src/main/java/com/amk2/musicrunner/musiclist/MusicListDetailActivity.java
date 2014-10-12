@@ -26,13 +26,14 @@ import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnSongPreparedListener;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.views.MusicRunnerSongSelectorActivity;
 
 import java.util.HashMap;
 
 /**
  * Created by ktlee on 9/29/14.
  */
-public class MusicListDetailActivity extends Activity implements OnSongPreparedListener{
+public class MusicListDetailActivity extends Activity implements OnSongPreparedListener, View.OnClickListener{
     private static final String TAG = "MusicListDetailActivity";
     public static final String PLAYLIST_MEMBER_ID = "playlist_member_id";
 
@@ -54,6 +55,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     private TextView tracksTextView;
     private TextView durationTextView;
     private TextView caloriesTextView;
+    private ImageView addMusicImageView;
 
     private LinearLayout songContainer;
 
@@ -98,6 +100,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         tracksTextView        = (TextView) findViewById(R.id.tracks);
         durationTextView      = (TextView) findViewById(R.id.duration);
         caloriesTextView      = (TextView) findViewById(R.id.calories);
+        addMusicImageView     = (ImageView) findViewById(R.id.add_music);
         songContainer         = (LinearLayout) findViewById(R.id.song_container);
     }
 
@@ -119,6 +122,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         }
         cursor.close();
         playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
+        addMusicImageView.setOnClickListener(this);
     }
 
     private void addSongToList (String filePath) {
@@ -194,6 +198,16 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     @Override
     public void OnSongPrepared(MusicMetaData musicMetaData) {
         mPlaylistUiHandler.post(new AddSongRunnable(musicMetaData));
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_music:
+                Intent intent = new Intent(this, MusicRunnerSongSelectorActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     private class AddSongRunnable implements Runnable {
