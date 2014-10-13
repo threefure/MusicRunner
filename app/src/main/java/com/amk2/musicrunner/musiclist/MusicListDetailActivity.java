@@ -34,8 +34,9 @@ import java.util.HashMap;
  * Created by ktlee on 9/29/14.
  */
 public class MusicListDetailActivity extends Activity implements OnSongPreparedListener, View.OnClickListener{
-    private static final String TAG = "MusicListDetailActivity";
+    public static final int REQUEST_ADD_MUSIC_TO_PLAYLIST = 0;
     public static final String PLAYLIST_MEMBER_ID = "playlist_member_id";
+    private static final String TAG = "MusicListDetailActivity";
 
     private static final int ADD_MUSIC = 1;
     private static final int UPDATE_INFO = 2;
@@ -205,8 +206,19 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         switch (view.getId()) {
             case R.id.add_music:
                 Intent intent = new Intent(this, MusicRunnerSongSelectorActivity.class);
-                startActivity(intent);
+                intent.putExtra(MusicRunnerSongSelectorActivity.PLAYLIST_ID, playlistId);
+                startActivityForResult(intent, REQUEST_ADD_MUSIC_TO_PLAYLIST);
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult (int reqCode, int resCode, Intent data) {
+        if (reqCode == REQUEST_ADD_MUSIC_TO_PLAYLIST && resCode == RESULT_OK) {
+            songContainer.removeAllViews();
+            PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
+            Thread loaderThread = new Thread(loader);
+            loaderThread.start();
         }
     }
 
@@ -266,6 +278,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 }
             }
             cursor.close();
+            Thread.interrupted();
         }
     }
 }

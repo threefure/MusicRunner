@@ -4,25 +4,26 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
+        android:background="@color/running_info_background_color"
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <TextView
             android:id="@+id/cancel"
             android:text="Cancel"
-            android:textSize="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="10dp"
+            android:background="@drawable/music_runner_green_button"
+            style="@style/Finish.TopBar"/>
         <TextView
-            android:id="@+id/OK"
+            android:text="@string/select_songs"
+            android:layout_centerHorizontal="true"
+            style="@style/Finish.TopBar" />
+        <TextView
+            android:id="@+id/ok"
             android:text="OK"
-            android:textSize="20dp"
-            android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="10dp"
+            android:background="@drawable/music_runner_green_button"
+            style="@style/Finish.TopBar"/>
     </RelativeLayout>
     <ListView
         android:id="@android:id/list"

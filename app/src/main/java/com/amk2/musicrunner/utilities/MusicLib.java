@@ -345,11 +345,11 @@ public class MusicLib {
         return cnt;
     }
 
-    public static Uri insertSongToPlaylist (Context context, Uri playlistUri, Long songRealId, Integer playOrder) {
+    public static Uri insertSongToPlaylist (Context context, Uri playlistMemberUri, Long songRealId, Integer playOrder) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, playOrder);
         values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, songRealId);
-        Uri uri = context.getContentResolver().insert(playlistUri, values);
+        Uri uri = context.getContentResolver().insert(playlistMemberUri, values);
         return uri;
     }
 

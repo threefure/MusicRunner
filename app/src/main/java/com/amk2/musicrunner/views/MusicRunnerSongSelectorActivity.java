@@ -1,10 +1,13 @@
 package com.amk2.musicrunner.views;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.media.SoundPool;
@@ -35,7 +38,8 @@ import java.util.List;
 /**
  * Created by daz on 10/12/14.
  */
-public class MusicRunnerSongSelectorActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MusicRunnerSongSelectorActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
+    public static final String PLAYLIST_ID = "playlist_id";
     private static final String[] MUSIC_SELECT_PROJECTION = new String[] {
             android.provider.MediaStore.Audio.Media._ID,
             android.provider.MediaStore.Audio.Media.TITLE,
@@ -46,12 +50,20 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
     private LayoutInflater inflater;
     private ArrayList<MusicSong> allSongsArrayList;
     private SongSelectorAdapter mSongSelectorAdapter;
+    private Long playlistId;
+
+    private TextView cancelTextView;
+    private TextView okTextView;
+    private AlertDialog.Builder dialog;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_song);
+        playlistId = getIntent().getExtras().getLong(PLAYLIST_ID);
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        initViews();
+        setViews();
         //getListView().setEmptyView(findViewById(R.id.empty));
         allSongsArrayList = new ArrayList<MusicSong>();
         mSongSelectorAdapter = new SongSelectorAdapter(this, R.layout.select_song_template, allSongsArrayList);
@@ -74,7 +86,6 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         allSongsArrayList = convertCursorToMusicSongList(cursor);
-        Log.d("dadas", "onload");
         mSongSelectorAdapter.updateSongArrayList(allSongsArrayList);
         mSongSelectorAdapter.notifyDataSetChanged();
     }
@@ -90,12 +101,58 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         SongSelectorAdapter.ViewTag viewTag = (SongSelectorAdapter.ViewTag) view.getTag();
         if (!mSongSelectorAdapter.isSelected(position)) {
             viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-            //view.findViewById(R.id.selected).setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
         } else {
-            //view.findViewById(R.id.selected).setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
             viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
         }
         mSongSelectorAdapter.toggle(position);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.cancel:
+                dialog.show();
+                break;
+            case R.id.ok:
+                ArrayList<MusicSong> selectedSongsArrayList = mSongSelectorAdapter.getSelectedSongs();
+                PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(this, playlistId);
+                Uri playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(playlistId);
+                int length = selectedSongsArrayList.size();
+                int order = playlistMetaData.mTracks + 1;
+                for (int i = 0; i < length; i++) {
+                    MusicLib.insertSongToPlaylist(this, playlistMemberUri, selectedSongsArrayList.get(i).mId, order);
+                    order ++;
+                }
+                if(length > 0) {
+                    setResult(RESULT_OK);
+                }
+                finish();
+                break;
+        }
+    }
+
+    private void initViews () {
+        cancelTextView = (TextView) findViewById(R.id.cancel);
+        okTextView     = (TextView) findViewById(R.id.ok);
+        dialog = new AlertDialog.Builder(this)
+                .setMessage("Are you sure ending editing your playlist?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+    }
+
+    private void setViews () {
+        cancelTextView.setOnClickListener(this);
+        okTextView.setOnClickListener(this);
     }
 
     public ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
@@ -142,13 +199,23 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         }
 
         public boolean isSelected (int i) {
-            Log.d("position", i + " size:" + mSongIsSelectedArrayList.size());
             return mSongIsSelectedArrayList.get(i);
         }
 
         public void toggle (int i) {
             boolean isSelected = mSongIsSelectedArrayList.get(i);
             mSongIsSelectedArrayList.set(i, !isSelected);
+        }
+
+        public ArrayList<MusicSong> getSelectedSongs () {
+            ArrayList<MusicSong> selectedSongsArrayList = new ArrayList<MusicSong>();
+            int length = mSongIsSelectedArrayList.size();
+            for (int i = 0; i < length; i ++) {
+                if (mSongIsSelectedArrayList.get(i)) {
+                    selectedSongsArrayList.add(mSongArrayList.get(i));
+                }
+            }
+            return selectedSongsArrayList;
         }
 
         @Override
@@ -186,6 +253,11 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             viewTag.title.setText(ms.mTitle);
             viewTag.artist.setText(ms.mArtist);
             viewTag.duration.setText(durationString);
+            if (mSongIsSelectedArrayList.get(i)) {
+                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+            } else {
+                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+            }
             return view;
         }
 

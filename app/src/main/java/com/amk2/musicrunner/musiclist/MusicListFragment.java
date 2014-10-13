@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -59,7 +60,7 @@ import java.util.zip.Inflater;
  * Created by logicmelody on 2014/9/23.
  */
 
-public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener {
+public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener, AdapterView.OnItemClickListener {
     public static final String CREATE_PLAYLIST = "com.amk2.music.create_playlist";
     public static final String PLAYLIST_URI    = "playlist_uri";
     private static final String TAG = "MusicListFragment";
@@ -117,8 +118,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     private void initViews() {
         View thisView = getView();
         playlistContainer = (PinnedSectionListView) thisView.findViewById(R.id.playlist_container);
-        //TODO set onItemClickListener here!!
-        //playlistContainer.setOnItemClickListener();
+        playlistContainer.setOnItemClickListener(this);
         createPlaylistButtonImageView = (ImageView) thisView.findViewById(R.id.create_playlist_button);
     }
     private void setViews() {
@@ -142,12 +142,9 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             Long playlistId = (Long) extras.get(PLAYLIST_URI);
-            Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
             PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(getActivity(), playlistId);
             mPlaylistMetaData.add(playlistMetaData);
             playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
-            playlistPinnedSectionListAdapter.notifyDataSetChanged();
-            //Log.d(TAG, "playlist ID " + playlistId.toString());
         }
     };
 
@@ -159,17 +156,21 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         mPlaylistUIHandler.post(new Runnable() {
             @Override
             public void run() {
-                //PlaylistPinnedSectionListAdapter adapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
                 playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
-                playlistPinnedSectionListAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
+        intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, id);
+        startActivity(intent);
     }
 
     private class PlaylistPinnedSectionListAdapter extends ArrayAdapter<Object> implements PinnedSectionListAdapter, View.OnClickListener {
         private final int TYPE_SECTION  = 0;
         private final int TYPE_PLAYLIST = 1;
-        private boolean isPlaylistInitialized = false;
         SharedPreferences mPlaylistPreferences;
         private ArrayList<Object> mPlaylistArrayList;
         private View mSelectedPlaylist = null;
@@ -180,10 +181,21 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             mContext = context;
             mPlaylistPreferences = mContext.getSharedPreferences("playlist", 0);
             mPlaylistArrayList = list;
+            initSelectedPlaylist();
         }
 
         public void updatePlaylistArrayList (ArrayList<Object> playlistArrayList) {
             mPlaylistArrayList = playlistArrayList;
+            initSelectedPlaylist();
+            notifyDataSetChanged();
+        }
+
+        public void initSelectedPlaylist () {
+            Long id = mPlaylistPreferences.getLong("id", -1);
+            if (id == -1 && mPlaylistArrayList.size() > 0) {
+                id = ((PlaylistMetaData)mPlaylistArrayList.get(1)).mId;
+                mPlaylistPreferences.edit().putLong("id", id);
+            }
         }
 
         @Override
@@ -222,39 +234,88 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View musicListTemplate;
+            Long selectedPlaylist = mPlaylistPreferences.getLong("id", -1);
+            if (view == null) {
+                if (getItemViewType(i) == TYPE_PLAYLIST) {
+                    view = inflater.inflate(R.layout.music_list_template, null);
 
-            if (mPlaylistArrayList.get(i) instanceof PlaylistMetaData) {
-                // playlist data
-                PlaylistMetaData playlistMetaData = (PlaylistMetaData) mPlaylistArrayList.get(i);
-                musicListTemplate = inflater.inflate(R.layout.music_list_template, null);
-                TextView titleTextView    = (TextView) musicListTemplate.findViewById(R.id.playlist_title);
-                TextView tracksTextView   = (TextView) musicListTemplate.findViewById(R.id.playlist_tracks);
-                TextView choosePlaylistTextView = (TextView) musicListTemplate.findViewById(R.id.choose_playlist);
-                titleTextView.setText(playlistMetaData.mTitle);
-                tracksTextView.setText(playlistMetaData.mTracks.toString());
+                    PlaylistMetaData playlistMetaData = (PlaylistMetaData) mPlaylistArrayList.get(i);
+                    TextView titleTextView          = (TextView) view.findViewById(R.id.playlist_title);
+                    TextView tracksTextView         = (TextView) view.findViewById(R.id.playlist_tracks);
+                    TextView choosePlaylistTextView = (TextView) view.findViewById(R.id.choose_playlist);
+                    PlaylistViewTag playlistViewTag = new PlaylistViewTag(titleTextView, tracksTextView, choosePlaylistTextView);
 
-                // set song id to tag and onClick event
-                musicListTemplate.setTag(playlistMetaData.mId);
-                musicListTemplate.setOnClickListener(this);
+                    titleTextView.setText(playlistMetaData.mTitle);
+                    tracksTextView.setText(playlistMetaData.mTracks.toString());
 
-                // set song id to tag and onClick event
-                choosePlaylistTextView.setTag(playlistMetaData.mId);
-                choosePlaylistTextView.setOnClickListener(this);
-                if (!isPlaylistInitialized) {
-                    isPlaylistInitialized = true;
-                    choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                    mPlaylistPreferences.edit().remove("id").putLong("id", playlistMetaData.mId).commit();
-                    mSelectedPlaylist = choosePlaylistTextView;
+                    // set song id to tag and onClick event
+                    view.setTag(playlistViewTag);
+
+                    // set song id to tag and onClick event
+                    choosePlaylistTextView.setTag(playlistMetaData.mId);
+                    choosePlaylistTextView.setOnClickListener(this);
+                    if (playlistMetaData.mId.equals(selectedPlaylist)){
+                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        mSelectedPlaylist = choosePlaylistTextView;
+                    } else {
+                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                    }
+                } else {
+                    PlaylistSectionData playlistSectionData = (PlaylistSectionData) mPlaylistArrayList.get(i);
+                    view = inflater.inflate(R.layout.music_list_section_title_template, null);
+                    TextView titleTextView = (TextView) view.findViewById(R.id.playlist_section_title);
+                    SectionTitleViewTag sectionTitleViewTag = new SectionTitleViewTag(titleTextView);
+
+                    titleTextView.setText(playlistSectionData.mSectionTitle);
+                    view.setTag(sectionTitleViewTag);
                 }
             } else {
-                // section title
-                PlaylistSectionData playlistSectionData = (PlaylistSectionData) mPlaylistArrayList.get(i);
-                musicListTemplate = inflater.inflate(R.layout.music_list_section_title_template, null);
-                TextView titleTextView = (TextView) musicListTemplate.findViewById(R.id.playlist_section_title);
-                titleTextView.setText(playlistSectionData.mSectionTitle);
+                if (getItemViewType(i) == TYPE_PLAYLIST) {
+                    PlaylistViewTag playlistViewTag;
+                    PlaylistMetaData playlistMetaData = (PlaylistMetaData) mPlaylistArrayList.get(i);
+                    if (view.getTag() instanceof PlaylistViewTag) {
+                        playlistViewTag =  (PlaylistViewTag) view.getTag();
+                    } else {
+                        view = inflater.inflate(R.layout.music_list_template, null);
+
+                        TextView titleTextView          = (TextView) view.findViewById(R.id.playlist_title);
+                        TextView tracksTextView         = (TextView) view.findViewById(R.id.playlist_tracks);
+                        TextView choosePlaylistTextView = (TextView) view.findViewById(R.id.choose_playlist);
+                        playlistViewTag = new PlaylistViewTag(titleTextView, tracksTextView, choosePlaylistTextView);
+
+                        // set song id to tag and onClick event
+                        view.setTag(playlistViewTag);
+                    }
+                    playlistViewTag.mTitleTextView.setText(playlistMetaData.mTitle);
+                    playlistViewTag.mTracksTextView.setText(playlistMetaData.mTracks.toString());
+
+                    // set song id to tag and onClick event
+                    playlistViewTag.mChoosePlaylistTextView.setTag(playlistMetaData.mId);
+                    playlistViewTag.mChoosePlaylistTextView.setOnClickListener(this);
+
+                    if (playlistMetaData.mId.equals(selectedPlaylist)){
+                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        mSelectedPlaylist = playlistViewTag.mChoosePlaylistTextView;
+                    } else {
+                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                    }
+
+                } else {
+                    SectionTitleViewTag sectionTitleViewTag;
+                    PlaylistSectionData playlistSectionData = (PlaylistSectionData) mPlaylistArrayList.get(i);
+                    if (view.getTag() instanceof SectionTitleViewTag) {
+                        sectionTitleViewTag = (SectionTitleViewTag) view.getTag();
+                    } else {
+                        view = inflater.inflate(R.layout.music_list_section_title_template, null);
+                        TextView titleTextView = (TextView) view.findViewById(R.id.playlist_section_title);
+                        sectionTitleViewTag = new SectionTitleViewTag(titleTextView);
+                        view.setTag(sectionTitleViewTag);
+                    }
+                    sectionTitleViewTag.mTitleTextView.setText(playlistSectionData.mSectionTitle);
+
+                }
             }
-            return musicListTemplate;
+            return view;
         }
 
         @Override
@@ -267,12 +328,31 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     break;
                 case R.id.choose_playlist:
                     Long newPlaylistId = (Long) view.getTag();
-                    mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
-
-                    view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                    mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
-                    mSelectedPlaylist = view;
+                    Long oldPlaylistId = mPlaylistPreferences.getLong("id", -1);
+                    if (!oldPlaylistId.equals(newPlaylistId)) {
+                        mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
+                        view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        mSelectedPlaylist = view;
+                    }
                     break;
+            }
+        }
+
+        public class PlaylistViewTag {
+            TextView mTitleTextView;
+            TextView mTracksTextView;
+            TextView mChoosePlaylistTextView;
+            public PlaylistViewTag (TextView title, TextView tracks, TextView choosePlaylist) {
+                mTitleTextView = title;
+                mTracksTextView = tracks;
+                mChoosePlaylistTextView = choosePlaylist;
+            }
+        }
+        public class SectionTitleViewTag {
+            TextView mTitleTextView;
+            public SectionTitleViewTag (TextView title) {
+                mTitleTextView = title;
             }
         }
     }
