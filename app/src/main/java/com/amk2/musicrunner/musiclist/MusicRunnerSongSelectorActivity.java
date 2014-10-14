@@ -1,4 +1,4 @@
-package com.amk2.musicrunner.views;
+package com.amk2.musicrunner.musiclist;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;

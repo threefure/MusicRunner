@@ -227,9 +227,9 @@ public class MusicLib {
         try {
             songId = songInfo.getLong(ID);
             bpm = songInfo.getDouble(BPM);
-            if (bpm == -2) {
-                bpm = null;
-            }
+            //if (bpm == -2) {
+            //    bpm = null;
+            //}
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

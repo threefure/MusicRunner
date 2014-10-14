@@ -27,10 +27,8 @@ import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnSongPreparedListener;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
-import com.amk2.musicrunner.views.MusicRunnerSongSelectorActivity;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Created by ktlee on 9/29/14.
