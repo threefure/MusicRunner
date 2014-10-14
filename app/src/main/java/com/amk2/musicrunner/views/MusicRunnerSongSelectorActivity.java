@@ -125,6 +125,8 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                 }
                 if(length > 0) {
                     setResult(RESULT_OK);
+                } else {
+                    setResult(RESULT_CANCELED);
                 }
                 finish();
                 break;

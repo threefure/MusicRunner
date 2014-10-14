@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.*;
 import android.os.Process;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,20 +30,23 @@ import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.views.MusicRunnerSongSelectorActivity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Created by ktlee on 9/29/14.
  */
 public class MusicListDetailActivity extends Activity implements OnSongPreparedListener, View.OnClickListener{
     public static final int REQUEST_ADD_MUSIC_TO_PLAYLIST = 0;
-    public static final String PLAYLIST_MEMBER_ID = "playlist_member_id";
+    public static final String PLAYLIST_ID = "playlist_id";
     private static final String TAG = "MusicListDetailActivity";
 
     private static final int ADD_MUSIC = 1;
     private static final int UPDATE_INFO = 2;
 
+    private boolean isPlaylistUpdated = false;
     private Integer tracks;
     private Integer duration;
+    private Integer playlistPosition;
     private Long playlistId;
     private Uri playlistUri;
     private Uri playlistMemberUri;
@@ -64,7 +68,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list_detail);
-        Intent intent = getIntent();
         init();
         initActionBar();
         initViews();
@@ -76,9 +79,21 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         super.onStart();
     }
 
+    @Override
+    protected void onDestroy () {
+        if (isPlaylistUpdated) {
+            Intent intent = new Intent(MusicListFragment.UPDATE_PLAYLIST);
+            intent.putExtra(PLAYLIST_ID, playlistId);
+            intent.putExtra(MusicListFragment.PLAYLIST_POSITION, playlistPosition);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
+        super.onDestroy();
+    }
+
     private void init () {
         Intent intent = getIntent();
-        playlistId        = intent.getExtras().getLong(PLAYLIST_MEMBER_ID);
+        playlistId        = intent.getExtras().getLong(PLAYLIST_ID);
+        playlistPosition  = intent.getExtras().getInt(MusicListFragment.PLAYLIST_POSITION);
         playlistUri       = MusicLib.getPlaylistUriFromId(playlistId);
         playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(playlistId);
         mContentResolver  = getContentResolver();
@@ -215,24 +230,32 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     @Override
     public void onActivityResult (int reqCode, int resCode, Intent data) {
         if (reqCode == REQUEST_ADD_MUSIC_TO_PLAYLIST && resCode == RESULT_OK) {
+            isPlaylistUpdated = true;
             songContainer.removeAllViews();
+            duration = 0;
+            tracks = 0;
             PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
             Thread loaderThread = new Thread(loader);
             loaderThread.start();
         }
     }
 
+    static Object lock = new Object();
+
     private class AddSongRunnable implements Runnable {
         MusicMetaData mMusicMetaData;
+
         public AddSongRunnable (MusicMetaData musicMetaData) {
             mMusicMetaData = musicMetaData;
         }
         @Override
         public void run() {
-            addSongToList(mMusicMetaData);
-            duration += mMusicMetaData.mDuration;
-            tracks ++;
-            updateSummary();
+            synchronized (lock) {
+                addSongToList(mMusicMetaData);
+                duration += mMusicMetaData.mDuration;
+                tracks++;
+                updateSummary();
+            }
         }
     }
 
@@ -252,6 +275,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             Double bpm;
             Long audio_id;
             String title, artist, filePath;
+            Integer duration;
             Bitmap albumPhoto;
             Uri musicUri;
             String[] projection = {

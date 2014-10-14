@@ -62,7 +62,9 @@ import java.util.zip.Inflater;
 
 public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener, AdapterView.OnItemClickListener {
     public static final String CREATE_PLAYLIST = "com.amk2.music.create_playlist";
+    public static final String UPDATE_PLAYLIST = "com.amk2.music.update_playlist";
     public static final String PLAYLIST_URI    = "playlist_uri";
+    public static final String PLAYLIST_POSITION = "playlist_position";
     private static final String TAG = "MusicListFragment";
     private static final int MUSIC_LOADER_ID = 1;
 
@@ -89,6 +91,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mCreatePlaylistReceiver, new IntentFilter(CREATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdatePlaylistReceiver, new IntentFilter(UPDATE_PLAYLIST));
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mPlaylistMetaData = new ArrayList<Object>();
 
@@ -148,6 +151,18 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         }
     };
 
+    private BroadcastReceiver mUpdatePlaylistReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            Long playlistId       = extras.getLong(MusicListDetailActivity.PLAYLIST_ID);
+            int playlistPosition  = extras.getInt(MusicListFragment.PLAYLIST_POSITION);
+            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(getActivity(), playlistId);
+            mPlaylistMetaData.set(playlistPosition, playlistMetaData);
+            playlistPinnedSectionListAdapter.notifyDataSetChanged();
+        }
+    };
+
     private Handler mPlaylistUIHandler = new Handler();
 
     @Override
@@ -164,7 +179,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
-        intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, id);
+        intent.putExtra(MusicListFragment.PLAYLIST_POSITION, position);
+        intent.putExtra(MusicListDetailActivity.PLAYLIST_ID, id);
         startActivity(intent);
     }
 
@@ -321,11 +337,6 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.playlist:
-                    Intent intent = new Intent(mContext, MusicListDetailActivity.class);
-                    intent.putExtra(MusicListDetailActivity.PLAYLIST_MEMBER_ID, (Long) view.getTag());
-                    startActivity(intent);
-                    break;
                 case R.id.choose_playlist:
                     Long newPlaylistId = (Long) view.getTag();
                     Long oldPlaylistId = mPlaylistPreferences.getLong("id", -1);
