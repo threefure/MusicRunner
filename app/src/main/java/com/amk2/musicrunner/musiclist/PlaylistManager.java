@@ -164,11 +164,12 @@ public class PlaylistManager{
                 playlistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
                 playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
                 playlistName = MusicLib.getPlaylistName(mContext, playlistUri);
-                if (playlistName != HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE &&
-                    playlistName != HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE&&
-                    playlistName != ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE&&
-                    playlistName != ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE) {
+                if (!playlistName.equals(HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE) &&
+                    !playlistName.equals(HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE) &&
+                    !playlistName.equals(ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE) &&
+                    !playlistName.equals(ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE)) {
                     //user generated playlist
+                    Log.d(TAG, playlistName);
                     PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(mContext, playlistId);
                     playlistMetaDatas.add(playlistMetaData);
                 }
