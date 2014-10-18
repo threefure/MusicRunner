@@ -210,7 +210,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             Long id = mPlaylistPreferences.getLong("id", -1);
             if (id == -1 && mPlaylistArrayList.size() > 0) {
                 id = ((PlaylistMetaData)mPlaylistArrayList.get(1)).mId;
-                mPlaylistPreferences.edit().putLong("id", id);
+                mPlaylistPreferences.edit().remove("id").putLong("id", id).commit();
             }
         }
 
@@ -343,9 +343,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     if (!oldPlaylistId.equals(newPlaylistId)) {
                         mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
                         view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                        if (mSelectedPlaylist != null) {
-                            mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
-                        }
+                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
                         mSelectedPlaylist = view;
                     }
                     break;
