@@ -343,7 +343,9 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     if (!oldPlaylistId.equals(newPlaylistId)) {
                         mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
                         view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
-                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        if (mSelectedPlaylist != null) {
+                            mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        }
                         mSelectedPlaylist = view;
                     }
                     break;

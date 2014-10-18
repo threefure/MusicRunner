@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -84,15 +85,20 @@ public class PlaylistManager{
                 String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
                 JSONArray trackListArray = new JSONArray(trackListArrayString);
                 saveBpmForEachSong(trackListArray);
+                categorizePlaylists();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             }
+        } else {
+            categorizePlaylists();
         }
-        categorizePlaylists();
+
     }
 
     public PlaylistMetaData generate30MinsPlaylist (Integer type) {

@@ -27,15 +27,12 @@ public class MusicRunnerActivity extends Activity {
 
     private UIController mUIController;
     private ContentResolver mContentResolver;
-    private LocationHelper mLocationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_runner);
         initialize();
-        //initializeSyncJobs();
-        //initializeLocation();
         mUIController.onActivityCreate(savedInstanceState);
         goToRunningPage();
     }
@@ -59,9 +56,6 @@ public class MusicRunnerActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Constant.isServerOn) {
-            mLocationHelper.Connect();
-        }
     }
 
     private void initialize() {
@@ -73,11 +67,6 @@ public class MusicRunnerActivity extends Activity {
         mContentResolver = getContentResolver();
         mContentResolver.setSyncAutomatically(MusicRunnerDBMetaData.mAccount,
                 MusicRunnerDBMetaData.AUTHORITY, true);
-    }
-
-    private void initializeLocation() {
-        mLocationHelper = new LocationHelper(this.getApplicationContext());
-
     }
 
     @Override
@@ -106,10 +95,6 @@ public class MusicRunnerActivity extends Activity {
 
     @Override
     protected void onStop() {
-        if (Constant.isServerOn) {
-            mLocationHelper.unregisterPeriodicSyncs();
-            mLocationHelper.Disconnect();
-        }
         super.onStop();
     }
 
@@ -123,7 +108,6 @@ public class MusicRunnerActivity extends Activity {
     protected void onDestroy() {
         Intent intent = new Intent(this, SyncService.class);
         stopService(intent);
-        mLocationHelper.Disconnect();
         mUIController.onActivityDestroy();
         super.onDestroy();
     }
