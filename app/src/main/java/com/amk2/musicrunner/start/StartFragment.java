@@ -142,7 +142,9 @@ public class StartFragment extends Fragment implements
     @Override
     public void onConnected(Bundle bundle) {
         mCurrentLocation = mLocationClient.getLastLocation();
-        updateMap();
+        if (mCurrentLocation != null) {
+            updateMap();
+        }
     }
 
     @Override
@@ -179,6 +181,8 @@ public class StartFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        updateMap();
+        if (mCurrentLocation != null) {
+            updateMap();
+        }
     }
 }
