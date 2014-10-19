@@ -5,7 +5,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/light_gray">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp">
@@ -14,7 +15,6 @@
                 style="@style/Setting.Title"/>
             <TextView
                 android:id="@+id/account"
-                android:text="Test Account"
                 style="@style/Setting.Content"/>
         </RelativeLayout>
         <RelativeLayout
@@ -51,22 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
             <RadioGroup
-                android:id="@+id/unit_distance"
-                style="@style/Setting.RadioGroup">
-                <RadioButton
-                    android:id="@+id/setting_km"
-                    android:text="@string/setting_km"
-                    style="@style/Setting.RadioButton"/>
-                <RadioButton
-                    android:id="@+id/setting_mi"
-                    android:text="@string/mi"
-                    style="@style/Setting.RadioButton"/>
-            </RadioGroup>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-            <RadioGroup
                 android:id="@+id/unit_height"
                 style="@style/Setting.RadioGroup">
                 <RadioButton
@@ -83,14 +67,30 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
             <RadioGroup
+                android:id="@+id/unit_distance"
+                style="@style/Setting.RadioGroup">
+                <RadioButton
+                    android:id="@+id/setting_km"
+                    android:text="@string/setting_km"
+                    style="@style/Setting.RadioButton"/>
+                <RadioButton
+                    android:id="@+id/setting_mi"
+                    android:text="@string/mi"
+                    style="@style/Setting.RadioButton"/>
+            </RadioGroup>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+            <RadioGroup
                 android:id="@+id/unit_pace_speed"
                 style="@style/Setting.RadioGroup">
                 <RadioButton
-                    android:id="@+id/setting_pace"
+                    android:id="@+id/setting_speed"
                     android:text="@string/speed"
                     style="@style/Setting.RadioButton"/>
                 <RadioButton
-                    android:id="@+id/setting_speed"
+                    android:id="@+id/setting_pace"
                     android:text="@string/pace"
                     style="@style/Setting.RadioButton"/>
             </RadioGroup>
@@ -113,6 +113,7 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/setting_weight"
+            android:background="@drawable/music_runner_clickable_setting_item"
             android:layout_width="match_parent"
             android:layout_height="50dp">
             <TextView
@@ -125,6 +126,7 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/setting_height"
+            android:background="@drawable/music_runner_clickable_setting_item"
             android:layout_width="match_parent"
             android:layout_height="50dp">
             <TextView
@@ -137,6 +139,7 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/setting_birth_date"
+            android:background="@drawable/music_runner_clickable_setting_item"
             android:layout_width="match_parent"
             android:layout_height="50dp">
             <TextView
@@ -184,6 +187,7 @@
             android:layout_width="match_parent"
             android:layout_height="80dp">
             <Button
+                android:id="@+id/logout"
                 android:text="@string/logout"
                 android:textColor="@color/white"
                 android:background="@drawable/music_runner_clickable_blue_round_border"
