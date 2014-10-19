@@ -85,6 +85,28 @@
     <!-- Setting -->
     <string name="setting_text">Setting</string>
     <string name="title_activity_running_dotted_line">RunningDottedLine</string>
+    <string name="account">Account</string>
+    <string name="facebook">Facebook</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="audio_cue">Audio Cue</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="display">Display</string>
+    <string name="unit">Unit</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="kg">Kg</string>
+    <string name="lb">Lb</string>
+    <string name="setting_km">Km</string>
+    <string name="mi">Mi</string>
+    <string name="cm">Cm</string>
+    <string name="in">In</string>
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="auto_cue">Auto Cue</string>
+    <string name="pace">Pace</string>
+    <string name="logout">Logout</string>
 
     <!-- Create Playlist -->
     <string name="create_playlist_name">Playlist Name</string>
