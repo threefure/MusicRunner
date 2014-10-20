@@ -1,5 +1,9 @@
 package com.amk2.musicrunner;
 
+import com.amk2.musicrunner.setting.SettingActivity;
+
+import java.util.HashMap;
+
 /**
  * Created by ktlee on 5/25/14.
  */
@@ -65,5 +69,19 @@ public class Constant {
     // Running Activity
     public static final String PERF_SEPARATOR = ":>:";
     public static final String SONG_SEPARATOR = ":<:";
+
+    // Shared Preference
+    public static final HashMap<Integer, String> DistanceMap = new HashMap<Integer, String>();
+    public static final HashMap<String, Integer> PaceSpeedMap = new HashMap<String, Integer>();
+    static {
+        DistanceMap.put(SettingActivity.SETTING_DISTANCE_KM, "km");
+        DistanceMap.put(SettingActivity.SETTING_DISTANCE_MI, "mi");
+
+        PaceSpeedMap.put("my_running_km_pace", R.string.my_running_km_pace);
+        PaceSpeedMap.put("my_running_mi_pace", R.string.my_running_mi_pace);
+        PaceSpeedMap.put("my_running_km_speed", R.string.my_running_km_speed);
+        PaceSpeedMap.put("my_running_mi_speed", R.string.my_running_mi_speed);
+    }
+
 
 }

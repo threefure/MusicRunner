@@ -3,13 +3,11 @@ package com.amk2.musicrunner.my;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,51 +21,19 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.running.RunningActivity;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
-import com.amk2.musicrunner.utilities.RestfulUtility;
-import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.utilities.UnitConverter;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
-public class MyFragment extends Fragment implements TabHost.OnTabChangeListener, View.OnClickListener {
+public class MyFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = "MyFragment";
-
-    public static final String RUNNING_TAB_TAG = "running_tab_tag";
-    public static final String MUSIC_TAB_TAG = "music_tab_tag";
-
-    public static class MyTabState {
-        public static final int RUNNING = 0;
-        public static final int MUSIC = 1;
-    }
-
-    public interface MyTabFragmentListener {
-        void onSwitchBetweenMyAndPastRecordFragment();
-    }
-
     private Activity mActivity;
-
     private ContentResolver mContentResolver;
-
-    private MyTabFragmentListener mMyTabFragmentListener;
-
     private LayoutInflater inflater;
     private LinearLayout myMusicContainer;
 
@@ -81,8 +47,11 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     private TextView weeklyDurationTextView;
     private TextView weeklyTimesTextView;
     private TextView weeklyDistanceTextView;
+    private TextView weeklyDistanceUnitTextView;
     private TextView weeklyCalorieTextView;
+    private TextView weeklySpeedTitleTextView;
     private TextView weeklySpeedTextView;
+    private TextView weeklySpeedUnitTextView;
 
     private RelativeLayout pastActivitiesRelativeLayout;
 
@@ -95,12 +64,9 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
     private Double weeklyDistance;
     private Double weeklySpeed;
 
-    private ImageButton pastRecordMutton;
-    private Handler handler = new Handler();
-
-    public void setMyTabFragmentListener(MyTabFragmentListener listener) {
-        mMyTabFragmentListener = listener;
-    }
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
+    private Integer unitSpeedPace;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,76 +77,43 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
-		// This function is like onCreate() in activity.
-		// You can start from here.
-        //SharedPreferences preferences = this.getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, Context.MODE_PRIVATE);
-        //String account = preferences.getString(Constant.ACCOUNT_PARAMS, null);
-//        TextView textView = (TextView) getView().findViewById(R.id.my_view);
-//        textView.setText(account,TextView.BufferType.EDITABLE);
-        //inflater = (LayoutInflater) getView().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         initialize();
 	}
 
     private void initialize() {
         mContentResolver = getActivity().getContentResolver();
+        mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         initViews();
-        /*initTabs();
-
-        mContentResolver = getActivity().getContentResolver();
-
-        timesBar = (ProgressBar) getView().findViewById(R.id.time_bar);
-        timesBar.setMax(100);
-
-        speedsBar = (ProgressBar) getView().findViewById(R.id.speeds_bar);
-        speedsBar.setMax(100);
-
-        caloriesBar = (ProgressBar) getView().findViewById(R.id.calories_bar);
-        caloriesBar.setMax(100);
-
-        distanceBar = (ProgressBar) getView().findViewById(R.id.distance_bar);
-        distanceBar.setMax(100);
-
-        pastRecordMutton = (ImageButton) getView().findViewById(R.id.my_past_record_button);
-        pastRecordMutton.setOnClickListener(this);
-
-        myMusicContainer = (LinearLayout) getView().findViewById(R.id.my_music_container);
-
-        //showing user name
-        String userName = SharedPreferencesUtility.getAccount(getActivity());
-        TextView userNameTextView = (TextView) getView().findViewById(R.id.my_user_name);
-        userNameTextView.setText(userName);*/
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        getSharedPreferences();
         getTotalDataFromDB();
-        setProgressBar();
         setWeeklySummary();
-        //myMusicContainer.removeAllViews();
-        //setValueOfProgressBar();
     }
 
 
     public void initViews () {
         View thisView = getView();
-        timesProgressBar    = (ProgressBar) thisView.findViewById(R.id.my_time_progress_bar);
-        calorieProgressBar  = (ProgressBar) thisView.findViewById(R.id.my_calorie_progress_bar);
-        distanceProgressBar = (ProgressBar) thisView.findViewById(R.id.my_distance_progress_bar);
 
-        totalTimesTextView    = (TextView) thisView.findViewById(R.id.my_time_count);
-        totalCalorieTextView  = (TextView) thisView.findViewById(R.id.my_calorie_count);
-        totalDistanceTextView = (TextView) thisView.findViewById(R.id.my_distance_count);
-
-        weeklyDurationTextView = (TextView) thisView.findViewById(R.id.my_weekly_duration);
-        weeklyTimesTextView    = (TextView) thisView.findViewById(R.id.my_weekly_times);
-        weeklyDistanceTextView = (TextView) thisView.findViewById(R.id.my_weekly_distance);
-        weeklyCalorieTextView  = (TextView) thisView.findViewById(R.id.my_weekly_calories);
-        weeklySpeedTextView    = (TextView) thisView.findViewById(R.id.my_weekly_speed);
+        weeklyDurationTextView     = (TextView) thisView.findViewById(R.id.my_weekly_duration);
+        weeklyDistanceTextView     = (TextView) thisView.findViewById(R.id.my_weekly_distance);
+        weeklyDistanceUnitTextView = (TextView) thisView.findViewById(R.id.my_weekly_distance_unit);
+        weeklyCalorieTextView      = (TextView) thisView.findViewById(R.id.my_weekly_calories);
+        weeklySpeedTitleTextView   = (TextView) thisView.findViewById(R.id.my_weekly_speed_title);
+        weeklySpeedTextView        = (TextView) thisView.findViewById(R.id.my_weekly_speed);
+        weeklySpeedUnitTextView    = (TextView) thisView.findViewById(R.id.my_weekly_speed_unit);
 
         pastActivitiesRelativeLayout = (RelativeLayout) thisView.findViewById(R.id.my_past_activities);
 
         pastActivitiesRelativeLayout.setOnClickListener(this);
+    }
+
+    private void getSharedPreferences () {
+        unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
     }
 
     public void getTotalDataFromDB () {
@@ -244,153 +177,48 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
 
     public void setWeeklySummary () {
         String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
+        String distanceString, speedString, speedUnitString = "my_running_";
+        Double minutes = weeklyDuration.doubleValue()/60;
+        Double distance = weeklyDistance;
+        Double speed;
+        Integer speedTitleId;
         weeklyDurationTextView.setText(duration);
-        weeklyTimesTextView.setText(weeklyTimes.toString());
-        weeklyDistanceTextView.setText(StringLib.truncateDoubleString(weeklyDistance.toString(), 2));
+
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+            distance = UnitConverter.getMIFromKM(distance);
+            speedUnitString += "mi_";
+        } else {
+            speedUnitString += "km_";
+        }
+
+        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
+            speed = minutes/distance;
+            if (speed.isNaN() || speed.isInfinite()) {
+                speed = 0.0;
+            }
+            speedUnitString += "pace";
+            speedTitleId = R.string.pace;
+        } else {
+            speed = distance/minutes;
+            speedUnitString += "speed";
+            speedTitleId = R.string.speed;
+        }
+
+        distanceString = StringLib.truncateDoubleString(distance.toString(), 2);
+        speedString = StringLib.truncateDoubleString(speed.toString(), 2);
+
+        // set up distance information
+        weeklyDistanceTextView.setText(distanceString);
+        weeklyDistanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
+
+        // set up speed information
+        weeklySpeedTextView.setText(speedString);
+        weeklySpeedUnitTextView.setText(getResources().getString(Constant.PaceSpeedMap.get(speedUnitString)));
+        weeklySpeedTitleTextView.setText(getResources().getString(speedTitleId));
+
+        // set up calorie information
         weeklyCalorieTextView.setText(StringLib.truncateDoubleString(weeklyCalories.toString(), 2));
-        weeklySpeedTextView.setText(StringLib.truncateDoubleString(weeklySpeed.toString(), 2));
-    }
 
-    private void initTabs(){
-        /*mTabHost = (TabHost) getView().findViewById(R.id.my_tab_host);
-        LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
-        layoutInflater.inflate(R.layout.running_map_tab, null);
-
-        mTabHost.setup();
-        addTab(RUNNING_TAB_TAG, "Running");
-        addTab(MUSIC_TAB_TAG, "Music");
-
-//        TabHost.TabSpec spec = mTabHost.newTabSpec("Running");
-//        spec.setContent(R.id.my_running_tab);
-//        spec.setIndicator("Running", getResources().getDrawable(android.R.drawable.ic_lock_idle_alarm));
-//        mTabHost.addTab(spec);
-//        TabHost.TabSpec spec2 = mTabHost.newTabSpec("Music");
-//        spec2.setContent(R.id.my_music_tab);
-//        spec2.setIndicator("Music", getResources().getDrawable(android.R.drawable.ic_lock_idle_alarm));
-//        mTabHost.addTab(spec2);
-
-        mTabHost.setCurrentTab(0);
-
-//        //set default tab background color
-//        tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.BLACK);
-//        tabHost.getTabWidget().getChildAt(1).setBackgroundColor(Color.WHITE);
-//        //set tab text color by selector
-//        TabWidget tabWidget = (TabWidget) tabHost.findViewById(android.R.id.tabs);
-//        View tabView = tabWidget.getChildTabViewAt(0);
-//        TextView tab = (TextView) tabView.findViewById(android.R.id.title);
-//        tab.setTextColor(this.getResources().getColorStateList(R.drawable.my_tab_selector));
-//        View tabView2 = tabWidget.getChildTabViewAt(1);
-//        TextView tab2 = (TextView) tabView2.findViewById(android.R.id.title);
-//        tab2.setTextColor(this.getResources().getColorStateList(R.drawable.my_tab_selector));
-        //set tab background color depending on selected/unselected
-        mTabHost.setOnTabChangedListener(this);*/
-    }
-
-    private void addTab(String tag, String labelText) {
-        /*View tabView = getTabView(tag);
-        TextView tabText = (TextView)tabView.findViewById(R.id.tab_text);
-        tabText.setText(labelText);
-        int contentId = -1;
-        if(RUNNING_TAB_TAG.equals(tag)) {
-            contentId = R.id.my_running_tab;
-        } else if(MUSIC_TAB_TAG.equals(tag)) {
-            contentId = R.id.my_music_tab;
-        }
-        mTabHost.addTab(mTabHost.newTabSpec(tag).setIndicator(tabView)
-                .setContent(contentId));*/
-    }
-/*
-    private View getTabView(String tag) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
-        View tabView = new View(mActivity);
-        if(RUNNING_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.my_running_tab, null);
-        } else if(MUSIC_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.my_music_tab, null);
-        }
-        return tabView;
-    }
-
-    private String getMyStatus(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.PREFERENCE_NAME, getActivity().MODE_PRIVATE);
-        String account =  preferences.getString(Constant.ACCOUNT_PARAMS, null);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost(Constant.AWS_HOST + "/getMyStatus");
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("userAccount", account));
-        HttpResponse response = null;
-        try {
-            post.setEntity(new UrlEncodedFormEntity(pairs));
-            response = client.execute(post);
-        } catch (UnsupportedEncodingException uee) {
-
-        } catch (ClientProtocolException cpe) {
-            //ignore this exception for now
-        } catch (IOException ioe) {
-            //ignore this exception for now
-        }
-        return RestfulUtility.getStatusCode(response);
-    }
-
-    private void setValueOfProgressBar () {
-        int times      = 0;
-        Double highestSpeed = 0.0;
-        Double totalDistance   = 0.0;
-        Double totalCalories   = 0.0;
-        String distance, calories, speed, songNames;
-
-        String[] projection = {
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES,
-                MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED
-                //MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SONGS
-        };
-        Cursor cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
-        while(cursor.moveToNext()) {
-            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
-            calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
-            speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
-            //songNames          = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerRunningEventDB.COLUMN_NAME_SONGS));
-
-            times++;
-            highestSpeed = (Double.parseDouble(speed) > highestSpeed) ? Double.parseDouble(speed) : highestSpeed;
-            totalCalories += Double.parseDouble(calories);
-            totalDistance += Double.parseDouble(distance);
-
-            //addMusicSongs(songNames);
-        }
-        timesBarStatus = Integer.valueOf(times);
-        timesBar.setProgress(timesBarStatus);
-        TextView timesTextView = (TextView) getView().findViewById(R.id.my_times_text);
-        timesTextView.setText(timesBarStatus.toString());
-
-        speedsBarStatus = Integer.valueOf(highestSpeed.intValue());
-        speedsBar.setProgress(speedsBarStatus);
-        TextView speedsTextView = (TextView) getView().findViewById(R.id.my_speeds_text);
-        speedsTextView.setText(speedsBarStatus.toString());
-
-        caloriesBarStatus = Integer.valueOf(totalCalories.intValue());
-        caloriesBar.setProgress(caloriesBarStatus);
-        TextView caloriesTextView = (TextView) getView().findViewById(R.id.my_calories_text);
-        caloriesTextView.setText(caloriesBarStatus.toString());
-
-        distanceBarStatus = Integer.valueOf(totalDistance.intValue());
-        distanceBar.setProgress(distanceBarStatus);
-        TextView distanceTextView = (TextView) getView().findViewById(R.id.my_distance_text);
-        distanceTextView.setText(distanceBarStatus.toString());
-    }
-*/
-    @Override
-    public void onTabChanged(String tabId) {
-//        TabHost tab = (TabHost) getView().findViewById(R.id.my_tab_host);
-//        for (int i = 0; i < tab.getTabWidget().getChildCount(); i++) {
-//            tab.getTabWidget().getChildAt(i)
-//                    .setBackgroundResource(R.color.my_background_tab_unselected); // unselected
-//        }
-//        tab.getTabWidget().getChildAt(tab.getCurrentTab())
-//                .setBackgroundResource(R.color.my_background_tab_selected); // selected
     }
 
     @Override
@@ -399,44 +227,6 @@ public class MyFragment extends Fragment implements TabHost.OnTabChangeListener,
             case R.id.my_past_activities:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
-            /*case R.id.my_past_record_button:
-                // Go to past record fragment
-                mMyTabFragmentListener.onSwitchBetweenMyAndPastRecordFragment();
-                break;*/
         }
     }
-/*
-    public void addMusicSongs (String songNames) {
-        String songName = getMostEfficientSongs(songNames);
-        if (songName.length() > 0) {
-            View myMusicTemplate = inflater.inflate(R.layout.my_music_template, null);
-            TextView textViewSongName = (TextView) myMusicTemplate.findViewById(R.id.song_name);
-            textViewSongName.setText(songName);
-
-            myMusicContainer.addView(myMusicTemplate);
-        }
-
-    }
-
-    public static String getMostEfficientSongs (String songNames) {
-        String mostEfficientSong = "";
-        String result = "";
-        Double mostEfficientPerformance = -1.0;
-        for (String song : songNames.split(Constant.SONG_SEPARATOR)) {
-            if (song.length() > 0) {
-                String[] songXperf = song.split(Constant.PERF_SEPARATOR);
-                Double perf = Double.parseDouble(songXperf[1]);
-                if (perf > mostEfficientPerformance) {
-                    mostEfficientSong = songXperf[0];
-                    mostEfficientPerformance = perf;
-                }
-            }
-        }
-        if (mostEfficientSong.length() > 0) {
-            result = mostEfficientSong + "   " + mostEfficientPerformance.toString() + " kcal/min";
-        }
-
-        Log.d("getMostEfficientSongs", result);
-        return result;
-    }*/
 }

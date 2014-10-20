@@ -28,11 +28,11 @@
                     android:layout_centerInParent="true"
                     android:orientation="vertical">
                     <TextView
-                        android:text="Danny Chan"
+                        android:text="Test Runner"
                         android:textSize="24dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <TextView
+                    <!--TextView
                         android:text="Run Beginner"
                         android:textSize="14dp"
                         android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
                         android:textSize="32dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content" /-->
                 </LinearLayout>
                 <ImageView
                     android:id="@+id/my_mascot_icon"
@@ -53,7 +53,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp" />
             </RelativeLayout>
-            <LinearLayout
+            <!--LinearLayout
                 style="@style/My.Card"
                 android:orientation="vertical">
                 <TextView
@@ -97,7 +97,7 @@
                     android:id="@+id/my_distance_count"
                     android:text="0/10 km"
                     style="@style/My.BarSubtitle"/>
-            </LinearLayout>
+            </LinearLayout-->
             <LinearLayout
                 style="@style/My.Card"
                 android:paddingBottom="8dp"
@@ -113,7 +113,8 @@
                     <LinearLayout
                         style="@style/Music.RankGeneralBox">
                         <TextView
-                            android:text="Pace"
+                            android:id="@+id/my_weekly_speed_title"
+                            android:text="@string/pace"
                             android:textStyle="bold"
                             style="@style/Music.RangGeneralBoxText" />
                         <LinearLayout
@@ -125,7 +126,8 @@
                                 android:layout_marginRight="4dp"
                                 style="@style/Music.RangGeneralBoxText" />
                             <TextView
-                                android:text="min/km"
+                                android:id="@+id/my_weekly_speed_unit"
+                                android:text="@string/my_running_mi_pace"
                                 style="@style/Music.RangGeneralBoxText"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -144,7 +146,8 @@
                                 android:layout_marginRight="4dp"
                                 style="@style/Music.RangGeneralBoxText"/>
                             <TextView
-                                android:text="km"
+                                android:id="@+id/my_weekly_distance_unit"
+                                android:text="@string/km"
                                 style="@style/Music.RangGeneralBoxText"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -154,7 +157,7 @@
                     android:layout_height="85dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp">
-                    <LinearLayout
+                    <!--LinearLayout
                         style="@style/Music.RankGeneralBox">
                         <ImageView
                             android:src="@drawable/times"
@@ -171,7 +174,7 @@
                                 android:text="times"
                                 style="@style/Music.RangGeneralBoxText"/>
                         </LinearLayout>
-                    </LinearLayout>
+                    </LinearLayout-->
                     <LinearLayout
                         style="@style/Music.RankGeneralBox">
                         <ImageView
@@ -225,7 +228,6 @@
                     android:layout_centerInParent="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
                 <ImageView
                     android:src="@drawable/right_arrow"
                     android:layout_width="10dp"

@@ -286,20 +286,19 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
      *
      * @author DannyLin
      */
-    public class MainTabViewPagerAdapter extends AbstractTabViewPagerAdapter implements
-            MyFragment.MyTabFragmentListener {
+    public class MainTabViewPagerAdapter extends AbstractTabViewPagerAdapter {
 
         private Fragment mFragmentAtMyTab;
 
         public MainTabViewPagerAdapter(FragmentManager fm, int size) {
             super(fm, size);
-            setSwitchFragmentListener();
+            //setSwitchFragmentListener();
         }
 
-        private void setSwitchFragmentListener() {
-            mMyFragment.setMyTabFragmentListener(this);
+        //private void setSwitchFragmentListener() {
+            //mMyFragment.setMyTabFragmentListener(this);
             //mStartFragment.setStartTabFragmentListener(this);
-        }
+        //}
 
         @Override
         protected Fragment getFragment(int position) {
@@ -330,7 +329,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             return POSITION_UNCHANGED;
         }
 
-        @Override
+        /*@Override
         public void onSwitchBetweenMyAndPastRecordFragment() {
             if (mCurTransaction == null) {
                 mCurTransaction = mFragmentManager.beginTransaction();
@@ -344,7 +343,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 mFragmentAtMyTab = mMyFragment;
             }
             notifyDataSetChanged();
-        }
+        }*/
 /*
         private void addPastRecordFragment() {
             mPastRecordFragment = (PastRecordFragment) mFragmentManager

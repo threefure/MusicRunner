@@ -40,6 +40,7 @@ public class SettingActivity extends Activity implements
         DatePickerDialog.OnDateSetListener,
         RadioGroup.OnCheckedChangeListener{
 
+    public static final String SETTING_SHARED_PREFERENCE = "setting";
     public static final String ACCOUNT         = "account";
     public static final String WEIGHT_UNIT     = "weight_unit";
     public static final String HEIGHT_UNIT     = "height_unit";
@@ -53,20 +54,22 @@ public class SettingActivity extends Activity implements
     public static final String LANGUAGE        = "language";
     public static final String AUTO_CUE_TOGGLE = "auto_cue_toggle";
 
-    private ActionBar mActionBar;
+    public static final int SETTING_WEIGHT_KG = 0;
+    public static final int SETTING_WEIGHT_LB = 1;
+    public static final int SETTING_DISTANCE_KM = 0;
+    public static final int SETTING_DISTANCE_MI = 1;
+    public static final int SETTING_HEIGHT_CM = 0;
+    public static final int SETTING_HEIGHT_IN = 1;
+    public static final int SETTING_PACE  = 0;
+    public static final int SETTING_SPEED = 1;
+    public static final int SETTING_DEGREE_C = 0;
+    public static final int SETTING_DEGREE_F = 1;
+    public static final String SETTING_AUTO_CUE_5_MINUTES = "5 Minutes";
+    public static final String SETTING_LANGUAGE_ENGLISH = "English";
+
     private final String TAG = "SettingActivity";
-    private final int SETTING_WEIGHT_KG = 0;
-    private final int SETTING_WEIGHT_LB = 1;
-    private final int SETTING_DISTANCE_KM = 0;
-    private final int SETTING_DISTANCE_MI = 1;
-    private final int SETTING_HEIGHT_CM = 0;
-    private final int SETTING_HEIGHT_IN = 1;
-    private final int SETTING_PACE  = 0;
-    private final int SETTING_SPEED = 1;
-    private final int SETTING_DEGREE_C = 0;
-    private final int SETTING_DEGREE_F = 1;
-    private final String SETTING_AUTO_CUE_5_MINUTES = "5 Minutes";
-    private final String SETTING_LANGUAGE_ENGLISH = "English";
+
+    private ActionBar mActionBar;
 
     private String weightUnit = "";
     private String heightUnit = "";
@@ -144,7 +147,7 @@ public class SettingActivity extends Activity implements
     }
 
     private void setViews () {
-        mSettingSharedPreferences = getSharedPreferences("setting", 0);
+        mSettingSharedPreferences = getSharedPreferences(SETTING_SHARED_PREFERENCE, 0);
         String account = mSettingSharedPreferences.getString(ACCOUNT, "no account");
         Integer unitWeight    = mSettingSharedPreferences.getInt(WEIGHT_UNIT, SETTING_WEIGHT_KG);
         Integer unitDistance  = mSettingSharedPreferences.getInt(DISTANCE_UNIT, SETTING_DISTANCE_KM);

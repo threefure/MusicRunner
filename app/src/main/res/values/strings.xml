@@ -56,9 +56,14 @@
 
     <!-- My Running -->
     <string name="my_running_times">Times</string>
-    <string name="my_running_speeds">Speeds</string>
+    <string name="my_running_speed">Speed</string>
+    <string name="my_running_pace">Pace</string>
     <string name="my_running_calories">Calories</string>
     <string name="my_running_distances">Distance</string>
+    <string name="my_running_km_pace">min/km</string>
+    <string name="my_running_mi_pace">min/mi</string>
+    <string name="my_running_km_speed">km/min</string>
+    <string name="my_running_mi_speed">mi/min</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Latitude, longitude format -->
