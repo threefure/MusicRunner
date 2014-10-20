@@ -455,12 +455,13 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
     @Override
     public void onChangeMusicSong(MusicRecord previousRecord) {
-        Log.d(TAG, "Change song title = " + previousRecord.mMusicSong.mTitle);
-        Log.d(TAG, "Change song duration = " + previousRecord.mPlayingDuration);
-        if (previousRecord.mPlayingDuration < 10000) {
+        if (previousRecord == null || previousRecord.mPlayingDuration < 10000) {
             // won't record this song if user play music less than 10 secs
             return;
         }
+
+        Log.d(TAG, "Change song title = " + previousRecord.mMusicSong.mTitle);
+        Log.d(TAG, "Change song duration = " + previousRecord.mPlayingDuration);
 
         String songName = previousRecord.mMusicSong.mTitle;
         String performanceString;
