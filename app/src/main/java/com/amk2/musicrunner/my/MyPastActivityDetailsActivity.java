@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
@@ -28,7 +30,9 @@ import com.amk2.musicrunner.utilities.ColorGenerator;
 import com.amk2.musicrunner.utilities.PhotoLib;
 import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
+import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.utilities.UnitConverter;
 import com.amk2.musicrunner.views.MusicRunnerLineMapView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -64,12 +68,19 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
     private TextView dateTextView;
     private TextView timeTextView;
     private TextView distanceTextView;
+    private TextView distanceUnitTextView;
     private TextView caloriesTextView;
+    private TextView speedTitleTextView;
     private TextView speedTextView;
+    private TextView speedUnitTextView;
     private TextView durationTextView;
     private ImageView picPreviewImageView;
     private ImageButton cameraImageButton;
     private MusicRunnerLineMapView musicRunnerLineMapView;
+
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
+    private Integer unitSpeedPace;
 
     private LayoutInflater inflater;
 
@@ -79,7 +90,8 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
 
         mContentResolver = getContentResolver();
         eventId = getIntent().getExtras().getInt(EVENT_ID);
-        Log.d(TAG, "evnetid = " + eventId);
+        mSettingSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        getSharedPreferences();
         fetchSongPerformance();
         initActionBar();
         initViews();
@@ -91,13 +103,21 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         mActionBar.hide();
     }
 
+    private void getSharedPreferences () {
+        unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
+    }
+
     private void initViews() {
-        dateTextView        = (TextView) findViewById(R.id.my_past_activity_details_date);
-        timeTextView        = (TextView) findViewById(R.id.my_past_activity_details_time);
-        distanceTextView    = (TextView) findViewById(R.id.my_past_activity_details_distance);
-        caloriesTextView    = (TextView) findViewById(R.id.my_past_activity_details_calorie);
-        speedTextView       = (TextView) findViewById(R.id.my_past_activity_details_speed);
-        durationTextView    = (TextView) findViewById(R.id.my_past_activity_details_duration);
+        dateTextView         = (TextView) findViewById(R.id.my_past_activity_details_date);
+        timeTextView         = (TextView) findViewById(R.id.my_past_activity_details_time);
+        distanceUnitTextView = (TextView) findViewById(R.id.my_past_activity_details_distance_unit);
+        distanceTextView     = (TextView) findViewById(R.id.my_past_activity_details_distance);
+        caloriesTextView     = (TextView) findViewById(R.id.my_past_activity_details_calorie);
+        speedTitleTextView   = (TextView) findViewById(R.id.my_past_activity_details_speed_title);
+        speedTextView        = (TextView) findViewById(R.id.my_past_activity_details_speed);
+        speedUnitTextView    = (TextView) findViewById(R.id.my_past_activity_details_speed_unit);
+        durationTextView     = (TextView) findViewById(R.id.my_past_activity_details_duration);
 
         picPreviewImageView = (ImageView) findViewById(R.id.my_past_activity_details_photo);
         cameraImageButton   = (ImageButton) findViewById(R.id.my_past_activity_details_camera);
@@ -112,12 +132,12 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
     }
 
     private void setViews () {
-        int duration;
         long timeInMillis;
         String timeInMillisString, durationString;
-        String distance, calories, speed, route;
-        String dayPeriodString, dateString, timeString;
-        Integer dayPeriod;
+        String distanceString, calories, speedString, route;
+        String dayPeriodString, dateString, timeString, speedUnitString = "my_running_";
+        Integer dayPeriod, duration, speedTitleId;
+        Double distance, minutes, speed;
         Calendar calendar = Calendar.getInstance();
 
         String[] projection = {
@@ -136,9 +156,9 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         cursor.moveToFirst();
         duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
         timeInMillisString = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-        distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+        distanceString     = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
         calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
-        speed              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
+        speedString              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_SPEED));
         photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
         route              = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_ROUTE));
         cursor.close();
@@ -169,14 +189,44 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         dateTextView.setText(dateString);
         timeTextView.setText(timeString);
 
-        distanceTextView.setText(distance);
+        // getting distance information
+        distance = Double.parseDouble(distanceString);
+        minutes = duration.doubleValue()/60;
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+            distance = UnitConverter.getMIFromKM(distance);
+            speedUnitString += "mi_";
+        } else {
+            speedUnitString += "km_";
+        }
+
+        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
+            speed = minutes/distance;
+            speedUnitString += "pace";
+            speedTitleId = R.string.pace;
+        } else {
+            speed = distance/minutes;
+            speedUnitString += "speed";
+            speedTitleId = R.string.speed;
+        }
+        if (speed.isNaN() || speed.isInfinite()) {
+            speed = 0.0;
+        }
+        distanceString = StringLib.truncateDoubleString(distance.toString(), 2);
+        speedString = StringLib.truncateDoubleString(speed.toString(), 2);
+
+        // setting distance information
+        distanceTextView.setText(distanceString);
+        distanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
+
+        // setting speed information
+        speedTextView.setText(speedString);
+        speedUnitTextView.setText(getResources().getString(Constant.PaceSpeedMap.get(speedUnitString)));
+        speedTitleTextView.setText(getResources().getString(speedTitleId));
+
+        // setting calories information
         caloriesTextView.setText(calories);
-        speedTextView.setText(speed);
 
-        //mLocationList = LocationUtils.parseRouteToLocation(route);
-        //mColorList = LocationUtils.parseRouteColor(route);
-        //mDrawRoute();
-
+        // setting duration information
         durationTextView.setText(durationString);
         if (photoPath != null && photoPath.length() > 0) {
             setPicPreview();

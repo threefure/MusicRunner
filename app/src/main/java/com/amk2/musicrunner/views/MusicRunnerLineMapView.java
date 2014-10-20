@@ -1,12 +1,15 @@
 package com.amk2.musicrunner.views;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.amk2.musicrunner.Constant;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
@@ -42,6 +45,9 @@ public class MusicRunnerLineMapView extends View{
     private Paint mPointPaint;
     private ArrayList<SongPerformance> songPerformanceJoints;
 
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
+
     public MusicRunnerLineMapView(Context _context, AttributeSet attrs) {
         super(_context, attrs);
         context = _context;
@@ -50,6 +56,9 @@ public class MusicRunnerLineMapView extends View{
     }
 
     private void initialize () {
+        mSettingSharedPreferences = context.getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        unitDistance = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.BLACK);
         mTextPaint.setTextSize((float)UnitConverter.getPixelsFromDP(context, textSizeInDP));
@@ -103,8 +112,9 @@ public class MusicRunnerLineMapView extends View{
         if (!isInEditMode()) {
             int length = songPerformanceJoints.size();
             int fromX = startX.intValue(), fromY = startY.intValue(), toX = startX.intValue(), toY = startY.intValue();
-            Double kms = 0.0;
+            Double totalDistance = 0.0, distance;
             Double temp;
+            String unit = Constant.DistanceMap.get(unitDistance);
             canvas.drawText("Start", toX - offsetTopX.intValue(), toY - offsetTopY.intValue(), mTextPaint);
             canvas.drawCircle(toX, toY, radius, mPointPaint);
             for (int i = 0; i < length; i++) {
@@ -114,9 +124,14 @@ public class MusicRunnerLineMapView extends View{
                 }
                 toY = toY + temp.intValue();
 
-                kms += songPerformanceJoints.get(i).distance;
+                if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+                    distance = songPerformanceJoints.get(i).distance;
+                } else {
+                    distance = UnitConverter.getMIFromKM(songPerformanceJoints.get(i).distance);
+                }
+                totalDistance += distance;
                 canvas.drawCircle(toX, toY, radius, mPointPaint);
-                canvas.drawText(StringLib.truncateDoubleString(kms.toString(), 2) + " km", toX - offsetLeft.intValue(), toY, mTextPaint);
+                canvas.drawText(StringLib.truncateDoubleString(totalDistance.toString(), 2) + " " + unit, toX - offsetLeft.intValue(), toY, mTextPaint);
                 canvas.drawText(StringLib.truncate(songPerformanceJoints.get(i).name, 20), toX + offsetRight.intValue(), toY, mTextPaint);
                 canvas.drawText(StringLib.truncateDoubleString(songPerformanceJoints.get(i).performance.toString(), 2) + " kcal/min",
                         toX + offsetRight.intValue(), toY + 55, mTextPaint);
