@@ -3,6 +3,7 @@ package com.amk2.musicrunner.music;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,12 +13,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.utilities.UnitConverter;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,8 +41,11 @@ public class MusicRankDetailActivity extends Activity {
     private TextView bestPerformanceTextView;
     private TextView averagePerformanceTextView;
     private TextView bestPerformanceDateTextView;
-    private TextView paceTextView;
+    private TextView speedTitleTextView;
+    private TextView speedTextView;
+    private TextView speedUnitTextView;
     private TextView distanceTextView;
+    private TextView distanceUnitTextView;
     private TextView timesTextView;
     private TextView durationTextView;
     private TextView caloriesTextView;
@@ -46,15 +53,26 @@ public class MusicRankDetailActivity extends Activity {
     private ImageView albumPhotoImageView;
     private ImageView addToPlaylistImageView;
 
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
+    private Integer unitSpeedPace;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_rank_detail);
         mContentResolver = getContentResolver();
+        mSettingSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         mActionBar = getActionBar();
+        getSharedPreferences();
         initActionBar();
         initViews();
         setViews();
+    }
+
+    private void getSharedPreferences () {
+        unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
     }
 
     private void initActionBar() {
@@ -69,8 +87,11 @@ public class MusicRankDetailActivity extends Activity {
         bestPerformanceTextView     = (TextView) findViewById(R.id.best_performance);
         averagePerformanceTextView  = (TextView) findViewById(R.id.average_performance);
         bestPerformanceDateTextView = (TextView) findViewById(R.id.best_performance_date);
-        paceTextView                = (TextView) findViewById(R.id.pace);
+        speedTitleTextView          = (TextView) findViewById(R.id.speed_title);
+        speedTextView               = (TextView) findViewById(R.id.speed);
+        speedUnitTextView           = (TextView) findViewById(R.id.speed_unit);
         distanceTextView            = (TextView) findViewById(R.id.distance);
+        distanceUnitTextView        = (TextView) findViewById(R.id.distance_unit);
         timesTextView               = (TextView) findViewById(R.id.times);
         durationTextView            = (TextView) findViewById(R.id.duration);
         caloriesTextView            = (TextView) findViewById(R.id.calories);
@@ -81,9 +102,9 @@ public class MusicRankDetailActivity extends Activity {
         HashMap<String, String> songInfo;
         Calendar calendar = Calendar.getInstance();
         Integer songId = (Integer) getIntent().getExtras().get(SONG_ID);
-        Integer duration, totalDuration, times;
-        Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, pace;
-        String calories, distance, currentEpoch, speed, songName, durationString, artist, bestEpoch = null;
+        Integer duration, totalDuration, times, speedTitleId;
+        Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, speed, minutes;
+        String calories, distance, currentEpoch, speedString, songName, durationString, artist, bestEpoch = null, speedUnitString = "my_running_";
         String[] projection = {
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_ID,
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES,
@@ -105,7 +126,7 @@ public class MusicRankDetailActivity extends Activity {
             calories     = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES));
             distance     = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_DISTANCE));
             currentEpoch = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-            speed        = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
+            speedString  = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
 
             tempCalories = Double.parseDouble(calories);
             performance  = tempCalories*60*1000/duration.doubleValue();
@@ -125,7 +146,38 @@ public class MusicRankDetailActivity extends Activity {
         artist   = MusicLib.getArtist(getApplicationContext(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
         averagePerformance = totalCalories*60/totalDuration.doubleValue();
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(totalDuration));
-        pace = totalDuration/(totalDistance*60);
+
+        // getting distance information
+        minutes = totalDuration.doubleValue()/60;
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+            totalDistance = UnitConverter.getMIFromKM(totalDistance);
+            speedUnitString += "mi_";
+        } else {
+            speedUnitString += "km_";
+        }
+
+        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
+            speed = minutes/totalDistance;
+            speedUnitString += "pace";
+            speedTitleId = R.string.pace;
+        } else {
+            speed = totalDistance/minutes;
+            speedUnitString += "speed";
+            speedTitleId = R.string.speed;
+        }
+        if (speed.isNaN() || speed.isInfinite()) {
+            speed = 0.0;
+        }
+
+        // setting distance information
+        distanceTextView.setText(StringLib.truncateDoubleString(totalDistance.toString(), 2));
+        distanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
+
+        // setting speed information
+        speedTextView.setText(StringLib.truncateDoubleString(speed.toString(), 2));
+        speedUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
+        speedTitleTextView.setText(getResources().getString(speedTitleId));
+
         if (bestEpoch != null) {
             calendar.setTimeInMillis(Long.parseLong(bestEpoch));
         }
@@ -136,9 +188,8 @@ public class MusicRankDetailActivity extends Activity {
         bestPerformanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
                 calendar.get(Calendar.DAY_OF_MONTH));
         averagePerformanceTextView.setText(StringLib.truncateDoubleString(averagePerformance.toString(), 2));
-        distanceTextView.setText(StringLib.truncateDoubleString(totalDistance.toString(), 2));
+
         timesTextView.setText(times.toString());
-        paceTextView.setText(StringLib.truncateDoubleString(pace.toString(), 2));
         durationTextView.setText(durationString);
         caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
 

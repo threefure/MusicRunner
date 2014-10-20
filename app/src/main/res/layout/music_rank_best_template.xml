@@ -109,6 +109,7 @@
                                 android:layout_marginRight="4dp"
                                 style="@style/Music.StatisticNumber"/>
                             <TextView
+                                android:id="@+id/distance_unit"
                                 android:text="@string/km"
                                 style="@style/Music.StatisticUnit" />
                         </LinearLayout>

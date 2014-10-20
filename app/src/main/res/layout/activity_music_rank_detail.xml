@@ -156,18 +156,20 @@
             <LinearLayout
                 style="@style/Music.RankGeneralBox">
                 <TextView
-                    android:text="Pace"
+                    android:id="@+id/speed_title"
+                    android:text="@string/pace"
                     android:textStyle="bold"
                     style="@style/Music.RangGeneralBoxText"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:id="@+id/pace"
+                        android:id="@+id/speed"
                         android:text="3.53"
                         android:layout_marginRight="4dp"
                         style="@style/Music.RangGeneralBoxText" />
                     <TextView
+                        android:id="@+id/speed_unit"
                         android:text="min/km"
                         style="@style/Music.RangGeneralBoxText"/>
                 </LinearLayout>
@@ -187,7 +189,8 @@
                         android:layout_marginRight="4dp"
                         style="@style/Music.RangGeneralBoxText"/>
                     <TextView
-                        android:text="km"
+                        android:id="@+id/distance_unit"
+                        android:text="@string/km"
                         style="@style/Music.RangGeneralBoxText"/>
                 </LinearLayout>
             </LinearLayout>

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,12 +17,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnSongRankPreparedListener;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
+import com.amk2.musicrunner.utilities.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +45,8 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
     private LinearLayout musicRankContainer;
     //private ContentResolver mContentResolver;
     private LayoutInflater inflater;
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
 
     private ArrayList<SongPerformance> mSongPerformanceList;
 
@@ -54,8 +60,9 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //mContentResolver = getActivity().getContentResolver();
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        unitDistance = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         initViews();
     }
 
@@ -84,15 +91,9 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
         musicRankContainer = (LinearLayout) thisView.findViewById(R.id.music_rank_container);
     }
 
-    private void setViews() {
-        int length = mSongPerformanceList.size();
-        for (int i = 0; i < length; i++) {
-            addSongRank(mSongPerformanceList.get(i), (i == 0));
-        }
-    }
-
     private void addSongRank(SongPerformance sp, boolean isBest) {
         View songRankTemplate;
+        Double distance;
         if (isBest) {
             songRankTemplate = inflater.inflate(R.layout.music_rank_best_template, null);
         } else {
@@ -102,14 +103,27 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
         TextView singerTextView       = (TextView) songRankTemplate.findViewById(R.id.singer);
         TextView caloriesTextView     = (TextView) songRankTemplate.findViewById(R.id.calories);
         TextView distanceTextView     = (TextView) songRankTemplate.findViewById(R.id.distance);
+        TextView distanceUnitTextView = (TextView) songRankTemplate.findViewById(R.id.distance_unit);
         TextView timesTextView        = (TextView) songRankTemplate.findViewById(R.id.times);
         TextView rankTagTextView      = (TextView) songRankTemplate.findViewById(R.id.rank_tag);
+
         ImageView albumPhotoImageView = (ImageView) songRankTemplate.findViewById(R.id.album_photo);
+
+        // getting distance information
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+            distance = UnitConverter.getMIFromKM(sp.distance);
+        } else {
+            distance = sp.distance;
+        }
+
+        //setting distance information
+        distanceTextView.setText(StringLib.truncateDoubleString(distance.toString(), 1));
+        distanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
 
         songNameTextView.setText(StringLib.truncate(sp.name, 20));
         singerTextView.setText(sp.artist);
         caloriesTextView.setText(StringLib.truncateDoubleString(sp.calories.toString(), 1));
-        distanceTextView.setText(StringLib.truncateDoubleString(sp.distance.toString(), 1));
+
         timesTextView.setText(sp.times.toString());
         if (isBest) {
             rankTagTextView.setText("Best");
@@ -194,7 +208,7 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
                 caloriesString = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES));
                 distanceString = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_DISTANCE));
                 currentEpoch   = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-                speedString          = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
+                speedString    = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
 
                 caloriesTemp = Double.parseDouble(caloriesString);
                 calories += caloriesTemp;
