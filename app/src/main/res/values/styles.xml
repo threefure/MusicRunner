@@ -218,4 +218,41 @@
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">30dp</item>
     </style>
+
+    <style name="Setting"></style>
+    <style name="Setting.Title">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/setting_title</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">20dp</item>
+    </style>
+    <style name="Setting.Content">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/setting_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginRight">20dp</item>
+    </style>
+    <style name="Setting.RadioGroup">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="Setting.RadioButton">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/setting_content</item>
+        <item name="android:background">@drawable/music_runner_radio_button</item>
+        <item name="android:button">@android:color/transparent</item>
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

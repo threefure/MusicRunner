@@ -1,11 +1,8 @@
 package com.amk2.musicrunner.musiclist;
 
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -13,48 +10,26 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.running.MusicSong;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnPlaylistPreparedListener;
-import com.amk2.musicrunner.utilities.RestfulUtility;
-import com.amk2.musicrunner.utilities.StringLib;
-import com.amk2.musicrunner.utilities.TimeConverter;
 
 import com.hb.views.PinnedSectionListView;
 import com.hb.views.PinnedSectionListView.PinnedSectionListAdapter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.zip.Inflater;
 
 /**
  * Created by logicmelody on 2014/9/23.
@@ -271,7 +246,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     choosePlaylistTextView.setTag(playlistMetaData.mId);
                     choosePlaylistTextView.setOnClickListener(this);
                     if (playlistMetaData.mId.equals(selectedPlaylist)){
-                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
                         mSelectedPlaylist = choosePlaylistTextView;
                     } else {
                         choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
@@ -310,7 +285,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     playlistViewTag.mChoosePlaylistTextView.setOnClickListener(this);
 
                     if (playlistMetaData.mId.equals(selectedPlaylist)){
-                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
                         mSelectedPlaylist = playlistViewTag.mChoosePlaylistTextView;
                     } else {
                         playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
@@ -342,7 +317,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     Long oldPlaylistId = mPlaylistPreferences.getLong("id", -1);
                     if (!oldPlaylistId.equals(newPlaylistId)) {
                         mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
-                        view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                        view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
                         mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
                         mSelectedPlaylist = view;
                     }

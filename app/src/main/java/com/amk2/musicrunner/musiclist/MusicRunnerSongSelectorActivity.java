@@ -7,14 +7,11 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
-import com.amk2.musicrunner.musiclist.MusicMetaData;
-import com.amk2.musicrunner.musiclist.PlaylistManager;
-import com.amk2.musicrunner.musiclist.PlaylistMetaData;
 import com.amk2.musicrunner.running.MusicSong;
 import com.amk2.musicrunner.utilities.MusicLib;
-import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
 import java.util.ArrayList;
@@ -100,7 +93,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         // Do something when a list item is clicked
         SongSelectorAdapter.ViewTag viewTag = (SongSelectorAdapter.ViewTag) view.getTag();
         if (!mSongSelectorAdapter.isSelected(position)) {
-            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
         } else {
             viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
         }
@@ -256,7 +249,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             viewTag.artist.setText(ms.mArtist);
             viewTag.duration.setText(durationString);
             if (mSongIsSelectedArrayList.get(i)) {
-                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_orund_border));
+                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
             } else {
                 viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
             }
