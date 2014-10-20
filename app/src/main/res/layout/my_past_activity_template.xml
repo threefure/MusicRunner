@@ -71,6 +71,7 @@
                         android:layout_marginRight="4dp"
                         style="@style/Music.StatisticNumber" />
                     <TextView
+                        android:id="@+id/my_past_activity_distance_unit"
                         android:text="@string/km"
                         android:textSize="12dp"
                         style="@style/Music.StatisticUnit" />
