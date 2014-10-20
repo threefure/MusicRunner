@@ -112,4 +112,17 @@
     <string name="create_playlist_name">Playlist Name</string>
     <string name="select_songs">Select Songs</string>
 
+    <string-array name="auto_cue">
+        <item>5 Minutes</item>
+        <item>10 Minutes</item>
+        <item>15 Minutes</item>
+        <item>20 Minutes</item>
+        <item>25 Minutes</item>
+        <item>30 Minutes</item>
+    </string-array>
+    <string-array name="language">
+        <item>English</item>
+        <item>中文</item>
+    </string-array>
+
 </resources>

@@ -163,7 +163,7 @@
                 android:layout_toLeftOf="@+id/auto_cue_spinner"/>
             <Spinner
                 android:id="@+id/auto_cue_spinner"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp">
@@ -177,7 +177,7 @@
                 style="@style/Setting.Title"/>
             <Spinner
                 android:id="@+id/language_spinner"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp">

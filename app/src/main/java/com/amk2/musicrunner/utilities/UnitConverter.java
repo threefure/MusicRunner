@@ -52,4 +52,27 @@ public class UnitConverter {
         return pixels;
     }
 
+    public static double getKGFromLB (double lb) {
+        return lb*0.4536;
+    }
+
+    public static double getLBFromKG (double kg) {
+        return kg*2.2046;
+    }
+
+    public static double getCMFromIN (double in) {
+        return in*2.54;
+    }
+
+    public static double getINFromCM (double cm) {
+        return cm*0.3937;
+    }
+
+    public static double getKMFromMI (double mi) {
+        return mi*1.6;
+    }
+
+    public static double getMIFromKM (double km) {
+        return km*0.6213;
+    }
 }
