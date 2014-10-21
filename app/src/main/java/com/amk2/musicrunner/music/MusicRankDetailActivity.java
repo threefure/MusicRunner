@@ -103,7 +103,7 @@ public class MusicRankDetailActivity extends Activity {
         Calendar calendar = Calendar.getInstance();
         Integer songId = (Integer) getIntent().getExtras().get(SONG_ID);
         Integer duration, totalDuration, times, speedTitleId;
-        Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, speed, minutes;
+        Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, speed, minutes, hours;
         String calories, distance, currentEpoch, speedString, songName, durationString, artist, bestEpoch = null, speedUnitString = "my_running_";
         String[] projection = {
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_ID,
@@ -149,6 +149,7 @@ public class MusicRankDetailActivity extends Activity {
 
         // getting distance information
         minutes = totalDuration.doubleValue()/60;
+        hours = totalDuration.doubleValue()/3600;
         if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
             totalDistance = UnitConverter.getMIFromKM(totalDistance);
             speedUnitString += "mi_";
@@ -161,7 +162,7 @@ public class MusicRankDetailActivity extends Activity {
             speedUnitString += "pace";
             speedTitleId = R.string.pace;
         } else {
-            speed = totalDistance/minutes;
+            speed = totalDistance/hours;
             speedUnitString += "speed";
             speedTitleId = R.string.speed;
         }

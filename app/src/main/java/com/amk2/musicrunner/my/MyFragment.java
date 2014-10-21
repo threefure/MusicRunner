@@ -179,6 +179,7 @@ public class MyFragment extends Fragment implements View.OnClickListener {
         String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
         String distanceString, speedString, speedUnitString = "my_running_";
         Double minutes = weeklyDuration.doubleValue()/60;
+        Double hours   = weeklyDuration.doubleValue()/3600;
         Double distance = weeklyDistance;
         Double speed;
         Integer speedTitleId;
@@ -199,7 +200,7 @@ public class MyFragment extends Fragment implements View.OnClickListener {
             speedUnitString += "pace";
             speedTitleId = R.string.pace;
         } else {
-            speed = distance/minutes;
+            speed = distance/hours;
             speedUnitString += "speed";
             speedTitleId = R.string.speed;
         }

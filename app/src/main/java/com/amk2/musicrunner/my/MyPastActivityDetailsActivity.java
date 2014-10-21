@@ -137,7 +137,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         String distanceString, calories, speedString, route;
         String dayPeriodString, dateString, timeString, speedUnitString = "my_running_";
         Integer dayPeriod, duration, speedTitleId;
-        Double distance, minutes, speed;
+        Double distance, minutes, hours, speed;
         Calendar calendar = Calendar.getInstance();
 
         String[] projection = {
@@ -192,6 +192,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
         // getting distance information
         distance = Double.parseDouble(distanceString);
         minutes = duration.doubleValue()/60;
+        hours = duration.doubleValue()/3600;
         if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
             distance = UnitConverter.getMIFromKM(distance);
             speedUnitString += "mi_";
@@ -204,7 +205,7 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             speedUnitString += "pace";
             speedTitleId = R.string.pace;
         } else {
-            speed = distance/minutes;
+            speed = distance/hours;
             speedUnitString += "speed";
             speedTitleId = R.string.speed;
         }
