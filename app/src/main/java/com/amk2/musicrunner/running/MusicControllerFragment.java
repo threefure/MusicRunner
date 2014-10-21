@@ -46,7 +46,8 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     private static final String[] MUSIC_SELECT_PROJECTION = new String[] {
             android.provider.MediaStore.Audio.Media._ID,
             android.provider.MediaStore.Audio.Media.TITLE,
-            android.provider.MediaStore.Audio.Media.ARTIST
+            android.provider.MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.DURATION
     };
     private static final int MUSIC_ID = 0;
     private static final int MUSIC_TITLE = 1;
@@ -262,11 +263,12 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 long id = data.getLong(MUSIC_ID);
                 String title = data.getString(MUSIC_TITLE);
                 String artist = data.getString(MUSIC_ARTIST);
+                Integer duration = data.getInt(data.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 Uri musicUri = ContentUris.withAppendedId(MUSIC_URI,id);
                 String musicFilePath = MusicLib.getMusicFilePath(mActivity, musicUri);
                 if(isMusicFile(musicFilePath)) {
                     //Log.d("danny","Add music file path = " + musicFilePath);
-                    songList.add(new MusicSong(id, title, artist));
+                    songList.add(new MusicSong(id, title, artist, duration));
                 }
             }
         }
@@ -278,6 +280,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         Long audio_id;
         Uri musicUri;
         String title, artist;
+        Integer duration;
         Uri playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(mPlaylistId);
         String[] projection = {
                 MediaStore.Audio.Playlists.Members.AUDIO_ID
@@ -290,7 +293,8 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 retriever.setDataSource(mActivity, musicUri);
                 title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                songList.add(new MusicSong(audio_id, title, artist));
+                duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                songList.add(new MusicSong(audio_id, title, artist, duration));
             }
         }
         cursor.close();

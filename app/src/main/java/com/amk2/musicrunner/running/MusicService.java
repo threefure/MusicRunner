@@ -253,7 +253,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        int previousSongDuration = mp.getCurrentPosition();
+        //int previousSongDuration = mp.getCurrentPosition();
+        int previousSongDuration = mMusicSongList.get(mCurrentSongIndex).mDuration;
         playNextSong();
         mOnPlayingSongCompletionListener.onPlayingSongCompletion(previousSongDuration);
     }
