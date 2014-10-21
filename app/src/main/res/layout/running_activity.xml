@@ -54,6 +54,7 @@
                     android:text="@string/zero"
                     style="@style/Running.StatisticNumber"/>
                 <TextView
+                    android:id="@+id/running_distance_unit"
                     android:text="@string/km"
                     style="@style/Running.StatisticUnits"/>
             </LinearLayout>
@@ -83,6 +84,7 @@
                 android:layout_marginRight="0dp"
                 style="@style/Running.StatisticUnitBackground">
                 <TextView
+                    android:id="@+id/running_speed_title"
                     android:text="@string/speed"
                     style="@style/Running.StatisticUnits"/>
                 <TextView
@@ -91,6 +93,7 @@
                     android:textSize="30dp"
                     style="@style/Running.StatisticNumber"/>
                 <TextView
+                    android:id="@+id/running_speed_unit"
                     android:text="@string/speed_ratio"
                     style="@style/Running.StatisticUnits"/>
             </LinearLayout>

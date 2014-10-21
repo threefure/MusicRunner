@@ -62,8 +62,8 @@
     <string name="my_running_distances">Distance</string>
     <string name="my_running_km_pace">min/km</string>
     <string name="my_running_mi_pace">min/mi</string>
-    <string name="my_running_km_speed">km/min</string>
-    <string name="my_running_mi_speed">mi/min</string>
+    <string name="my_running_km_speed">km/hr</string>
+    <string name="my_running_mi_speed">mi/hr</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Latitude, longitude format -->
@@ -117,13 +117,19 @@
     <string name="create_playlist_name">Playlist Name</string>
     <string name="select_songs">Select Songs</string>
 
+    <string name="_5minutes">5 Minutes</string>
+    <string name="_10minutes">10 Minutes</string>
+    <string name="_15minutes">15 Minutes</string>
+    <string name="_20minutes">20 Minutes</string>
+    <string name="_25minutes">25 Minutes</string>
+    <string name="_30minutes">30 Minutes</string>
     <string-array name="auto_cue">
-        <item>5 Minutes</item>
-        <item>10 Minutes</item>
-        <item>15 Minutes</item>
-        <item>20 Minutes</item>
-        <item>25 Minutes</item>
-        <item>30 Minutes</item>
+        <item>@string/_5minutes</item>
+        <item>@string/_10minutes</item>
+        <item>@string/_15minutes</item>
+        <item>@string/_20minutes</item>
+        <item>@string/_25minutes</item>
+        <item>@string/_30minutes</item>
     </string-array>
     <string-array name="language">
         <item>English</item>

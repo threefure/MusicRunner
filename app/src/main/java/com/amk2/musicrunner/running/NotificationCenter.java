@@ -1,11 +1,12 @@
 package com.amk2.musicrunner.running;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.util.Log;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.utilities.StringLib;
 
 import java.util.HashMap;
@@ -18,8 +19,17 @@ public class NotificationCenter {
     private SoundPool mSoundPool;
     HashMap<String, Integer> soundMap;
 
+    private SharedPreferences mSettingSharedPreferences;
+    private Integer unitDistance;
+    private Integer unitSpeedPace;
+
     public NotificationCenter(Context _context) {
         context = _context;
+        // setting shared preference
+        mSettingSharedPreferences = context.getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
+
         mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 5);
         soundMap = new HashMap<String, Integer>();
 
@@ -38,7 +48,7 @@ public class NotificationCenter {
         soundMap.put("sec", mSoundPool.load(context, R.raw.second, 1));
         soundMap.put("time", mSoundPool.load(context, R.raw.time, 1));
         soundMap.put("distance", mSoundPool.load(context, R.raw.distance, 1));
-        soundMap.put("unit", mSoundPool.load(context, R.raw.km, 1));
+        soundMap.put("km", mSoundPool.load(context, R.raw.km, 1));
         soundMap.put("dot", mSoundPool.load(context, R.raw.point, 1));
         soundMap.put("avgSpeed", mSoundPool.load(context, R.raw.average_pace, 1));
         soundMap.put("every", mSoundPool.load(context, R.raw.every, 1));
@@ -114,101 +124,22 @@ public class NotificationCenter {
          */
         public void reportDistance () {
             this.play(soundMap.get("distance"), 1200);
-            if (distance >= 20) {
-                // second digit
-                toPlay = distance.intValue() / 10;
-                this.play(soundMap.get(toPlay.toString()), 700);
+
+            //play distance number
+            playNumber(distance);
+            if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
+                this.play(soundMap.get("km"), 1200);
+            } else {
+                // TODO should be mi
+                this.play(soundMap.get("km"), 1200);
             }
-            if (distance >= 10) {
-                // ten
-                this.play(soundMap.get("10"), 700);
-            }
-            if (distance > 0) {
-                // first digit
-                toPlay = distance.intValue() % 10;
-                this.play(soundMap.get(toPlay.toString()), 700);
-
-                distanceString = distance.toString();
-                indexOfDot = distanceString.indexOf(".");
-                if (indexOfDot > 0) {
-                    distanceString = StringLib.truncateDoubleString(distanceString, 2);
-
-                    // dot
-                    this.play(soundMap.get("dot"), 1000);
-
-                    // 小數點後第一位
-                    this.play(soundMap.get(distanceString.charAt(indexOfDot + 1) + ""), 700);
-
-                    // 小數點後第二位
-                    if ( distanceString.length() > indexOfDot + 2) {
-                        this.play(soundMap.get(distanceString.charAt(indexOfDot + 2) + ""), 700);
-                    }
-                }
-            }
-            if (distance == 0) {
-                this.play(soundMap.get("0"), 700);
-            }
-
-            this.play(soundMap.get("unit"), 1200);
         }
 
         public void reportCalories () {
-            boolean isLTTen = false; //is larger than 10
             this.play(soundMap.get("consumeCalories"), 2000);
-            if (calories >= 1000) {
-                toPlay = calories.intValue() / 1000;
-                this.play(soundMap.get(toPlay.toString()), 700);
-                this.play(soundMap.get("thousand"), 700);
-                calories -= (toPlay.doubleValue() * 1000);
-                isLTTen = true;
-            }
-            if (calories >= 100) {
-                toPlay = calories.intValue() / 100;
-                this.play(soundMap.get(toPlay.toString()), 700);
-                this.play(soundMap.get("hundred"), 700);
-                calories -= (toPlay.doubleValue() * 100);
-                isLTTen = true;
-            }
-            if (calories >= 10) {
-                // second digit
-                toPlay = calories.intValue() / 10;
-                this.play(soundMap.get(toPlay.toString()), 700);
-                // ten
-                this.play(soundMap.get("10"), 700);
-                isLTTen = true;
-            }
-            if (calories > 0) {
-                // first digit
-                toPlay = calories.intValue() % 10;
-                if (toPlay > 0) {
-                    this.play(soundMap.get(toPlay.toString()), 700);
-                } else {
-                    if (!isLTTen) {
-                        this.play(soundMap.get(toPlay.toString()), 700);
-                    }
-                }
 
-                reportString = calories.toString();
-                indexOfDot = reportString.indexOf(".");
-                if (indexOfDot > 0) {
-                    reportString = StringLib.truncateDoubleString(reportString, 2);
-
-                    // dot
-                    this.play(soundMap.get("dot"), 700);
-
-                    // 小數點後第一位
-                    this.play(soundMap.get(reportString.charAt(indexOfDot + 1) + ""), 700);
-
-                    // 小數點後第二位
-                    if ( reportString.length() > indexOfDot + 2) {
-                        this.play(soundMap.get(reportString.charAt(indexOfDot + 2) + ""), 700);
-                    }
-                }
-            }
-            if (calories == 0) {
-                this.play(soundMap.get("0"), 700);
-            }
-
+            //play calorie number
+            playNumber(calories);
             this.play(soundMap.get("kcal"), 1500);
         }
 
@@ -216,36 +147,64 @@ public class NotificationCenter {
          * reportSpeed: report the current speed
          */
         public void reportSpeed () {
+            if (unitSpeedPace == SettingActivity.SETTING_PACE) { // reporting pace sounds
+                // TODO should be average pace
+                this.play(soundMap.get("avgSpeed"), 1200);
+                this.play(soundMap.get("every"), 700);
+
+                if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
+                    this.play(soundMap.get("km"), 1000);
+                } else {
+                    // TODO should be mi
+                    this.play(soundMap.get("km"), 1000);
+                }
+
+                playNumber(speed);
+
+                this.play(soundMap.get("min"), 1000);
+            } else { // reporting speed sounds
+                // TODO should be "平均時數"
+                this.play(soundMap.get("avgSpeed"), 1200);
+                // play speed
+                playNumber(speed);
+
+                if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
+                    this.play(soundMap.get("km"), 1000);
+                } else {
+                    // TODO should be mi
+                    this.play(soundMap.get("km"), 1000);
+                }
+            }
+        }
+
+        private void playNumber (Double number) {
             boolean isLTTen = false; //is larger than 10
-            this.play(soundMap.get("avgSpeed"), 1200);
-            this.play(soundMap.get("every"), 700);
-            this.play(soundMap.get("unit"), 1000);
-            if (speed >= 1000) {
-                toPlay = speed.intValue() / 1000;
+            if (number >= 1000) {
+                toPlay = number.intValue() / 1000;
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("thousand"), 700);
-                speed -= (toPlay.doubleValue() * 1000);
+                number -= (toPlay.doubleValue() * 1000);
                 isLTTen = true;
             }
-            if (speed >= 100) {
-                toPlay = speed.intValue() / 100;
+            if (number >= 100) {
+                toPlay = number.intValue() / 100;
                 this.play(soundMap.get(toPlay.toString()), 700);
                 this.play(soundMap.get("hundred"), 700);
-                speed -= (toPlay.doubleValue() * 100);
+                number -= (toPlay.doubleValue() * 100);
                 isLTTen = true;
             }
-            if (speed >= 10) {
+            if (number >= 10) {
                 // second digit
-                toPlay = speed.intValue() / 10;
+                toPlay = number.intValue() / 10;
                 this.play(soundMap.get(toPlay.toString()), 700);
 
                 // ten
                 this.play(soundMap.get("10"), 700);
                 isLTTen = true;
             }
-            if (speed > 0) {
+            if (number > 0) {
                 // first digit
-                toPlay = speed.intValue() % 10;
+                toPlay = number.intValue() % 10;
                 if (toPlay > 0) {
                     this.play(soundMap.get(toPlay.toString()), 700);
                 } else {
@@ -254,7 +213,7 @@ public class NotificationCenter {
                     }
                 }
 
-                reportString = speed.toString();
+                reportString = number.toString();
                 indexOfDot = reportString.indexOf(".");
                 if (indexOfDot > 0) {
                     reportString = StringLib.truncateDoubleString(reportString, 2);
@@ -266,17 +225,15 @@ public class NotificationCenter {
                     this.play(soundMap.get(reportString.charAt(indexOfDot + 1) + ""), 700);
 
                     // 小數點後第二位
-                    if ( reportString.length() > indexOfDot + 2) {
+                    if (reportString.length() > indexOfDot + 2) {
                         this.play(soundMap.get(reportString.charAt(indexOfDot + 2) + ""), 700);
                     }
                 }
             }
 
-            if (speed == 0) {
+            if (number == 0) {
                 this.play(soundMap.get("0"), 700);
             }
-
-            this.play(soundMap.get("min"), 1000);
         }
 
         /*

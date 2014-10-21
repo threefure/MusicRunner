@@ -361,6 +361,7 @@ public class SettingActivity extends Activity implements
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+        Log.d(TAG, "id:" + id + " adapter id:" + adapterView.getId() + " view id:" + view.getId() + " resource id:" + R.string._5minutes);
         switch (adapterView.getId()){
             case R.id.auto_cue_spinner:
                 mSettingSharedPreferences.edit().remove(AUTO_CUE).putString(AUTO_CUE, (adapterView.getItemAtPosition(pos)).toString()).apply();

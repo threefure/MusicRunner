@@ -73,6 +73,7 @@ public class Constant {
     // Shared Preference
     public static final HashMap<Integer, String> DistanceMap = new HashMap<Integer, String>();
     public static final HashMap<String, Integer> PaceSpeedMap = new HashMap<String, Integer>();
+    public static final HashMap<String, Integer> AutoCueMap = new HashMap<String, Integer>();
     static {
         DistanceMap.put(SettingActivity.SETTING_DISTANCE_KM, "km");
         DistanceMap.put(SettingActivity.SETTING_DISTANCE_MI, "mi");
@@ -81,6 +82,13 @@ public class Constant {
         PaceSpeedMap.put("my_running_mi_pace", R.string.my_running_mi_pace);
         PaceSpeedMap.put("my_running_km_speed", R.string.my_running_km_speed);
         PaceSpeedMap.put("my_running_mi_speed", R.string.my_running_mi_speed);
+
+        AutoCueMap.put("5 Minutes", 5);
+        AutoCueMap.put("10 Minutes", 10);
+        AutoCueMap.put("15 Minutes", 15);
+        AutoCueMap.put("20 Minutes", 20);
+        AutoCueMap.put("25 Minutes", 25);
+        AutoCueMap.put("30 Minutes", 30);
     }
 
 

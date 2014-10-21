@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,9 +27,11 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.amk2.musicrunner.utilities.UnitConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,8 +77,11 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private MusicControllerFragment mMusicControllerFragment;
 
     private TextView distanceTextView;
+    private TextView distanceUnitTextView;
     private TextView calorieTextView;
+    private TextView speedTitleTextView;
     private TextView speedTextView;
+    private TextView speedUnitTextView;
     private TextView durationTextView;
 
     private RelativeLayout pauseContainerRelativeLayout;
@@ -97,7 +103,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private Integer previousSongStartTime    = 0;
     private Double previousSongStartCalories = 0.0;
     private Double previousSongEndDistance = 0.0;
-
     private Double distance = 0.0;
     private Double calorie = 0.0;
     private Double speed = 0.0;
@@ -106,14 +111,23 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private String calorieString;
     private String speedString = "0";
     private String songNames = "";
-
-    private ArrayList<SongPerformance> songPerformanceArrayList;
-
     private String photoPath;
 
-    private NotificationCenter notificationCenter;
+    private SharedPreferences mSettingSharedPreferences;
+    private Boolean isAutoCue;
+    private Integer unitDistance;
+    private Integer unitSpeedPace;
+    private Integer autoCuePeriod;
+    private String autoCuePeriodString;
+
+    //private
+    private Double weight;
+    private Double height;
 
     private File musicRunnerDir;
+    private ArrayList<SongPerformance> songPerformanceArrayList;
+    private NotificationCenter notificationCenter;
+
 
     public class RunningTabViewPagerAdapter extends AbstractTabViewPagerAdapter {
 
@@ -144,15 +158,30 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     }
 
     private void initialize() {
+        mSettingSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        songPerformanceArrayList = new ArrayList<SongPerformance>();
+
+        getSharedPreferences();
         initViews();
         initActionBar();
         initFragments();
         initViewPager();
+
+        setViews();
+
         Timer timer = new Timer();
         timer.schedule(runningTask, 0, 1000);
         notificationCenter = new NotificationCenter(this);
+    }
 
-        songPerformanceArrayList = new ArrayList<SongPerformance>();
+    private void getSharedPreferences () {
+        unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
+        weight        = Double.parseDouble(mSettingSharedPreferences.getString(SettingActivity.WEIGHT, "50"));
+        height        = Double.parseDouble(mSettingSharedPreferences.getString(SettingActivity.HEIGHT, "160"));
+        isAutoCue     = mSettingSharedPreferences.getBoolean(SettingActivity.AUTO_CUE_TOGGLE, true);
+        autoCuePeriodString = mSettingSharedPreferences.getString(SettingActivity.AUTO_CUE, "5 Minutes");
+        autoCuePeriod = Constant.AutoCueMap.get(autoCuePeriodString);
     }
 
     private void initActionBar() {
@@ -205,9 +234,12 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private void initViews() {
         durationTextView = (TextView) findViewById(R.id.running_duration);
 
-        distanceTextView = (TextView) findViewById(R.id.running_distance);
-        calorieTextView  = (TextView) findViewById(R.id.running_calorie);
-        speedTextView    = (TextView) findViewById(R.id.running_speed);
+        distanceTextView     = (TextView) findViewById(R.id.running_distance);
+        distanceUnitTextView = (TextView) findViewById(R.id.running_distance_unit);
+        calorieTextView      = (TextView) findViewById(R.id.running_calorie);
+        speedTextView        = (TextView) findViewById(R.id.running_speed);
+        speedUnitTextView    = (TextView) findViewById(R.id.running_speed_unit);
+        speedTitleTextView   = (TextView) findViewById(R.id.running_speed_title);
 
         pauseButton   = (Button) findViewById(R.id.running_pause);
         doneButton    = (Button) findViewById(R.id.running_done);
@@ -228,6 +260,32 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         //picPreviewImageView.setOnClickListener(this);
         cameraImageButton.setOnClickListener(this);
 
+    }
+
+    private void setViews() {
+        // getting distance information
+        Integer speedTitleId;
+        String speedUnitString = "my_running_";
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+            speedUnitString += "mi_";
+        } else {
+            speedUnitString += "km_";
+        }
+
+        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
+            speedUnitString += "pace";
+            speedTitleId = R.string.pace;
+        } else {
+            speedUnitString += "speed";
+            speedTitleId = R.string.speed;
+        }
+
+        // setting distance information
+        distanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
+
+        // setting speed information
+        speedUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
+        speedTitleTextView.setText(getResources().getString(speedTitleId));
     }
 
     private TimerTask runningTask = new TimerTask() {
@@ -256,6 +314,9 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     //update distance
                     //distance += 0.1;
                     distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
+                        distance = UnitConverter.getMIFromKM(distance);
+                    }
                     distanceString = distance.toString();
                     distanceString = StringLib.truncateDoubleString(distanceString, 2);
                     distanceTextView.setText(distanceString);
@@ -263,7 +324,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     //update calorie
                     //calorie += 0.1;
                     calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
-                    //calorie = calculateCalories(totalSec, distance);
                     calorieString = calorie.toString();
                     calorieString = StringLib.truncateDoubleString(calorieString, 2);
                     calorieTextView.setText(calorieString);
@@ -271,8 +331,11 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     //update ratio
                     //running_speed += 0.01;
                     if (distance > 0) {
-                        //speed = ((double) totalSec / 60)/distance;//MapFragmentRun.getmSpeed();
-                        speed = ((double) totalSec / 60)/distance;//MapFragmentRun.getmSpeed();
+                        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
+                            speed = (((double) totalSec / 60)/distance);
+                        } else {
+                            speed = distance/((double) totalSec / 3600);
+                        }
                     }
                     speedString = speed.toString();
                     speedString = StringLib.truncateDoubleString(speedString, 2);
@@ -280,7 +343,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     actualSec = totalSec % 60;
                     actualMin = totalSec / 60;
-                    if (actualSec % Constant.ONE_MINUTE == 0) {
+                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE ) == 0) {
                         notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;
@@ -314,7 +377,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         double per400meters = distanceInMeter / 400;
         double speed = mins / per400meters;
         double K = 30 / speed;
-        double calories = 70*hours*K;
+        double calories = weight*hours*K;
 
         return calories;
     }
