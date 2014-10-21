@@ -11,11 +11,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <RelativeLayout
-                android:layout_height="120dp"
+                android:layout_height="80dp"
                 style="@style/My.Card">
-                <ImageView
+                <!--ImageView
                     android:id="@+id/my_user_icon"
                     android:src="@drawable/sunny"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" /-->
+                <TextView
+                    android:id="@+id/my_user_icon"
+                    android:background="@drawable/music_runner_gray_round"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
@@ -44,9 +52,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" /-->
                 </LinearLayout>
-                <ImageView
+                <!--ImageView
                     android:id="@+id/my_mascot_icon"
                     android:src="@drawable/fox"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" /-->
+                <TextView
+                    android:id="@+id/my_mascot_icon"
+                    android:background="@drawable/music_runner_gray_round"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="20dp"

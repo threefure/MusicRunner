@@ -9,7 +9,7 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:orientation="vertical"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -19,11 +19,10 @@
                 android:id="@+id/playlist_title"
                 android:text="Playlist 1"
                 android:textSize="24dp"
-                android:textColor="@color/music_info_red_title"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
+                android:textColor="@color/section_title_gray"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content" />
-            <LinearLayout
+            <!--LinearLayout
                 android:layout_width="100dp"
                 android:layout_height="60dp">
                 <LinearLayout
@@ -45,7 +44,7 @@
                             style="@style/Music.RangGeneralBoxText"/>
                     </LinearLayout>
                 </LinearLayout>
-                <!--LinearLayout
+                <LinearLayout
                     style="@style/Music.RankGeneralBox">
                     <ImageView
                         android:src="@drawable/burning"
@@ -62,15 +61,34 @@
                             android:text="@string/kcal"
                             style="@style/Music.RangGeneralBoxText"/>
                     </LinearLayout>
-                </LinearLayout-->
-            </LinearLayout>
+                </LinearLayout>
+            </LinearLayout-->
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/choose_playlist"
+            android:orientation="vertical"
+            android:layout_marginRight="10dp"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/playlist_tracks"
+                android:text="0"
+                android:textSize="30dp"
+                android:layout_marginRight="4dp"
+                style="@style/Music.RangGeneralBoxText" />
+            <TextView
+                android:text="Tracks"
+                android:textSize="14dp"
+                style="@style/Music.RangGeneralBoxText"/>
         </LinearLayout>
         <TextView
             android:id="@+id/choose_playlist"
             android:text="Listen"
             android:background="@drawable/music_runner_clickable_grass_round_border"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="20dp"

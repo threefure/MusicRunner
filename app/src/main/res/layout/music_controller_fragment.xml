@@ -115,12 +115,12 @@
 
             </LinearLayout>
 
-            <TextView
+            <!--TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/music_info_text_color"
                 android:textSize="@dimen/music_control_this_song_text_size"
-                android:text="@string/this_song_text"/>
+                android:text="@string/this_song_text"/-->
 
         </LinearLayout>
 
@@ -130,7 +130,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_above="@+id/running_info_container"/>
-
         <LinearLayout
             android:id="@+id/running_info_container"
             android:layout_width="match_parent"
@@ -138,9 +137,14 @@
             android:layout_below="@+id/music_control_container"
             android:paddingTop="1dp"
             android:orientation="horizontal"
-            android:background="@color/white">
+            android:background="@color/music_controller_background_color">
+            <TextView
+                android:layout_gravity="center"
+                android:background="@drawable/music_runner_gray_round"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
 
-            <LinearLayout
+            <!--LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -196,7 +200,7 @@
                 <TextView
                     android:text="@string/speed_ratio"
                     style="@style/Running.StatisticUnits"/>
-            </LinearLayout>
+            </LinearLayout-->
 
         </LinearLayout>
 

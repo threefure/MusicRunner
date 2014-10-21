@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.musiclist;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -12,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +50,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
     private TextView cancelTextView;
     private TextView okTextView;
     private AlertDialog.Builder dialog;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -55,7 +58,9 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         setContentView(R.layout.activity_select_song);
         playlistId = getIntent().getExtras().getLong(PLAYLIST_ID);
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mActionBar = getActionBar();
         initViews();
+        setActionBar();
         setViews();
         //getListView().setEmptyView(findViewById(R.id.empty));
         allSongsArrayList = new ArrayList<MusicSong>();
@@ -64,6 +69,11 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
 
         getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
 
+    }
+
+
+    private void setActionBar() {
+        mActionBar.hide();
     }
 
     @Override

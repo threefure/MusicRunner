@@ -70,6 +70,8 @@
     <color name="light_yellow">#F3F781</color>
     <color name="green_blue">#81CDD2</color>
     <color name="dark_green_blue">#50AEC3</color>
+    <color name="section_title_gray">#53585F</color>
+    <color name="section_title_background_gray">#DCDEE0</color>
 
     <!-- Finish Running Activity -->
     <color name="finish_button_save">#338526</color>
@@ -79,7 +81,7 @@
     <color name="setting_title">#9D6A64</color>
     <color name="setting_content">#7A8681</color>
     <color name="setting_border">#9CCEA1</color>
-    <color name="setting_radio_button">#9CCEBF</color>
+    <color name="setting_radio_button">#A0C8EB</color>
 
     <!-- Weather Fragment- -->
     <color name="weather_lightblue">#A9F5F2</color>
