@@ -28,6 +28,7 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.finish.FinishRunningActivity;
 import com.amk2.musicrunner.main.AbstractTabViewPagerAdapter;
 import com.amk2.musicrunner.setting.SettingActivity;
+import com.amk2.musicrunner.utilities.HealthLib;
 import com.amk2.musicrunner.utilities.SongPerformance;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
@@ -122,7 +123,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
     //private
     private Double weight;
-    private Double height;
 
     private File musicRunnerDir;
     private ArrayList<SongPerformance> songPerformanceArrayList;
@@ -178,7 +178,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
         weight        = Double.parseDouble(mSettingSharedPreferences.getString(SettingActivity.WEIGHT, "50"));
-        height        = Double.parseDouble(mSettingSharedPreferences.getString(SettingActivity.HEIGHT, "160"));
         isAutoCue     = mSettingSharedPreferences.getBoolean(SettingActivity.AUTO_CUE_TOGGLE, true);
         autoCuePeriodString = mSettingSharedPreferences.getString(SettingActivity.AUTO_CUE, "5 Minutes");
         autoCuePeriod = Constant.AutoCueMap.get(autoCuePeriodString);
@@ -323,7 +322,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     //update calorie
                     //calorie += 0.1;
-                    calorie = calculateCalories(totalSec, MapFragmentRun.getmTotalDistance());
+                    calorie = HealthLib.calculateCalories(totalSec, MapFragmentRun.getmTotalDistance(), weight);
                     calorieString = calorie.toString();
                     calorieString = StringLib.truncateDoubleString(calorieString, 2);
                     calorieTextView.setText(calorieString);
@@ -343,7 +342,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     actualSec = totalSec % 60;
                     actualMin = totalSec / 60;
-                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE ) == 0) {
+                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
                         notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;
@@ -366,20 +365,6 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
             }
 
         }
-    }
-
-    private Double calculateCalories (int timeInSec, Double distanceInMeter) {
-        if (distanceInMeter == 0.0) {
-            return 0.0;
-        }
-        double mins  = (double) timeInSec / 60;
-        double hours = (double) timeInSec / 3600;
-        double per400meters = distanceInMeter / 400;
-        double speed = mins / per400meters;
-        double K = 30 / speed;
-        double calories = weight*hours*K;
-
-        return calories;
     }
 
     private void galleryAddPic() {

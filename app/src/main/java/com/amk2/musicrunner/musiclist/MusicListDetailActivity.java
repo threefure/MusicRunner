@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.utilities.HealthLib;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnSongPreparedListener;
@@ -52,6 +54,9 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     private MediaMetadataRetriever retriever;
     private LayoutInflater inflater;
 
+    private SharedPreferences mSettingSharedPreferences;
+    private Double weight;
+
     private ActionBar mActionBar;
     private TextView playlistTitleTextView;
     private TextView distanceTextView;
@@ -66,6 +71,10 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list_detail);
+        mSettingSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        weight = Double.parseDouble(mSettingSharedPreferences.getString(SettingActivity.WEIGHT, "50"));
+        HealthLib.setWeight(weight);
+
         init();
         initActionBar();
         initViews();
@@ -203,7 +212,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         tracksTextView.setText(tracks.toString());
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration / 1000));
         durationTextView.setText(durationString);
-        calories = HealthLib.calculateCalories(duration / 1000, 325.0 * tracks);
+        calories = HealthLib.calculateCalories(duration / 1000, 325.0 * tracks, weight);
         caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));
     }
 
