@@ -42,6 +42,7 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
     private Double mAveragePerformance;
     private Integer totalDuration;
 
+    private LinearLayout musicRankInitialInformation;
     private LinearLayout musicRankContainer;
     //private ContentResolver mContentResolver;
     private LayoutInflater inflater;
@@ -88,6 +89,7 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
 
     private void initViews() {
         View thisView = getView();
+        musicRankInitialInformation = (LinearLayout) thisView.findViewById(R.id.initial_information);
         musicRankContainer = (LinearLayout) thisView.findViewById(R.id.music_rank_container);
     }
 
@@ -158,16 +160,20 @@ public class MusicRankFragment extends Fragment implements View.OnClickListener,
     public void OnSongRankPrepared(ArrayList<SongPerformance> songPerformanceList, Double averagePerformance) {
         mSongPerformanceList = songPerformanceList;
         mAveragePerformance = averagePerformance;
-        mSongRankUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                int length = mSongPerformanceList.size();
-                Log.d(TAG, Thread.currentThread().getName());
-                for (int i = 0; i < length; i++) {
-                    addSongRank(mSongPerformanceList.get(i), (i == 0));
+        if (songPerformanceList.size() > 0) {
+            mSongRankUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    int length = mSongPerformanceList.size();
+                    Log.d(TAG, Thread.currentThread().getName());
+                    for (int i = 0; i < length; i++) {
+                        addSongRank(mSongPerformanceList.get(i), (i == 0));
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            musicRankInitialInformation.setVisibility(View.VISIBLE);
+        }
     }
 
     private class SongRankLoaderRunnable implements Runnable {

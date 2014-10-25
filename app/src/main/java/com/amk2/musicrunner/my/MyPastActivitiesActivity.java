@@ -41,6 +41,7 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
     private ActionBar mActionBar;
     private ContentResolver mContentResolver;
 
+    private LinearLayout myPastActivityInitialInformation;
     private LinearLayout myPastActivityContainer;
     private LayoutInflater inflater;
     private SharedPreferences mSettingSharedPreferences;
@@ -67,6 +68,7 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
     private void initViews() {
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        myPastActivityInitialInformation = (LinearLayout) findViewById(R.id.initial_information);
         myPastActivityContainer = (LinearLayout) findViewById(R.id.my_past_activity_container);
     }
 
@@ -82,14 +84,18 @@ public class MyPastActivitiesActivity extends Activity implements View.OnClickLi
         };
         String orderBy = MusicRunnerRunningEventDB.COLUMN_NAME_ID + " DESC";
         Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, orderBy);
-        while (cursor.moveToNext()) {
-            eventId            = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_ID));
-            duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
-            distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
-            currentEpoch       = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
-            photoPath          = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                eventId = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_ID));
+                duration = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
+                distance = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
+                currentEpoch = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
+                photoPath = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_PHOTO_PATH));
 
-            addPastActivity(eventId, duration, distance, currentEpoch, photoPath);
+                addPastActivity(eventId, duration, distance, currentEpoch, photoPath);
+            }
+        } else {
+            myPastActivityInitialInformation.setVisibility(View.VISIBLE);
         }
         cursor.close();
     }

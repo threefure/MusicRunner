@@ -136,4 +136,7 @@
         <item>中文</item>
     </string-array>
 
+    <!-- Music Rank Fragment -->
+    <string name="music_rank_initial_information">Hey just start running!</string>
+
 </resources>

@@ -15,6 +15,7 @@ import android.os.*;
 import android.os.Process;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
