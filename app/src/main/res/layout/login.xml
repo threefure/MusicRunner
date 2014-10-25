@@ -35,6 +35,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />
             <EditText
+                android:id="@+id/account_info"
                 android:background="@drawable/textlines"
                 android:layout_weight="10"
                 android:layout_width="0dp"
@@ -63,6 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />
             <EditText
+                android:id="@+id/password"
                 android:background="@drawable/textlines"
                 android:layout_weight="10"
                 android:layout_width="0dp"
@@ -92,6 +94,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"/>
             <Button
+                android:id="@+id/login_register"
+                android:onClick="registerAccount"
                 android:text="Register"
                 android:textStyle="bold"
                 android:textSize="12pt"

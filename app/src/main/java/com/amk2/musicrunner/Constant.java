@@ -52,7 +52,8 @@ public class Constant {
     //---------------------------------
 
     //AWS Setting
-    public static final String AWS_HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080";
+    //public static final String AWS_HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080";
+    public static final String AWS_HOST = "http://ec2-54-187-100-217.us-west-2.compute.amazonaws.com:8080";
 
     //SharedPreference Parameters
     public static final String PREFERENCE_NAME = "musicrun";
