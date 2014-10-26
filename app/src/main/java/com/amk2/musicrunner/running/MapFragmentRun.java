@@ -112,6 +112,9 @@ public class MapFragmentRun extends Fragment implements
          */
         mLocationClient = new LocationClient(v.getContext(), this, this);
 
+        Intent intent = new Intent(this.getActivity(), MapService.class);
+        this.getActivity().startService(intent);
+
         return v;
     }
 
