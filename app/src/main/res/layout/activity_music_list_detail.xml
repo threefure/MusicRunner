@@ -87,7 +87,7 @@
                             android:layout_marginRight="4dp"
                             style="@style/Music.RangGeneralBoxText" />
                         <TextView
-                            android:text="tracks"
+                            android:text="@string/tracks"
                             style="@style/Music.RangGeneralBoxText"/>
                     </LinearLayout>
                 </LinearLayout>

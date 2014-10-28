@@ -38,7 +38,7 @@
     </LinearLayout>
     <TextView
         android:id="@+id/selected"
-        android:text="Listen"
+        android:text="@string/listen"
         android:gravity="center"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"

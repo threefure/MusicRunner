@@ -379,13 +379,13 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             PlaylistMetaData halfHourMediumPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
             PlaylistMetaData oneHourSlowPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
             PlaylistMetaData oneHourMediumPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
-            playlistMetaDatas.add(new PlaylistSectionData("30 Minutes Playlists"));
+            playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string._30_mins_playlist)));
             playlistMetaDatas.add(halfHourSlowPlaylistMetaData);
             playlistMetaDatas.add(halfHourMediumPlaylistMetaData);
-            playlistMetaDatas.add(new PlaylistSectionData("1 Hour Playlists"));
+            playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string._1_hour_playlist)));
             playlistMetaDatas.add(oneHourSlowPlaylistMetaData);
             playlistMetaDatas.add(oneHourMediumPlaylistMetaData);
-            playlistMetaDatas.add(new PlaylistSectionData("Your Playlists"));
+            playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string.your_playlist)));
             ArrayList<PlaylistMetaData> UGPlaylistMetaDatas = playlistManager.getUserGeneratedPlaylist();
             playlistMetaDatas.addAll(UGPlaylistMetaDatas);
 

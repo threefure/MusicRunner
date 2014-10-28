@@ -3,6 +3,7 @@ package com.amk2.musicrunner.main;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.services.SyncService;
+import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService;
@@ -15,8 +16,13 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+
+import java.util.Locale;
 
 /**
  * Main activity of MusicRunner+
@@ -27,6 +33,7 @@ public class MusicRunnerActivity extends Activity {
 
     private UIController mUIController;
     private ContentResolver mContentResolver;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,18 @@ public class MusicRunnerActivity extends Activity {
     }
 
     private void initialize() {
+        Configuration configuration = getResources().getConfiguration();
+        mSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        CharSequence language = mSharedPreferences.getString(SettingActivity.LANGUAGE, SettingActivity.SETTING_LANGUAGE_ENGLISH);
+        Log.d("asdfa initial locale", getResources().getConfiguration().locale.toString());
+        if (language.equals("中文")) {
+            configuration.setLocale(Locale.TAIWAN);
+        } else {
+            configuration.setLocale(Locale.ENGLISH);
+        }
+        getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
+        Log.d("asdfa initial locale after set", getResources().getConfiguration().locale.toString());
+        //getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
         mUIController = new UIController(this);
     }
 
@@ -67,6 +86,11 @@ public class MusicRunnerActivity extends Activity {
         mContentResolver = getContentResolver();
         mContentResolver.setSyncAutomatically(MusicRunnerDBMetaData.mAccount,
                 MusicRunnerDBMetaData.AUTHORITY, true);
+    }
+
+    @Override
+    public void onConfigurationChanged (Configuration configuration) {
+        super.onConfigurationChanged(configuration);
     }
 
     @Override
@@ -121,5 +145,13 @@ public class MusicRunnerActivity extends Activity {
     @Override
     public void onBackPressed() {
         mUIController.onActivityBackPressed();
+    }
+
+
+    @Override
+    public void onActivityResult (int reqCode, int resCode, Intent data) {
+        if (reqCode == UIController.REQUEST_SETTING && resCode == RESULT_OK) {
+            getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
+        }
     }
 }
