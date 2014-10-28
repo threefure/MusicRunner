@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
@@ -32,6 +34,7 @@ import com.amk2.musicrunner.utilities.UnitConverter;
 import com.amk2.musicrunner.views.DatePickerFragment;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 public class SettingActivity extends Activity implements
         View.OnClickListener,
@@ -96,6 +99,7 @@ public class SettingActivity extends Activity implements
     private ArrayAdapter<CharSequence> autoCueArrayAdapter;
     private ArrayAdapter<CharSequence> languageArrayAdapter;
     private Calendar calendar;
+    private Configuration configuration;
 
     LayoutInflater inflater;
 
@@ -106,10 +110,25 @@ public class SettingActivity extends Activity implements
         initialize();
     }
 
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
+        Intent intent = new Intent();
+        intent.putExtra("config", configuration);
+        setResult(RESULT_OK, intent);
+        super.onBackPressed();
+    }
+
     private void initialize() {
         mActionBar = getActionBar();
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         calendar = Calendar.getInstance();
+        configuration = getResources().getConfiguration();
         initActionBar();
         initViews();
         setViews();
@@ -368,6 +387,12 @@ public class SettingActivity extends Activity implements
                 break;
             case R.id.language_spinner:
                 mSettingSharedPreferences.edit().remove(LANGUAGE).putString(LANGUAGE, (adapterView.getItemAtPosition(pos)).toString()).apply();
+                if ((adapterView.getItemAtPosition(pos)).toString().equals("中文")) {
+                    configuration.setLocale(Locale.TRADITIONAL_CHINESE);
+                    getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
+                } else if ((adapterView.getItemAtPosition(pos)).toString().equals("English")) {
+                    configuration.setLocale(Locale.ENGLISH);
+                }
                 break;
         }
 

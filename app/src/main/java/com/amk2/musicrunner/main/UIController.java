@@ -33,6 +33,8 @@ import android.widget.TabHost;
  */
 public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, View.OnClickListener {
 
+    public static final int REQUEST_SETTING = 1;
+
     private static final String TAG = "UIController";
     private static final int TAB_SIZE = 4;
 
@@ -382,7 +384,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.setting_button:
-                mMainActivity.startActivity(new Intent(mMainActivity, SettingActivity.class));
+                mMainActivity.startActivityForResult(new Intent(mMainActivity, SettingActivity.class), REQUEST_SETTING);
                 break;
         }
     }

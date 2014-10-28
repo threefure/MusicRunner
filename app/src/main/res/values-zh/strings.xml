@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">音樂跑者++++</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Tab -->
+    <string name="start_tab">Start</string>
+    <string name="my_tab">My</string>
+    <string name="music_tab">Music</string>
+    <string name="weather_tab">Weather</string>
+
+    <!-- Start Fragment -->
+    <string name="chance_of_rain">Chance of Rain</string>
+    <string name="uv_index">UV Index</string>
+    <string name="humidity">Humidity</string>
+    <string name="go_running_button_text">跑吧</string>
+
+    <!-- Running Activity -->
+    <string name="initial_duration">00 : 00 : 00</string>
+    <string name="distance">Distance</string>
+    <string name="km">km</string>
+    <string name="calorie">Calorie</string>
+    <string name="kcal">kcal</string>
+    <string name="zero">0</string>
+    <string name="speed">Speed</string>
+    <string name="speed_ratio">min/km</string>
+    <string name="pause">PAUSE</string>
+    <string name="done">DONE</string>
+    <string name="resume">RESUME</string>
+    <string name="map_tab_text">MAP</string>
+    <string name="music_tab_text">MUSIC</string>
+
+    <!-- Music Controller fragment -->
+    <string name="empty_music_text">Please add music to rock!</string>
+    <string name="empty_music_artist">Unknown artist</string>
+    <string name="previous_button_text">Previous</string>
+    <string name="next_button_text">Next</string>
+    <string name="pause_button_text">Pause</string>
+    <string name="play_button_text">Play</string>
+    <string name="this_song_text">This Song</string>
+
+    <!-- Map fragment -->
+    <string name="map_fragment_text">Map</string>
+
+    <!-- Discover fragment -->
+    <string name="discover_fragment_tag">Discover Fragment</string>
+
+    <!-- Finish running activity -->
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="authority"></string>
+    <string name="google_map_api_key">AIzaSyCG22OmmJ0Brv9fhnFXWfNIwYwQcFQ9nQU</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- My Running -->
+    <string name="my_running_times">Times</string>
+    <string name="my_running_speed">Speed</string>
+    <string name="my_running_pace">Pace</string>
+    <string name="my_running_calories">Calories</string>
+    <string name="my_running_distances">Distance</string>
+    <string name="my_running_km_pace">min/km</string>
+    <string name="my_running_mi_pace">min/mi</string>
+    <string name="my_running_km_speed">km/hr</string>
+    <string name="my_running_mi_speed">mi/hr</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Latitude, longitude format -->
+    <string name="latitude_longitude">%1$.8f, %2$.8f</string>
+    <!-- share Perf -->
+    <string name="cur_location">CURRENT_LOC</string>
+    <string name="cur_location_lng">CURRENT_LOC_LNG</string>
+    <string name="cur_location_lat">CURRENT_LOC_LAT</string>
+
+    <!-- Past Record -->
+    <string name="past_record_sessions">Sessions</string>
+    <string name="past_record_duration">Duration</string>
+    <string name="past_record_elevation">Elevation</string>
+    <string name="resolved">Error resolved. Please re-try operation.</string>
+    <string name="no_resolution">Google Play services: unable to resolve connection error.</string>
+    <string name="unknown_activity_request_code">        Received an unknown activity request code %1$d in onActivityResult.</string>
+    <string name="play_services_available">Google Play services is available</string>
+
+    <!-- Facebook Setting -->
+    <string name="title_activity_fblogin">FBLogin</string>
+    <string name="facebook_app_id">445576178911956</string>
+    <string name="title_activity_setting">SettingActivity</string>
+
+    <!-- Setting -->
+    <string name="setting_text">Setting</string>
+    <string name="title_activity_running_dotted_line">RunningDottedLine</string>
+    <string name="account">Account</string>
+    <string name="facebook">Facebook</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="audio_cue">Audio Cue</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="display">Display</string>
+    <string name="unit">Unit</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="kg">Kg</string>
+    <string name="lb">Lb</string>
+    <string name="setting_km">Km</string>
+    <string name="mi">Mi</string>
+    <string name="cm">Cm</string>
+    <string name="in">In</string>
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="auto_cue">Auto Cue</string>
+    <string name="pace">Pace</string>
+    <string name="logout">Logout</string>
+
+    <!-- Create Playlist -->
+    <string name="create_playlist_name">Playlist Name</string>
+    <string name="select_songs">Select Songs</string>
+
+    <string name="_5minutes">5 Minutes</string>
+    <string name="_10minutes">10 Minutes</string>
+    <string name="_15minutes">15 Minutes</string>
+    <string name="_20minutes">20 Minutes</string>
+    <string name="_25minutes">25 Minutes</string>
+    <string name="_30minutes">30 Minutes</string>
+    <string-array name="auto_cue">
+        <item>@string/_5minutes</item>
+        <item>@string/_10minutes</item>
+        <item>@string/_15minutes</item>
+        <item>@string/_20minutes</item>
+        <item>@string/_25minutes</item>
+        <item>@string/_30minutes</item>
+    </string-array>
+    <string-array name="language">
+        <item>English</item>
+        <item>中文</item>
+    </string-array>
+
+    <!-- Music Rank Fragment -->
+    <string name="music_rank_initial_information">Hey just start running!</string>
+
+</resources>
