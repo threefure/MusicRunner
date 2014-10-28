@@ -9,7 +9,7 @@
         android:layout_height="50dp">
         <TextView
             android:id="@+id/cancel"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:padding="10dp"
             android:background="@drawable/music_runner_green_button"
             style="@style/Finish.TopBar"/>
@@ -19,7 +19,7 @@
             style="@style/Finish.TopBar" />
         <TextView
             android:id="@+id/ok"
-            android:text="OK"
+            android:text="@string/ok"
             android:layout_alignParentRight="true"
             android:padding="10dp"
             android:background="@drawable/music_runner_green_button"

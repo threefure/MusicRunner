@@ -10,7 +10,7 @@
         android:background="@color/running_info_background_color">
         <TextView
             android:id="@+id/finish_discard"
-            android:text="Discard"
+            android:text="@string/discard"
             android:padding="10dp"
             android:background="@drawable/music_runner_green_button"
             style="@style/Finish.TopBar"/>
@@ -30,7 +30,7 @@
             style="@style/Finish.TopBar"/>
         <TextView
             android:id="@+id/finish_save"
-            android:text="Save"
+            android:text="@string/save"
             android:padding="10dp"
             android:layout_alignParentRight="true"
             android:background="@drawable/music_runner_green_button"

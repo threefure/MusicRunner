@@ -79,13 +79,13 @@
                 android:layout_marginRight="4dp"
                 style="@style/Music.RangGeneralBoxText" />
             <TextView
-                android:text="Tracks"
+                android:text="@string/tracks"
                 android:textSize="14dp"
                 style="@style/Music.RangGeneralBoxText"/>
         </LinearLayout>
         <TextView
             android:id="@+id/choose_playlist"
-            android:text="Listen"
+            android:text="@string/listen"
             android:background="@drawable/music_runner_clickable_grass_round_border"
             android:layout_width="60dp"
             android:layout_height="60dp"

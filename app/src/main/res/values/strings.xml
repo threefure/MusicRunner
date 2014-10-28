@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MusicRunner+</string>
+    <string name="app_name">MusicRunner</string>
     <string name="action_settings">Settings</string>
 
     <!-- Tab -->
@@ -138,5 +138,16 @@
 
     <!-- Music Rank Fragment -->
     <string name="music_rank_initial_information">Hey just start running!</string>
+    <string name="best">Best</string>
+    <string name="average">Average</string>
+
+    <!-- Music List Fragment -->
+    <string name="tracks">tracks</string>
+    <string name="listen">Listen</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="_30_mins_playlist">30 Minutes Playlist</string>
+    <string name="_1_hour_playlist">1 Hour Playlist</string>
+    <string name="your_playlist">Your Playlist</string>
 
 </resources>

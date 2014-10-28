@@ -109,7 +109,7 @@
                             android:layout_marginRight="4dp"
                             style="@style/Music.StatisticNumber" />
                         <TextView
-                            android:text="times"
+                            android:text="@string/my_running_times"
                             style="@style/Music.StatisticUnit" />
                     </LinearLayout>
                 </LinearLayout>

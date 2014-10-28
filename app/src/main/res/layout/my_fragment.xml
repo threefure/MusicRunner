@@ -119,7 +119,7 @@
                 android:paddingBottom="8dp"
                 android:orientation="vertical">
                 <TextView
-                    android:text="This Week"
+                    android:text="@string/my_running_this_week"
                     style="@style/My.Title"/>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -150,7 +150,7 @@
                     <LinearLayout
                         style="@style/Music.RankGeneralBox">
                         <TextView
-                            android:text="Distance"
+                            android:text="@string/my_running_distances"
                             android:textStyle="bold"
                             style="@style/Music.RangGeneralBoxText" />
                         <LinearLayout
@@ -236,7 +236,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"/>
                 <TextView
-                    android:text="Past Activities"
+                    android:text="@string/my_running_past_activities"
                     android:textSize="20dp"
                     android:textStyle="bold"
                     android:layout_marginTop="14dp"
