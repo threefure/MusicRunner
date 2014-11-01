@@ -64,6 +64,8 @@
     <string name="my_running_mi_pace">min/mi</string>
     <string name="my_running_km_speed">km/hr</string>
     <string name="my_running_mi_speed">mi/hr</string>
+    <string name="my_running_this_week">This Week</string>
+    <string name="my_running_past_activities">Past Activities</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Latitude, longitude format -->
