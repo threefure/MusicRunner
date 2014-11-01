@@ -6,8 +6,9 @@
     <color name="music_runner_dark_blue">#4096E8</color>
     <color name="music_runner_grass">#70BF41</color>
 
-    <color name="music_runner_green_button">#00A174</color>
-    <color name="music_runner_green_button_is_clicked">#22C396</color>
+    <color name="music_runner_green_button_color">#33D0A2</color>
+    <color name="music_runner_green_button_stroke_color">#91908F</color>
+    <color name="music_runner_green_button_is_clicked_color">#22C396</color>
 
     <color name="banner">#33000000</color>
     <color name="white">#FFFFFF</color>
