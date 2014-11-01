@@ -119,6 +119,7 @@
             android:screenOrientation="portrait" />
 
         <service android:name=".running.MusicService" />
+        <service android:name=".running.MapService" />
 
         <activity
             android:name=".login.LoginActivity"

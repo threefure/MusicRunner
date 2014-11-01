@@ -16,6 +16,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -57,6 +58,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     //private DiscoverFragment mDiscoverFragment;
     //private SettingFragment mSettingFragment;
 
+    // Tabs
     private TabHost mTabHost;
 
     public static class TabState {
@@ -229,15 +231,21 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     private View getTabView(String tag) {
         LayoutInflater layoutInflater = LayoutInflater.from(mMainActivity);
         View tabView = new View(mMainActivity);
+        tabView = layoutInflater.inflate(R.layout.main_tab_template, null);
+        ImageView tabIcon = (ImageView)tabView.findViewById(R.id.tab_icon);
+
+        int tabIconResourceId = 0;
         if(TabTag.START_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.start_tab, null);
+            tabIconResourceId = R.drawable.main_start_tab_icon_selector;
         } else if(TabTag.MY_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.my_tab, null);
+            tabIconResourceId = R.drawable.main_my_tab_icon_selector;
         } else if(TabTag.MUSIC_LIST_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.music_list_tab, null);
+            tabIconResourceId = R.drawable.main_music_list_tab_icon_selector;
         } else if(TabTag.MUSIC_RANK_TAB_TAG.equals(tag)) {
-            tabView = layoutInflater.inflate(R.layout.music_rank_tab, null);
+            tabIconResourceId = R.drawable.main_music_rank_tab_icon_selector;
         }
+        tabIcon.setImageResource(tabIconResourceId);
+
         return tabView;
     }
 

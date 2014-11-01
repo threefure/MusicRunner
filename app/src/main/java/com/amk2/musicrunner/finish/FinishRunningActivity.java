@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
+import com.amk2.musicrunner.running.MapService;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
@@ -246,7 +247,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 dispatchTakePictureIntent();
                 break;
         }
-        MapFragmentRun.resetAllParam();
+        MapService.resetAllParam();
     }
 
     private void dispatchTakePictureIntent() {
@@ -276,8 +277,10 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     }
 
     private void mDrawRoute() {
-        ArrayList<LatLng> polylines = MapFragmentRun.getmTrackList();
-        ArrayList<Integer> mColorList = MapFragmentRun.getmColorList();
+        ArrayList<LatLng> polylines = MapService.getmTrackList();
+        ArrayList<Integer> mColorList = MapService.getmColorList();
+        if(polylines == null || mColorList == null)
+            return;
         if(polylines.size() > 0) {
             LatLng lastPosition = null;
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polylines.get(0), LocationUtils.CAMERA_PAD));

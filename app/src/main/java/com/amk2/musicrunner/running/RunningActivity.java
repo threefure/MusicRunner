@@ -312,7 +312,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     //update distance
                     //distance += 0.1;
-                    distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    distance = MapService.getmTotalDistance() * 0.001;
                     if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
                         distance = UnitConverter.getMIFromKM(distance);
                     }
@@ -322,7 +322,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     //update calorie
                     //calorie += 0.1;
-                    calorie = HealthLib.calculateCalories(totalSec, MapFragmentRun.getmTotalDistance(), weight);
+                    calorie = HealthLib.calculateCalories(totalSec, MapService.getmTotalDistance(), weight);
                     calorieString = calorie.toString();
                     calorieString = StringLib.truncateDoubleString(calorieString, 2);
                     calorieTextView.setText(calorieString);
@@ -529,7 +529,7 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         performanceString = StringLib.truncateDoubleString(performance.toString(), 2);
         songNames += (songName + Constant.PERF_SEPARATOR + performanceString + Constant.SONG_SEPARATOR );
 
-        mMapFragment.musicChangeCallback(previousRecord);
+        MapService.musicChangeCallback(previousRecord);
 
         SongPerformance mp = new SongPerformance(previousRecord.mPlayingDuration, distanceDiff, caloriesDiff, previousRecord.mMusicSong.mTitle, previousRecord.mMusicSong.mArtist);
         mp.setRealSongId(previousRecord.mMusicSong.mId);
