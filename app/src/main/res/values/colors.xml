@@ -30,7 +30,8 @@
     <!-- Main Activity tab view -->
     <color name="main_tab_item_text_selected">#706E06</color>
     <color name="main_tab_item_text_normal">#FFFFFF</color>
-    <color name="main_tab_background_color">#A2A187</color>
+    <color name="main_tab_background_color">#4F625C</color>
+    <color name="main_tab_highlight_background_color">#46E0B5</color>
 
     <!-- Running Activity tab view -->
     <color name="running_tab_widget_background">#000000</color>
