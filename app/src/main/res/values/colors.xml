@@ -21,7 +21,7 @@
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>
-    <color name="action_bar_background_color">#F05943</color>
+    <color name="action_bar_background_color">#1DD299</color>
 
     <!-- Start Fragment -->
     <color name="start_go_running">#00A174</color>
