@@ -2,18 +2,21 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@color/section_title_background_gray"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:background="@color/white"
+    android:gravity="center">
     <TextView
         android:id="@+id/playlist_section_title"
         android:text="@string/_30_mins_playlist"
         android:textColor="@color/section_title_gray"
+        android:textSize="16dp"
+        android:background="@drawable/playlist_section_title"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 </LinearLayout>

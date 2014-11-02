@@ -100,6 +100,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         createPlaylistButtonImageView = (ImageView) thisView.findViewById(R.id.create_playlist_button);
     }
     private void setViews() {
+        playlistContainer.setShadowVisible(false);
         playlistContainer.setAdapter(new PlaylistPinnedSectionListAdapter(getActivity(), R.layout.music_list_item_template, mPlaylistMetaData));
         playlistPinnedSectionListAdapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
         createPlaylistButtonImageView.setOnClickListener(this);
@@ -246,10 +247,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     choosePlaylistTextView.setTag(playlistMetaData.mId);
                     choosePlaylistTextView.setOnClickListener(this);
                     if (playlistMetaData.mId.equals(selectedPlaylist)){
-                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
+                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
                         mSelectedPlaylist = choosePlaylistTextView;
                     } else {
-                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        choosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
                     }
                 } else {
                     PlaylistSectionData playlistSectionData = (PlaylistSectionData) mPlaylistArrayList.get(i);
@@ -285,11 +286,12 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     playlistViewTag.mChoosePlaylistTextView.setOnClickListener(this);
 
                     if (playlistMetaData.mId.equals(selectedPlaylist)){
-                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_blue_round_border));
+                        // selected playlist
+                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
                         playlistViewTag.mChoosePlaylistTextView.setTextColor(getResources().getColor(R.color.white));
                         mSelectedPlaylist = playlistViewTag.mChoosePlaylistTextView;
                     } else {
-                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
                         playlistViewTag.mChoosePlaylistTextView.setTextColor(getResources().getColor(R.color.black));
                     }
 
@@ -319,9 +321,9 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     Long oldPlaylistId = mPlaylistPreferences.getLong("id", -1);
                     if (!oldPlaylistId.equals(newPlaylistId)) {
                         mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
-                        view.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_blue_round_border));
+                        view.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
                         ((TextView)view).setTextColor(getResources().getColor(R.color.white));
-                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
                         ((TextView)mSelectedPlaylist).setTextColor(getResources().getColor(R.color.black));
                         mSelectedPlaylist = view;
                     }

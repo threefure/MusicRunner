@@ -19,6 +19,7 @@
     <color name="darkblue">#104E8B</color>
     <color name="light_gray">#EEEEEE</color>
     <color name="rice_white">#FCFDFC</color>
+    <color name="light_green">#0AD7A9</color>
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>
@@ -87,5 +88,10 @@
 
     <!-- Weather Fragment- -->
     <color name="weather_lightblue">#A9F5F2</color>
+
+    <!-- Playlist Fragment -->
+    <color name="button_border">#979797</color>
+    <color name="radio_button">#D8D8D8</color>
+    <color name="radio_button_selected">#50E3C2</color>
 
 </resources>

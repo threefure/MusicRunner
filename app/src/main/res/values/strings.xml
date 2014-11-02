@@ -148,8 +148,8 @@
     <string name="listen">Listen</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="_30_mins_playlist">30 Minutes Playlist</string>
-    <string name="_1_hour_playlist">1 Hour Playlist</string>
-    <string name="your_playlist">Your Playlist</string>
+    <string name="_30_mins_playlist">30 Minutes</string>
+    <string name="_1_hour_playlist">1 Hour</string>
+    <string name="your_playlist">Your Playlists</string>
 
 </resources>
