@@ -19,8 +19,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
@@ -31,6 +34,7 @@ import com.amk2.musicrunner.utilities.OnSongPreparedListener;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -55,10 +59,14 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     private MediaMetadataRetriever retriever;
     private LayoutInflater inflater;
 
+    private ArrayList<MusicMetaData> musicMetaDataArrayList;
+    private PlaylistDetailAdapter mPlaylistDetailAdapter;
+
     private SharedPreferences mSettingSharedPreferences;
     private Double weight;
 
     private ActionBar mActionBar;
+    private ListView mPlaylistDetailListView;
     private TextView playlistTitleTextView;
     private TextView distanceTextView;
     private TextView tracksTextView;
@@ -126,6 +134,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         caloriesTextView      = (TextView) findViewById(R.id.calories);
         addMusicImageView     = (ImageView) findViewById(R.id.add_music);
         songContainer         = (LinearLayout) findViewById(R.id.song_container);
+        mPlaylistDetailListView = (ListView) findViewById(R.id.playlist_detail_list_view);
     }
 
     private void setViews () {
@@ -147,6 +156,11 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         cursor.close();
         playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
         addMusicImageView.setOnClickListener(this);
+
+        // initialize list view
+        musicMetaDataArrayList = new ArrayList<MusicMetaData>();
+        mPlaylistDetailAdapter = new PlaylistDetailAdapter(this, R.layout.music_list_item_template, musicMetaDataArrayList);
+        mPlaylistDetailListView.setAdapter(mPlaylistDetailAdapter);
     }
 
     private void addSongToList (String filePath) {
@@ -225,6 +239,23 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     }
 
     @Override
+    public void OnSongLoadedFinished(final ArrayList<MusicMetaData> musicMetaDatas) {
+        this.musicMetaDataArrayList = musicMetaDatas;
+        mPlaylistUiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < musicMetaDataArrayList.size(); i ++ ) {
+                    duration += musicMetaDataArrayList.get(i).mDuration;
+                }
+                tracks = musicMetaDataArrayList.size();
+                updateSummary();
+                mPlaylistDetailAdapter.updateMusicMetaDataArrayList(musicMetaDataArrayList);
+            }
+        });
+
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_music:
@@ -249,7 +280,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     }
 
     static Object lock = new Object();
-
     private class AddSongRunnable implements Runnable {
         MusicMetaData mMusicMetaData;
 
@@ -286,6 +316,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             Integer duration;
             Bitmap albumPhoto;
             Uri musicUri;
+            ArrayList<MusicMetaData> musicMetaDataArrayList = new ArrayList<MusicMetaData>();
             String[] projection = {
                     MediaStore.Audio.Playlists.Members.AUDIO_ID
             };
@@ -306,11 +337,118 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
 
                     MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
-                    listener.OnSongPrepared(metaData);
+                    musicMetaDataArrayList.add(metaData);
+                    //listener.OnSongPrepared(metaData);
                 }
+                listener.OnSongLoadedFinished(musicMetaDataArrayList);
             }
             cursor.close();
             Thread.interrupted();
+        }
+    }
+
+    private class PlaylistDetailAdapter extends ArrayAdapter<MusicMetaData> {
+        private ArrayList<MusicMetaData> mMusicMetaDataArrayList;
+
+        public PlaylistDetailAdapter(Context context, int resource, ArrayList<MusicMetaData> musicMeatDataArrayList) {
+            super(context, resource);
+
+            mMusicMetaDataArrayList = musicMeatDataArrayList;
+        }
+
+        public void updateMusicMetaDataArrayList (ArrayList<MusicMetaData> musicMeatDataArrayList) {
+            mMusicMetaDataArrayList = musicMeatDataArrayList;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount () {
+            return mMusicMetaDataArrayList.size();
+        }
+
+        @Override
+        public MusicMetaData getItem (int i) {
+            return mMusicMetaDataArrayList.get(i);
+        }
+
+        @Override
+        public long getItemId (int i) {
+            return -1;
+        }
+
+        @Override
+        public View getView (int i, View view, ViewGroup viewGroup) {
+            MusicMetaData musicMetaData = mMusicMetaDataArrayList.get(i);
+            TextView songIndexNumber;
+            TextView title;
+            TextView artist;
+            ImageView albumPhoto;
+            ImageView songTempo;
+            if (view == null) {
+                // inflate the view
+                view = inflater.inflate(R.layout.music_list_item_template, null);
+                songIndexNumber = (TextView) view.findViewById(R.id.song_index_number);
+                title           = (TextView) view.findViewById(R.id.title);
+                artist          = (TextView) view.findViewById(R.id.artist);
+                albumPhoto     = (ImageView) view.findViewById(R.id.album_photo);
+                songTempo      = (ImageView) view.findViewById(R.id.song_tempo);
+
+                // setting tag for song view
+                SongViewTag songViewTag = new SongViewTag(songIndexNumber, title, artist, albumPhoto, songTempo);
+                view.setTag(songViewTag);
+
+
+            } else {
+                //reuse the view
+                SongViewTag songViewTag = (SongViewTag) view.getTag();
+                songIndexNumber = songViewTag.songIndexNumber;
+                title           = songViewTag.title;
+                artist          = songViewTag.artist;
+                albumPhoto      = songViewTag.albumPhoto;
+                songTempo       = songViewTag.songTempo;
+            }
+
+            // setting song index
+            songIndexNumber.setText(String.valueOf(i + 1));
+
+            // setting title
+            title.setText(musicMetaData.mTitle);
+
+            // setting artist
+            artist.setText(musicMetaData.mArtist);
+
+            // setting album photo
+            if (musicMetaData.mAlbumPhoto != null)
+                albumPhoto.setImageBitmap(musicMetaData.mAlbumPhoto);
+
+            // setting tempo icon
+            if (musicMetaData.mBpm != null) {
+                if (musicMetaData.mBpm < 110) {
+                    songTempo.setImageResource(R.drawable.slow);
+                } else if (musicMetaData.mBpm < 130 && musicMetaData.mBpm >= 110) {
+                    songTempo.setImageResource(R.drawable.medium);
+                } else {
+                    songTempo.setImageResource(R.drawable.fast);
+                }
+            }
+
+            return view;
+        }
+
+        public class SongViewTag {
+            TextView songIndexNumber;
+            TextView title;
+            TextView artist;
+            ImageView albumPhoto;
+            ImageView songTempo;
+            public SongViewTag(TextView songIndexNumber, TextView title, TextView artist, ImageView albumPhoto, ImageView songTempo) {
+                this.songIndexNumber = songIndexNumber;
+                this.title = title;
+                this.artist = artist;
+                this.albumPhoto = albumPhoto;
+                this.songTempo = songTempo;
+            }
+
         }
     }
 }

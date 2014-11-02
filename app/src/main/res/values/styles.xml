@@ -216,6 +216,12 @@
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">30dp</item>
     </style>
+    <style name="Music.PlaylistText">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/light_green</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
 
     <style name="Setting"></style>
     <style name="Setting.Title">
