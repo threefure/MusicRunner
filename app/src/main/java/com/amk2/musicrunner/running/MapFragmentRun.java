@@ -142,20 +142,25 @@ public class MapFragmentRun extends Fragment implements
 
     @Override
     public void onStop() {
-
-        stopUpdates(this.getView());
-        // After disconnect() is called, the client is considered "dead".
-        mLocationClient.disconnect();
         super.onStop();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        if(!mLocationClient.isConnected()){
+            // Connect the client.
+            mLocationClient.connect();
+            mMap.setMyLocationEnabled(true);
+        }
+    }
 
-        // Connect the client.
-        mLocationClient.connect();
-        mMap.setMyLocationEnabled(true);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopUpdates(this.getView());
+        // After disconnect() is called, the client is considered "dead".
+        mLocationClient.disconnect();
     }
 
     @Override
@@ -218,6 +223,7 @@ public class MapFragmentRun extends Fragment implements
                 .position(curLoc).title("Yo"));
 
 
+        Log.e("onLocationChanged!!!", String.valueOf(lat) + String.valueOf(lng));
         drawLine(curLoc);
     }
 
