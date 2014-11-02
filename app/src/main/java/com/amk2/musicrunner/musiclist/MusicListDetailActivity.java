@@ -74,8 +74,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     private TextView caloriesTextView;
     private ImageView addMusicImageView;
 
-    private LinearLayout songContainer;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +131,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         durationTextView      = (TextView) findViewById(R.id.duration);
         caloriesTextView      = (TextView) findViewById(R.id.calories);
         addMusicImageView     = (ImageView) findViewById(R.id.add_music);
-        songContainer         = (LinearLayout) findViewById(R.id.song_container);
         mPlaylistDetailListView = (ListView) findViewById(R.id.playlist_detail_list_view);
     }
 
@@ -163,64 +160,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         mPlaylistDetailListView.setAdapter(mPlaylistDetailAdapter);
     }
 
-    private void addSongToList (String filePath) {
-        String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-        String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-        String type;
-        Integer typeContainerBackgroundId;
-        Double bpm;
-        HashMap<String, String> songInfo = MusicLib.getSongInfo(getApplicationContext(), title);
-        Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
-        bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-
-
-        View musicListItemTemplate = inflater.inflate(R.layout.music_list_item_template, null);
-        TextView titleTextView  = (TextView) musicListItemTemplate.findViewById(R.id.title);
-        TextView artistTextView = (TextView) musicListItemTemplate.findViewById(R.id.artist);
-        TextView typeTextView   = (TextView) musicListItemTemplate.findViewById(R.id.type);
-        ImageView albumPhotoImageView = (ImageView) musicListItemTemplate.findViewById(R.id.album_photo);
-        LinearLayout typeContainer = (LinearLayout) musicListItemTemplate.findViewById(R.id.type_container);
-
-        titleTextView.setText(StringLib.truncate(title, 18));
-        artistTextView.setText(StringLib.truncate(artist, 18));
-
-        if (bpm < 110.0) {
-            type = "Slow";
-            typeContainerBackgroundId = R.drawable.music_runner_grass_round_border;
-        } else if (bpm >= 110.0 && bpm < 130) {
-            type = "Medium";
-            typeContainerBackgroundId = R.drawable.music_runner_blue_round_border;
-        } else {
-            type = "Fast";
-            typeContainerBackgroundId = R.drawable.music_runner_red_round_border;
-        }
-        typeTextView.setText(type);
-        typeContainer.setBackground(getResources().getDrawable(typeContainerBackgroundId));
-        if (albumPhoto != null) {
-            albumPhotoImageView.setImageBitmap(albumPhoto);
-        }
-
-        songContainer.addView(musicListItemTemplate);
-    }
-
-    private void addSongToList (MusicMetaData musicMetaData) {
-        View musicListItemTemplate = inflater.inflate(R.layout.music_list_item_template, null);
-        TextView titleTextView  = (TextView) musicListItemTemplate.findViewById(R.id.title);
-        TextView artistTextView = (TextView) musicListItemTemplate.findViewById(R.id.artist);
-        TextView typeTextView   = (TextView) musicListItemTemplate.findViewById(R.id.type);
-        ImageView albumPhotoImageView = (ImageView) musicListItemTemplate.findViewById(R.id.album_photo);
-        LinearLayout typeContainer = (LinearLayout) musicListItemTemplate.findViewById(R.id.type_container);
-
-        titleTextView.setText(StringLib.truncate(musicMetaData.mTitle, 18));
-        artistTextView.setText(StringLib.truncate(musicMetaData.mArtist, 18));
-        typeTextView.setText(musicMetaData.mType);
-        typeContainer.setBackground(getResources().getDrawable(musicMetaData.typeContainerBackgroundId));
-        if (musicMetaData.mAlbumPhoto != null) {
-            albumPhotoImageView.setImageBitmap(musicMetaData.mAlbumPhoto);
-        }
-        songContainer.addView(musicListItemTemplate);
-    }
-
     private void updateSummary () {
         String durationString;
         Double calories;
@@ -235,7 +174,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
     @Override
     public void OnSongPrepared(MusicMetaData musicMetaData) {
-        mPlaylistUiHandler.post(new AddSongRunnable(musicMetaData));
+        //mPlaylistUiHandler.post(new AddSongRunnable(musicMetaData));
     }
 
     @Override
@@ -270,30 +209,11 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     public void onActivityResult (int reqCode, int resCode, Intent data) {
         if (reqCode == REQUEST_ADD_MUSIC_TO_PLAYLIST && resCode == RESULT_OK) {
             isPlaylistUpdated = true;
-            songContainer.removeAllViews();
             duration = 0;
             tracks = 0;
             PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
             Thread loaderThread = new Thread(loader);
             loaderThread.start();
-        }
-    }
-
-    static Object lock = new Object();
-    private class AddSongRunnable implements Runnable {
-        MusicMetaData mMusicMetaData;
-
-        public AddSongRunnable (MusicMetaData musicMetaData) {
-            mMusicMetaData = musicMetaData;
-        }
-        @Override
-        public void run() {
-            synchronized (lock) {
-                addSongToList(mMusicMetaData);
-                duration += mMusicMetaData.mDuration;
-                tracks++;
-                updateSummary();
-            }
         }
     }
 
@@ -412,10 +332,10 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             songIndexNumber.setText(String.valueOf(i + 1));
 
             // setting title
-            title.setText(musicMetaData.mTitle);
+            title.setText(StringLib.truncate(musicMetaData.mTitle, 18));
 
             // setting artist
-            artist.setText(musicMetaData.mArtist);
+            artist.setText(StringLib.truncate(musicMetaData.mArtist, 18));
 
             // setting album photo
             if (musicMetaData.mAlbumPhoto != null)

@@ -37,7 +37,7 @@
                     <TextView
                         android:id="@+id/tracks"
                         android:text="0"
-                        android:layout_marginRight="4dp"
+                        android:textSize="24dp"
                         style="@style/Music.PlaylistText" />
                     <TextView
                         android:text="@string/tracks"
@@ -107,21 +107,12 @@
             android:background="@drawable/add_music_background"
             android:padding="10dp"/>
     </RelativeLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-        <LinearLayout
-            android:id="@+id/song_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-        </LinearLayout>
-    </ScrollView>
     <ListView
         android:id="@+id/playlist_detail_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
     </ListView>
 
