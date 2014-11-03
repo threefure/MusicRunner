@@ -19,7 +19,9 @@
     <color name="darkblue">#104E8B</color>
     <color name="light_gray">#EEEEEE</color>
     <color name="rice_white">#FCFDFC</color>
-    <color name="light_green">#0AD7A9</color>
+    <color name="tiffany">#0AD7A9</color>
+    <color name="tiffany_press">#50E3C2</color>
+    <color name="court_red">#EA5544</color>
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>

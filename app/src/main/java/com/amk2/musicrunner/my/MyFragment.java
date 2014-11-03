@@ -12,9 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -27,9 +30,12 @@ import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.utilities.UnitConverter;
 
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
 
-public class MyFragment extends Fragment implements View.OnClickListener {
+public class MyFragment extends Fragment implements View.OnClickListener,
+        RadioGroup.OnCheckedChangeListener {
 
     private final String TAG = "MyFragment";
     private Activity mActivity;
@@ -37,32 +43,29 @@ public class MyFragment extends Fragment implements View.OnClickListener {
     private LayoutInflater inflater;
     private LinearLayout myMusicContainer;
 
-    private ProgressBar timesProgressBar;
-    private ProgressBar calorieProgressBar;
-    private ProgressBar distanceProgressBar;
+    private boolean isThisWeekChecked = true;
 
-    private TextView totalTimesTextView;
-    private TextView totalCalorieTextView;
-    private TextView totalDistanceTextView;
-    private TextView weeklyDurationTextView;
-    private TextView weeklyTimesTextView;
-    private TextView weeklyDistanceTextView;
-    private TextView weeklyDistanceUnitTextView;
-    private TextView weeklyCalorieTextView;
-    private TextView weeklySpeedTitleTextView;
-    private TextView weeklySpeedTextView;
-    private TextView weeklySpeedUnitTextView;
+    private RadioGroup thisWeekTotalRadioGroup;
+    private RadioButton thisWeekRadioButton;
+    private RadioButton totalRadioButton;
 
-    private RelativeLayout pastActivitiesRelativeLayout;
+    private TextView caloriesTextView;
+    private TextView durationTextView;
+    private TextView distanceTextView;
+    private TextView distanceUnitTextView;
+    private Button pastActivitiesButton;
 
     private Integer totalTimes;
-    private Integer weeklyDuration;
-    private Integer weeklyTimes;
+    private Integer totalDuration;
     private Double totalCalories;
     private Double totalDistance;
+
+    private Integer weeklyTimes;
+    private Integer weeklyDuration;
     private Double weeklyCalories;
     private Double weeklyDistance;
-    private Double weeklySpeed;
+
+    //private Double weeklySpeed;
 
     private SharedPreferences mSettingSharedPreferences;
     private Integer unitDistance;
@@ -84,31 +87,49 @@ public class MyFragment extends Fragment implements View.OnClickListener {
         mContentResolver = getActivity().getContentResolver();
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         initViews();
+        getSharedPreferences();
+        getTotalDataFromDB();
+
+        setViews();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getSharedPreferences();
-        getTotalDataFromDB();
-        setWeeklySummary();
+        //getSharedPreferences();
+        //getTotalDataFromDB();
+        //setWeeklySummary();
     }
 
 
     public void initViews () {
         View thisView = getView();
 
-        weeklyDurationTextView     = (TextView) thisView.findViewById(R.id.my_weekly_duration);
-        weeklyDistanceTextView     = (TextView) thisView.findViewById(R.id.my_weekly_distance);
-        weeklyDistanceUnitTextView = (TextView) thisView.findViewById(R.id.my_weekly_distance_unit);
-        weeklyCalorieTextView      = (TextView) thisView.findViewById(R.id.my_weekly_calories);
-        weeklySpeedTitleTextView   = (TextView) thisView.findViewById(R.id.my_weekly_speed_title);
-        weeklySpeedTextView        = (TextView) thisView.findViewById(R.id.my_weekly_speed);
-        weeklySpeedUnitTextView    = (TextView) thisView.findViewById(R.id.my_weekly_speed_unit);
+        thisWeekTotalRadioGroup    = (RadioGroup) thisView.findViewById(R.id.this_week_total_radio_group);
+        thisWeekRadioButton        = (RadioButton) thisView.findViewById(R.id.this_week_radio_button);
+        totalRadioButton           = (RadioButton) thisView.findViewById(R.id.total_radio_button);
 
-        pastActivitiesRelativeLayout = (RelativeLayout) thisView.findViewById(R.id.my_past_activities);
+        caloriesTextView           = (TextView) thisView.findViewById(R.id.calories);
+        durationTextView           = (TextView) thisView.findViewById(R.id.duration);
+        distanceTextView           = (TextView) thisView.findViewById(R.id.distance);
+        distanceUnitTextView       = (TextView) thisView.findViewById(R.id.distance_unit);
 
-        pastActivitiesRelativeLayout.setOnClickListener(this);
+        pastActivitiesButton       = (Button) thisView.findViewById(R.id.past_activities_button);
+
+        thisWeekTotalRadioGroup.setOnCheckedChangeListener(this);
+        pastActivitiesButton.setOnClickListener(this);
+    }
+
+    public void setViews () {
+        thisWeekTotalRadioGroup.check(R.id.this_week_radio_button);
+        if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
+            distanceUnitTextView.setText(R.string.km);
+        } else {
+            distanceUnitTextView.setText(R.string.mi);
+        }
+
+        updateSummary(weeklyCalories, weeklyDistance, weeklyDuration);
+        thisWeekRadioButton.setTextColor(getResources().getColor(R.color.white));
     }
 
     private void getSharedPreferences () {
@@ -120,14 +141,17 @@ public class MyFragment extends Fragment implements View.OnClickListener {
         Calendar event_date = Calendar.getInstance();
         Calendar today      = Calendar.getInstance();
         String distance, calories, speed, currentEpoch;
+        Integer duration;
         totalTimes = 0;
+        totalDuration = 0;
         totalCalories = 0.0;
         totalDistance = 0.0;
-        weeklyDuration = 0;
+
         weeklyTimes = 0;
+        weeklyDuration = 0;
         weeklyDistance = 0.0;
         weeklyCalories = 0.0;
-        weeklySpeed = 100.0;
+        //weeklySpeed = 100.0;
 
         String[] projection = {
                 MusicRunnerRunningEventDB.COLUMN_NAME_DURATION,
@@ -138,6 +162,7 @@ public class MyFragment extends Fragment implements View.OnClickListener {
         };
         Cursor cursor = mContentResolver.query(MusicRunnerRunningEventDB.CONTENT_URI, projection, null, null, null);
         while(cursor.moveToNext()) {
+            duration           = cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
             distance           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DISTANCE));
             calories           = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_CALORIES));
             currentEpoch       = cursor.getString(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DATE_IN_MILLISECOND));
@@ -145,38 +170,31 @@ public class MyFragment extends Fragment implements View.OnClickListener {
             event_date.setTimeInMillis(Long.parseLong(currentEpoch));
 
             totalTimes++;
+            totalDuration += duration;
             totalCalories += Double.parseDouble(calories);
             totalDistance += Double.parseDouble(distance);
 
-            Log.d(TAG, "week of year = " + event_date.get(Calendar.WEEK_OF_YEAR) + " epoch=" + Long.parseLong(currentEpoch));
             // set up this week data
             if (event_date.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)) {
                 weeklyTimes ++;
-                weeklyDuration += cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
+                weeklyDuration += duration;//cursor.getInt(cursor.getColumnIndex(MusicRunnerRunningEventDB.COLUMN_NAME_DURATION));
                 weeklyDistance += Double.parseDouble(distance);
                 weeklyCalories += Double.parseDouble(calories);
-                weeklySpeed     = (weeklySpeed > Double.parseDouble(speed))? Double.parseDouble(speed) : weeklySpeed;
+                //weeklySpeed     = (weeklySpeed > Double.parseDouble(speed))? Double.parseDouble(speed) : weeklySpeed;
             }
         }
         cursor.close();
     }
 
-    public void setProgressBar () {
-        timesProgressBar.setMax(30);
-        timesProgressBar.setProgress(totalTimes.intValue());
-        totalTimesTextView.setText(totalTimes.intValue() + "/30 times");
-
-        calorieProgressBar.setMax(100);
-        calorieProgressBar.setProgress(totalCalories.intValue());
-        totalCalorieTextView.setText(totalCalories.intValue() + "/100 kcal");
-
-        distanceProgressBar.setMax(50);
-        distanceProgressBar.setProgress(totalDistance.intValue());
-        totalDistanceTextView.setText(totalDistance.intValue() + "/50 km");
+    public void updateSummary (Double calories, Double distance, Integer duration) {
+        caloriesTextView.setText(StringLib.truncateDoubleString(calories.toString(), 2));
+        String durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
+        durationTextView.setText(durationString);
+        distanceTextView.setText(StringLib.truncateDoubleString(distance.toString(), 2));
     }
 
     public void setWeeklySummary () {
-        String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
+        /*String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
         String distanceString, speedString, speedUnitString = "my_running_";
         Double minutes = weeklyDuration.doubleValue()/60;
         Double hours   = weeklyDuration.doubleValue()/3600;
@@ -219,14 +237,42 @@ public class MyFragment extends Fragment implements View.OnClickListener {
 
         // set up calorie information
         weeklyCalorieTextView.setText(StringLib.truncateDoubleString(weeklyCalories.toString(), 2));
-
+*/
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.my_past_activities:
+            case R.id.past_activities_button:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        int id = radioGroup.getCheckedRadioButtonId();
+        switch (radioGroup.getId()) {
+            case R.id.this_week_total_radio_group:
+                if (id == R.id.this_week_radio_button) {
+                    if (!isThisWeekChecked) {
+                        // only refreshing information when user selected total before
+                        isThisWeekChecked = true;
+
+                        updateSummary(weeklyCalories, weeklyDistance, weeklyDuration);
+                        thisWeekRadioButton.setTextColor(getResources().getColor(R.color.white));
+                        totalRadioButton.setTextColor(getResources().getColor(R.color.radio_button));
+                    }
+                } else if (id == R.id.total_radio_button) {
+                    if (isThisWeekChecked) {
+                        // only refreshing information when user selected this week before
+                        isThisWeekChecked = false;
+
+                        updateSummary(totalCalories + 500, totalDistance, totalDuration);
+                        thisWeekRadioButton.setTextColor(getResources().getColor(R.color.radio_button));
+                        totalRadioButton.setTextColor(getResources().getColor(R.color.white));
+                    }
+                }
                 break;
         }
     }

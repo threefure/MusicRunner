@@ -33,7 +33,7 @@
                 android:id="@+id/playlist_title"
                 android:text="Playlist 1"
                 android:textSize="16dp"
-                android:textColor="@color/light_green"
+                android:textColor="@color/tiffany"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
@@ -47,12 +47,12 @@
                 android:id="@+id/playlist_tracks"
                 android:text="0"
                 android:textSize="16dp"
-                android:textColor="@color/light_green"
+                android:textColor="@color/tiffany"
                 style="@style/Music.RangGeneralBoxText" />
             <TextView
                 android:text="@string/tracks"
                 android:textSize="14dp"
-                android:textColor="@color/light_green"
+                android:textColor="@color/tiffany"
                 style="@style/Music.RangGeneralBoxText"/>
         </LinearLayout>
     </LinearLayout>

@@ -218,7 +218,7 @@
     </style>
     <style name="Music.PlaylistText">
         <item name="android:textSize">16dp</item>
-        <item name="android:textColor">@color/light_green</item>
+        <item name="android:textColor">@color/tiffany</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -261,5 +261,9 @@
         <item name="android:layout_height">44dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="My.RadioButton" parent="Setting.RadioButton">
+        <item name="android:background">@drawable/my_radio_button</item>
     </style>
 </resources>

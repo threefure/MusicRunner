@@ -5,22 +5,153 @@
     android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/user_icon"
+                    android:src="@drawable/app_icon"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp" />
+                <TextView
+                    android:id="@+id/user_name"
+                    android:text="Danny Lin Sucker"
+                    android:textSize="20dp"
+                    style="@style/Music.PlaylistText"/>
+            </LinearLayout>
+            <RadioGroup
+                android:id="@+id/this_week_total_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/this_week_radio_button"
+                    android:text="@string/my_running_this_week"
+                    android:textColor="@color/radio_button"
+                    android:layout_width="100dp"
+                    android:layout_marginLeft="0dp"
+                    style="@style/My.RadioButton"/>
+                <RadioButton
+                    android:id="@+id/total_radio_button"
+                    android:text="@string/total"
+                    android:textColor="@color/radio_button"
+                    android:layout_width="100dp"
+                    style="@style/My.RadioButton"/>
+            </RadioGroup>
             <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+                <TextView
+                    android:id="@+id/laps"
+                    android:text="16 Laps"
+                    android:textSize="30dp"
+                    android:textColor="@color/tiffany"
+                    android:background="@drawable/laps_background"
+                    android:layout_width="230dp"
+                    android:layout_height="160dp"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:src="@drawable/burning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/calories"
+                            android:text="12"
+                            android:layout_marginRight="4dp"
+                            style="@style/Music.PlaylistText"/>
+                        <TextView
+                            android:text="@string/kcal"
+                            style="@style/Music.PlaylistText"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:src="@drawable/clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/duration"
+                            android:text="00 : 00 : 00"
+                            style="@style/Music.PlaylistText"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:src="@drawable/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/distance"
+                            android:text="12"
+                            android:layout_marginRight="4dp"
+                            style="@style/Music.PlaylistText"/>
+                        <TextView
+                            android:id="@+id/distance_unit"
+                            android:text="@string/km"
+                            style="@style/Music.PlaylistText"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginBottom="50dp"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/past_activities_button"
+                    android:text="@string/my_running_past_activities"
+                    android:textColor="@color/white"
+                    android:layout_width="160dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/past_activities_button"/>
+            </LinearLayout>
+            <!--RelativeLayout
                 android:layout_height="80dp"
                 style="@style/My.Card">
-                <!--ImageView
-                    android:id="@+id/my_user_icon"
-                    android:src="@drawable/sunny"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" /-->
                 <TextView
                     android:id="@+id/my_user_icon"
                     android:background="@drawable/music_runner_gray_round"
@@ -40,26 +171,7 @@
                         android:textSize="24dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <!--TextView
-                        android:text="Run Beginner"
-                        android:textSize="14dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:text="18888 pts"
-                        android:textSize="32dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" /-->
                 </LinearLayout>
-                <!--ImageView
-                    android:id="@+id/my_mascot_icon"
-                    android:src="@drawable/fox"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="20dp"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" /-->
                 <TextView
                     android:id="@+id/my_mascot_icon"
                     android:background="@drawable/music_runner_gray_round"
@@ -69,51 +181,6 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp" />
             </RelativeLayout>
-            <!--LinearLayout
-                style="@style/My.Card"
-                android:orientation="vertical">
-                <TextView
-                    android:text="Total"
-                    style="@style/My.Title" />
-                <TextView
-                    android:id="@+id/my_time_level"
-                    android:text="Times LV1"
-                    style="@style/My.BarTitle"/>
-                <ProgressBar
-                    android:id="@+id/my_time_progress_bar"
-                    android:progressDrawable="@drawable/progress_bar_green"
-                    style="@style/My.Bar" />
-                <TextView
-                    android:id="@+id/my_time_count"
-                    android:text="0/10 times"
-                    style="@style/My.BarSubtitle"/>
-
-                <TextView
-                    android:id="@+id/my_calorie_level"
-                    android:text="Calories LV1"
-                    style="@style/My.BarTitle" />
-                <ProgressBar
-                    android:id="@+id/my_calorie_progress_bar"
-                    android:progressDrawable="@drawable/progress_bar_yellow"
-                    style="@style/My.Bar" />
-                <TextView
-                    android:id="@+id/my_calorie_count"
-                    android:text="0/10 kcal"
-                    style="@style/My.BarSubtitle"/>
-
-                <TextView
-                    android:id="@+id/my_distance_level"
-                    android:text="Distance LV1"
-                    style="@style/My.BarTitle" />
-                <ProgressBar
-                    android:id="@+id/my_distance_progress_bar"
-                    android:progressDrawable="@drawable/progress_bar_red"
-                    style="@style/My.Bar" />
-                <TextView
-                    android:id="@+id/my_distance_count"
-                    android:text="0/10 km"
-                    style="@style/My.BarSubtitle"/>
-            </LinearLayout-->
             <LinearLayout
                 style="@style/My.Card"
                 android:paddingBottom="8dp"
@@ -173,24 +240,6 @@
                     android:layout_height="85dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp">
-                    <!--LinearLayout
-                        style="@style/Music.RankGeneralBox">
-                        <ImageView
-                            android:src="@drawable/times"
-                            style="@style/Music.RankGeneralBoxIcon"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/my_weekly_times"
-                                android:text="0"
-                                android:layout_marginRight="4dp"
-                                style="@style/Music.RangGeneralBoxText" />
-                            <TextView
-                                android:text="times"
-                                style="@style/Music.RangGeneralBoxText"/>
-                        </LinearLayout>
-                    </LinearLayout-->
                     <LinearLayout
                         style="@style/Music.RankGeneralBox">
                         <ImageView
@@ -255,7 +304,7 @@
             <RelativeLayout
                 style="@style/My.Card"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"/-->
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
