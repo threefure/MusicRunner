@@ -10,6 +10,7 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -103,9 +104,9 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         // Do something when a list item is clicked
         SongSelectorAdapter.ViewTag viewTag = (SongSelectorAdapter.ViewTag) view.getTag();
         if (!mSongSelectorAdapter.isSelected(position)) {
-            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
+            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
         } else {
-            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+            viewTag.selected.setBackground(getResources().getDrawable(R.drawable.playlist_selection_radio_button));
         }
         mSongSelectorAdapter.toggle(position);
     }
@@ -182,6 +183,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
         private ArrayList<MusicSong> mSongArrayList;
         private ArrayList<Boolean> mSongIsSelectedArrayList;
         private int mResourceId;
+
         public SongSelectorAdapter(Context context, int resource, List<MusicSong> objects) {
             super(context, resource, objects);
             mResourceId = resource;
@@ -255,13 +257,21 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             } else {
                 viewTag = (ViewTag) view.getTag();
             }
+
+            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), ms.mId);
+            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
+            Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
+            if (albumPhoto != null) {
+                viewTag.albumCoverPhoto.setImageBitmap(albumPhoto);
+            }
+
             viewTag.title.setText(ms.mTitle);
             viewTag.artist.setText(ms.mArtist);
             viewTag.duration.setText(durationString);
             if (mSongIsSelectedArrayList.get(i)) {
-                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_red_round_border));
+                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
             } else {
-                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.music_runner_clickable_grass_round_border));
+                viewTag.selected.setBackground(getResources().getDrawable(R.drawable.playlist_selection_radio_button));
             }
             return view;
         }
