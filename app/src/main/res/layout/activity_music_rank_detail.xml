@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/light_gray"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -14,40 +14,287 @@
             <ImageView
                 android:id="@+id/album_photo"
                 android:src="@drawable/initial_photo"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
                 android:layout_centerVertical="true"/>
             <LinearLayout
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/album_photo"
-                android:layout_width="160dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:orientation="vertical">
                 <TextView
-                    android:id="@+id/song_name"
+                    android:id="@+id/title"
                     android:text="Maps"
-                    android:textSize="24dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:textSize="20dp"
+                    style="@style/Music.PlaylistText" />
                 <TextView
-                    android:id="@+id/singer"
+                    android:id="@+id/artist"
                     android:text="Maroon 5"
                     android:textSize="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    style="@style/Music.PlaylistText"/>
             </LinearLayout>
             <ImageView
+                android:id="@+id/song_tempo"
+                android:src="@drawable/fast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+            <!--ImageView
                 android:id="@+id/add_to_playlist"
                 android:src="@drawable/add_music"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginRight="20dp"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"/-->
         </RelativeLayout>
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_vertical">
+            <ImageView
+                android:src="@drawable/clock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/duration"
+                android:text="00 : 02 : 32"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:gravity="center"
+                style="@style/Music.PlaylistText"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/times"
+                    android:text="3"
+                    android:layout_marginRight="4dp"
+                    style="@style/Music.PlaylistText" />
+                <TextView
+                    android:text="@string/my_running_times"
+                    style="@style/Music.PlaylistText"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:text="@string/total"
+                    android:textSize="14dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/button_border"/>
+                <TextView
+                    android:text="@string/best"
+                    android:textSize="14dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/button_border"/>
+                <TextView
+                    android:text="@string/average"
+                    android:textSize="14dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/button_border"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/separate_gray_line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:src="@drawable/burning"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/calories"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text="@string/kcal"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text=""
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/best_calories"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text="@string/kcal_per_min"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:id="@+id/best_calories_date"
+                        android:text="July 9"
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/average_calories"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text="@string/kcal_per_min"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text=""
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/separate_gray_line"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:src="@drawable/distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/distance"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:id="@+id/distance_unit"
+                        android:text="@string/km"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text=""
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/best_distance"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:id="@+id/best_distance_unit"
+                        android:text="@string/my_running_km_speed"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:id="@+id/best_distance_date"
+                        android:text="July 9"
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/average_distance"
+                        android:text="123"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:id="@+id/average_distance_unit"
+                        android:text="@string/my_running_km_speed"
+                        android:textSize="12dp"
+                        android:gravity="center"
+                        style="@style/Music.SongPerformanceRecord"/>
+                    <TextView
+                        android:text=""
+                        android:textSize="12dp"
+                        style="@style/Music.RankHighlightNumber" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/add_to_playlist"
+                android:src="@drawable/add_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <!--LinearLayout
             android:background="@drawable/music_runner_green_round_border"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -250,6 +497,6 @@
                         style="@style/Music.RangGeneralBoxText"/>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </LinearLayout-->
     </LinearLayout>
 </ScrollView>

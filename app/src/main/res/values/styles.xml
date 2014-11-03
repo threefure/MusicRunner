@@ -222,6 +222,9 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+    <style name="Music.SongPerformanceRecord" parent="Music.PlaylistText">
+        <item name="android:textSize">16dp</item>
+    </style>
 
     <style name="Setting"></style>
     <style name="Setting.Title">

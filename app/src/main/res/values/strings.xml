@@ -140,8 +140,10 @@
 
     <!-- Music Rank Fragment -->
     <string name="music_rank_initial_information">Hey just start running!</string>
+    <string name="total">Total</string>
     <string name="best">Best</string>
     <string name="average">Average</string>
+    <string name="kcal_per_min">kcal/min</string>
 
     <!-- Music List Fragment -->
     <string name="tracks">tracks</string>

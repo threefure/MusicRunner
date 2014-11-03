@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,21 +37,26 @@ public class MusicRankDetailActivity extends Activity {
     private ContentResolver mContentResolver;
 
     private ActionBar mActionBar;
-    private TextView songNameTextView;
-    private TextView singerTextView;
-    private TextView bestPerformanceTextView;
-    private TextView averagePerformanceTextView;
-    private TextView bestPerformanceDateTextView;
-    private TextView speedTitleTextView;
-    private TextView speedTextView;
-    private TextView speedUnitTextView;
-    private TextView distanceTextView;
-    private TextView distanceUnitTextView;
+    private TextView titleTextView;
+    private TextView artistTextView;
     private TextView timesTextView;
     private TextView durationTextView;
+
     private TextView caloriesTextView;
+    private TextView bestCaloriesTextView;
+    private TextView bestCaloriesDateTextView;
+    private TextView averageCaloriesTextView;
+
+    private TextView distanceTextView;
+    private TextView distanceUnitTextView;
+    private TextView bestDistanceTextView;
+    private TextView bestDistanceUnitTextView;
+    private TextView bestDistanceDateTextView;
+    private TextView averageDistanceTextView;
+    private TextView averageDistanceUnitTextView;
 
     private ImageView albumPhotoImageView;
+    private ImageView songTempoImageView;
     private ImageView addToPlaylistImageView;
 
     private SharedPreferences mSettingSharedPreferences;
@@ -82,29 +88,36 @@ public class MusicRankDetailActivity extends Activity {
     }
 
     private void initViews() {
-        songNameTextView            = (TextView) findViewById(R.id.song_name);
-        singerTextView              = (TextView) findViewById(R.id.singer);
-        bestPerformanceTextView     = (TextView) findViewById(R.id.best_performance);
-        averagePerformanceTextView  = (TextView) findViewById(R.id.average_performance);
-        bestPerformanceDateTextView = (TextView) findViewById(R.id.best_performance_date);
-        speedTitleTextView          = (TextView) findViewById(R.id.speed_title);
-        speedTextView               = (TextView) findViewById(R.id.speed);
-        speedUnitTextView           = (TextView) findViewById(R.id.speed_unit);
-        distanceTextView            = (TextView) findViewById(R.id.distance);
-        distanceUnitTextView        = (TextView) findViewById(R.id.distance_unit);
+        titleTextView               = (TextView) findViewById(R.id.title);
+        artistTextView              = (TextView) findViewById(R.id.artist);
         timesTextView               = (TextView) findViewById(R.id.times);
         durationTextView            = (TextView) findViewById(R.id.duration);
+
         caloriesTextView            = (TextView) findViewById(R.id.calories);
+        bestCaloriesTextView        = (TextView) findViewById(R.id.best_calories);
+        bestCaloriesDateTextView    = (TextView) findViewById(R.id.best_calories_date);
+        averageCaloriesTextView     = (TextView) findViewById(R.id.average_calories);
+
+        distanceTextView            = (TextView) findViewById(R.id.distance);
+        distanceUnitTextView        = (TextView) findViewById(R.id.distance_unit);
+        bestDistanceTextView        = (TextView) findViewById(R.id.best_distance);
+        bestDistanceUnitTextView    = (TextView) findViewById(R.id.best_distance_unit);
+        bestDistanceDateTextView    = (TextView) findViewById(R.id.best_distance_date);
+        averageDistanceTextView     = (TextView) findViewById(R.id.average_distance);
+        averageDistanceUnitTextView = (TextView) findViewById(R.id.average_distance_unit);
+
         albumPhotoImageView         = (ImageView) findViewById(R.id.album_photo);
+        songTempoImageView          = (ImageView) findViewById(R.id.song_tempo);
+        addToPlaylistImageView      = (ImageView) findViewById(R.id.add_to_playlist);
     }
 
     private void setViews() {
         HashMap<String, String> songInfo;
         Calendar calendar = Calendar.getInstance();
         Integer songId = (Integer) getIntent().getExtras().get(SONG_ID);
-        Integer duration, totalDuration, times, speedTitleId;
-        Double tempCalories, totalCalories, totalDistance, bestPerformance, averagePerformance, performance, speed, minutes, hours;
-        String calories, distance, currentEpoch, speedString, songName, durationString, artist, bestEpoch = null, speedUnitString = "my_running_";
+        Integer duration, totalDuration, times, speedTitleId, bestDistanceDuration;
+        Double tempCalories, totalCalories, totalDistance, bestCaloriesPerformance, bestDistance, bestSpeed, averageCaloriesPerformance, performance, speed, minutes, hours;
+        String calories, distance, currentEpoch, speedString, durationString, artist, bestCaloriesEpoch = null, bestDistanceEpoch = null, speedUnitString = "my_running_";
         String[] projection = {
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_ID,
                 MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES,
@@ -120,7 +133,10 @@ public class MusicRankDetailActivity extends Activity {
         totalDistance = 0.0;
         totalDuration = 0;
         times = 0;
-        bestPerformance = 0.0;
+        bestCaloriesPerformance = 0.0;
+        bestSpeed = 0.0;
+        bestDistance = 0.0;
+        bestDistanceDuration = 0;
         while (cursor.moveToNext()) {
             duration     = cursor.getInt(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_DURATION));
             calories     = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_CALORIES));
@@ -129,22 +145,63 @@ public class MusicRankDetailActivity extends Activity {
             speedString  = cursor.getString(cursor.getColumnIndex(MusicRunnerSongPerformanceDB.COLUMN_NAME_SPEED));
 
             tempCalories = Double.parseDouble(calories);
-            performance  = tempCalories*60*1000/duration.doubleValue();
-            if (performance > bestPerformance) {
-                bestPerformance = performance;
-                bestEpoch = currentEpoch;
+
+            // compute the best calories performance
+            performance  = tempCalories*60000/duration.doubleValue();
+            if (performance > bestCaloriesPerformance) {
+                bestCaloriesPerformance = performance;
+                bestCaloriesEpoch = currentEpoch;
+            }
+
+            // compute the best distance performance
+            speed  = Double.parseDouble(speedString);
+            if (speed > bestSpeed) {
+                bestSpeed = speed;
+                bestDistance = Double.parseDouble(distance);
+                bestDistanceDuration = duration;
+                bestDistanceEpoch = currentEpoch;
             }
 
             totalCalories += tempCalories;
             totalDistance += Double.parseDouble(distance);
-            totalDuration += (duration/1000);
+            totalDuration += duration;
             times ++;
+        }
+
+        String[] songProjection = {
+                MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM
+        };
+        String songSelection = MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
+        String[] songSelectionArgs = {songId.toString()};
+        String bpmString;
+        Double bpm = 0.0;
+        cursor = mContentResolver.query(MusicRunnerDBMetaData.MusicRunnerSongNameDB.CONTENT_URI, songProjection, songSelection, songSelectionArgs, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            bpmString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM));
+            bpm = Double.parseDouble(bpmString);
         }
         cursor.close();
 
+        if (bpm < 110) {
+            songTempoImageView.setImageResource(R.drawable.slow);
+        } else if (bpm < 130 && bpm >= 110) {
+            songTempoImageView.setImageResource(R.drawable.medium);
+        } else {
+            songTempoImageView.setImageResource(R.drawable.fast);
+        }
+
+        // convert to second
+        totalDuration = totalDuration/1000;
+
+        // setting song info
         songInfo = MusicLib.getSongInfo(getApplicationContext(), songId);
         artist   = MusicLib.getArtist(getApplicationContext(), Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
-        averagePerformance = totalCalories*60/totalDuration.doubleValue();
+
+        // getting average calories performance
+        averageCaloriesPerformance = totalCalories*60/totalDuration.doubleValue();
+
+        // getting total duration
         durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(totalDuration));
 
         // getting distance information
@@ -152,6 +209,7 @@ public class MusicRankDetailActivity extends Activity {
         hours = totalDuration.doubleValue()/3600;
         if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
             totalDistance = UnitConverter.getMIFromKM(totalDistance);
+            bestDistance  = UnitConverter.getMIFromKM(bestDistance);
             speedUnitString += "mi_";
         } else {
             speedUnitString += "km_";
@@ -159,10 +217,12 @@ public class MusicRankDetailActivity extends Activity {
 
         if (unitSpeedPace == SettingActivity.SETTING_PACE) {
             speed = minutes/totalDistance;
+            bestSpeed = bestDistanceDuration.doubleValue()/(bestDistance*60000);
             speedUnitString += "pace";
             speedTitleId = R.string.pace;
         } else {
             speed = totalDistance/hours;
+            bestSpeed = (bestDistance*3600000)/bestDistanceDuration.doubleValue();
             speedUnitString += "speed";
             speedTitleId = R.string.speed;
         }
@@ -170,29 +230,36 @@ public class MusicRankDetailActivity extends Activity {
             speed = 0.0;
         }
 
+        // setting calories information
+        caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
+        bestCaloriesTextView.setText(StringLib.truncateDoubleString(bestCaloriesPerformance.toString(), 2));
+        if (bestCaloriesEpoch != null) {
+            calendar.setTimeInMillis(Long.parseLong(bestCaloriesEpoch));
+            bestCaloriesDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
+                    calendar.get(Calendar.DAY_OF_MONTH));
+        }
+        averageCaloriesTextView.setText(StringLib.truncateDoubleString(averageCaloriesPerformance.toString(), 2));
+
+
         // setting distance information
         distanceTextView.setText(StringLib.truncateDoubleString(totalDistance.toString(), 2));
         distanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
-
-        // setting speed information
-        speedTextView.setText(StringLib.truncateDoubleString(speed.toString(), 2));
-        speedUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
-        speedTitleTextView.setText(getResources().getString(speedTitleId));
-
-        if (bestEpoch != null) {
-            calendar.setTimeInMillis(Long.parseLong(bestEpoch));
+        bestDistanceTextView.setText(StringLib.truncateDoubleString(bestSpeed.toString(), 2));
+        bestDistanceUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
+        if (bestDistanceEpoch != null) {
+            calendar.setTimeInMillis(Long.parseLong(bestDistanceEpoch));
+            bestDistanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
+                    calendar.get(Calendar.DAY_OF_MONTH));
         }
+        averageDistanceTextView.setText(StringLib.truncateDoubleString(speed.toString(), 2));
+        averageDistanceUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
 
-        songNameTextView.setText(StringLib.truncate(songInfo.get(MusicLib.SONG_NAME), 20));
-        singerTextView.setText(artist);
-        bestPerformanceTextView.setText(StringLib.truncateDoubleString(bestPerformance.toString(), 2));
-        bestPerformanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
-                calendar.get(Calendar.DAY_OF_MONTH));
-        averagePerformanceTextView.setText(StringLib.truncateDoubleString(averagePerformance.toString(), 2));
+        // setting song information
+        titleTextView.setText(StringLib.truncate(songInfo.get(MusicLib.SONG_NAME), 20));
+        artistTextView.setText(artist);
 
         timesTextView.setText(times.toString());
         durationTextView.setText(durationString);
-        caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
 
         Uri songUri = MusicLib.getMusicUriWithId(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
         String songPath = MusicLib.getMusicFilePath(getApplicationContext(), songUri);

@@ -4,11 +4,90 @@
     android:id="@+id/music_rank"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/song_rank"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    android:gravity="center"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/playlist_selection_radio_button_selected"/>
+                <ImageView
+                    android:id="@+id/album_photo"
+                    android:src="@drawable/initial_photo"
+                    android:layout_toRightOf="@+id/song_rank"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"/>
+                <LinearLayout
+                    android:layout_width="180dp"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@id/album_photo"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/title"
+                        android:text="Count on me"
+                        style="@style/Music.PlaylistText"/>
+                    <TextView
+                        android:id="@+id/artist"
+                        android:text="Maroon 5"
+                        android:textSize="12dp"
+                        style="@style/Music.PlaylistText"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:src="@drawable/burning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/calories"
+                            android:text="123"
+                            android:textSize="14dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/Music.PlaylistText"/>
+                        <TextView
+                            android:text="@string/kcal"
+                            android:textSize="14dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/Music.PlaylistText"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
     <LinearLayout
         android:background="@drawable/music_runner_clickable_card"
         android:layout_width="match_parent"
         android:layout_height="135dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp">
@@ -42,7 +121,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:id="@+id/album_photo"
                 android:src="@drawable/initial_photo"
                 android:layout_marginLeft="20dp"
                 android:layout_width="70dp"
@@ -65,7 +143,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <TextView
-                            android:id="@+id/calories"
                             android:text="324"
                             android:layout_marginRight="4dp"
                             style="@style/Music.StatisticNumber" />
