@@ -186,11 +186,11 @@ public class MusicRankDetailActivity extends Activity {
         }
         cursor.close();
 
-        if (bpm < 110) {
+        if (bpm > 0 && bpm < 110) {
             songTempoImageView.setImageResource(R.drawable.slow);
         } else if (bpm < 130 && bpm >= 110) {
             songTempoImageView.setImageResource(R.drawable.medium);
-        } else {
+        } else if (bpm >= 130){
             songTempoImageView.setImageResource(R.drawable.fast);
         }
 

@@ -343,11 +343,11 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
             // setting tempo icon
             if (musicMetaData.mBpm != null) {
-                if (musicMetaData.mBpm < 110) {
+                if (musicMetaData.mBpm > 0 && musicMetaData.mBpm < 110) {
                     songTempo.setImageResource(R.drawable.slow);
                 } else if (musicMetaData.mBpm < 130 && musicMetaData.mBpm >= 110) {
                     songTempo.setImageResource(R.drawable.medium);
-                } else {
+                } else if (musicMetaData.mBpm >= 130){
                     songTempo.setImageResource(R.drawable.fast);
                 }
             }

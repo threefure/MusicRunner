@@ -48,7 +48,7 @@
                 style="@style/Music.PlaylistText"/>
             <ImageView
                 android:id="@+id/song_tempo"
-                android:src="@drawable/fast"
+                android:src="@drawable/lay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

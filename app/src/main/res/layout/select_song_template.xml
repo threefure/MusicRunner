@@ -13,7 +13,7 @@
         android:layout_marginLeft="10dp"
         android:layout_centerVertical="true"/>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="70dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -43,4 +43,12 @@
         android:background="@drawable/playlist_selection_radio_button"
         android:layout_width="30dp"
         android:layout_height="30dp" />
+    <ImageView
+        android:id="@+id/song_tempo"
+        android:src="@drawable/lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"/>
 </RelativeLayout>

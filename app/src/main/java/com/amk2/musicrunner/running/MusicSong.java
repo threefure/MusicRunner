@@ -6,6 +6,7 @@ public class MusicSong {
 	public String mTitle;
 	public String mArtist;
     public Integer mDuration;
+    public Double mBpm;
 	public boolean mIsPlaying;
 
 	public MusicSong(long id, String title, String artist) {
@@ -14,6 +15,7 @@ public class MusicSong {
 		mArtist = artist;
         mDuration = 0;
 		mIsPlaying = false;
+        mBpm = -1.0;
 	}
 
     public MusicSong(long id, String title, String artist, Integer duration) {
@@ -22,6 +24,16 @@ public class MusicSong {
         mArtist = artist;
         mDuration = duration;
         mIsPlaying = false;
+        mBpm = -1.0;
+    }
+
+    public MusicSong(long id, String title, String artist, Integer duration, Double bpm) {
+        mId = id;
+        mTitle = title;
+        mArtist = artist;
+        mDuration = duration;
+        mIsPlaying = false;
+        mBpm = bpm;
     }
 
 }

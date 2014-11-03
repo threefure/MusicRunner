@@ -20,16 +20,16 @@ public class MusicMetaData {
         mArtist = artist;
         mDuration = duration;
         mBpm = bpm;
-        if (bpm < 110.0) {
+        /*if (bpm < 110.0) {
             mType = "Slow";
             typeContainerBackgroundId = R.drawable.music_runner_grass_round_border;
         } else if (bpm >= 110.0 && bpm < 130) {
             mType = "Medium";
             typeContainerBackgroundId = R.drawable.music_runner_blue_round_border;
-        } else {
+        } else{
             mType = "Fast";
             typeContainerBackgroundId = R.drawable.music_runner_red_round_border;
-        }
+        }*/
         mAlbumPhoto = albumPhoto;
     }
 }

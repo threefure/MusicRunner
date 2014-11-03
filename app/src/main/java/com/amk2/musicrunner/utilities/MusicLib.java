@@ -114,7 +114,8 @@ public class MusicLib {
         String[] projection = {
                 MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME,
                 MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID,
-                MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID
+                MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID,
+                MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM
         };
         String selection = MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ID + " = ?";
         String[] selectionArgs = { songId.toString() };
@@ -124,9 +125,11 @@ public class MusicLib {
             cursor.moveToFirst();
             Long artistId   = cursor.getLong(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_ARTIST_ID));
             Long songRealId = cursor.getLong(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_REAL_ID));
+            String bpm      = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM));
             songInfo.put(SONG_NAME, cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_SONG_NAME)));
             songInfo.put(ARTIST_ID, artistId.toString());
             songInfo.put(SONG_REAL_ID, songRealId.toString());
+            songInfo.put(BPM, bpm);
         }
         cursor.close();
         return songInfo;

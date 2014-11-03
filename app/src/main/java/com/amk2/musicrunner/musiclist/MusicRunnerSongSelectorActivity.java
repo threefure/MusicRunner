@@ -29,6 +29,7 @@ import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -171,8 +172,15 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                 Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
                 String musicFilePath = MusicLib.getMusicFilePath(this, musicUri);
+
+                HashMap<String, String> songInfo = MusicLib.getSongInfo(this, title);
+                Double bpm = -1.0;
+                if (songInfo != null && songInfo.get(MusicLib.BPM) != null) {
+                    bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+                }
+
                 if(PlaylistManager.isMusicFile(musicFilePath)) {
-                    songList.add(new MusicSong(id, title, artist, trackDuration));
+                    songList.add(new MusicSong(id, title, artist, trackDuration, bpm));
                 }
             }
         }
@@ -249,6 +257,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                 view = inflater.inflate(mResourceId, null);
                 viewTag = new ViewTag(
                         (ImageView)view.findViewById(R.id.album_cover_photo),
+                        (ImageView)view.findViewById(R.id.song_tempo),
                         (TextView)view.findViewById(R.id.title),
                         (TextView)view.findViewById(R.id.artist),
                         (TextView)view.findViewById(R.id.duration),
@@ -273,17 +282,29 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             } else {
                 viewTag.selected.setBackground(getResources().getDrawable(R.drawable.playlist_selection_radio_button));
             }
+
+            if (ms.mBpm != null){
+                if (ms.mBpm > 0 && ms.mBpm < 110) {
+                    viewTag.songTempo.setImageResource(R.drawable.slow);
+                } else if (ms.mBpm < 130 && ms.mBpm >= 110) {
+                    viewTag.songTempo.setImageResource(R.drawable.medium);
+                } else if (ms.mBpm >= 130) {
+                    viewTag.songTempo.setImageResource(R.drawable.fast);
+                }
+            }
             return view;
         }
 
         private class ViewTag {
             ImageView albumCoverPhoto;
+            ImageView songTempo;
             TextView title;
             TextView artist;
             TextView duration;
             TextView selected;
-            public ViewTag (ImageView albumCoverPhoto, TextView title, TextView artist, TextView duration, TextView selected) {
+            public ViewTag (ImageView albumCoverPhoto, ImageView songTempo, TextView title, TextView artist, TextView duration, TextView selected) {
                 this.albumCoverPhoto = albumCoverPhoto;
+                this.songTempo = songTempo;
                 this.title = title;
                 this.artist = artist;
                 this.duration = duration;
@@ -291,5 +312,4 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             }
         }
     }
-
 }
