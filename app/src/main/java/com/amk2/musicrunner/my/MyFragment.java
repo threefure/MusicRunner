@@ -40,8 +40,6 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private final String TAG = "MyFragment";
     private Activity mActivity;
     private ContentResolver mContentResolver;
-    private LayoutInflater inflater;
-    private LinearLayout myMusicContainer;
 
     private boolean isThisWeekChecked = true;
 
@@ -89,16 +87,12 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         initViews();
         getSharedPreferences();
         getTotalDataFromDB();
-
         setViews();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        //getSharedPreferences();
-        //getTotalDataFromDB();
-        //setWeeklySummary();
     }
 
 
@@ -191,53 +185,6 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         String durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
         durationTextView.setText(durationString);
         distanceTextView.setText(StringLib.truncateDoubleString(distance.toString(), 2));
-    }
-
-    public void setWeeklySummary () {
-        /*String duration = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(weeklyDuration));
-        String distanceString, speedString, speedUnitString = "my_running_";
-        Double minutes = weeklyDuration.doubleValue()/60;
-        Double hours   = weeklyDuration.doubleValue()/3600;
-        Double distance = weeklyDistance;
-        Double speed;
-        Integer speedTitleId;
-        weeklyDurationTextView.setText(duration);
-
-        if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
-            distance = UnitConverter.getMIFromKM(distance);
-            speedUnitString += "mi_";
-        } else {
-            speedUnitString += "km_";
-        }
-
-        if (unitSpeedPace == SettingActivity.SETTING_PACE) {
-            speed = minutes/distance;
-            if (speed.isNaN() || speed.isInfinite()) {
-                speed = 0.0;
-            }
-            speedUnitString += "pace";
-            speedTitleId = R.string.pace;
-        } else {
-            speed = distance/hours;
-            speedUnitString += "speed";
-            speedTitleId = R.string.speed;
-        }
-
-        distanceString = StringLib.truncateDoubleString(distance.toString(), 2);
-        speedString = StringLib.truncateDoubleString(speed.toString(), 2);
-
-        // set up distance information
-        weeklyDistanceTextView.setText(distanceString);
-        weeklyDistanceUnitTextView.setText(Constant.DistanceMap.get(unitDistance));
-
-        // set up speed information
-        weeklySpeedTextView.setText(speedString);
-        weeklySpeedUnitTextView.setText(getResources().getString(Constant.PaceSpeedMap.get(speedUnitString)));
-        weeklySpeedTitleTextView.setText(getResources().getString(speedTitleId));
-
-        // set up calorie information
-        weeklyCalorieTextView.setText(StringLib.truncateDoubleString(weeklyCalories.toString(), 2));
-*/
     }
 
     @Override

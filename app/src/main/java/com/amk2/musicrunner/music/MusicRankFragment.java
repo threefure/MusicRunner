@@ -238,6 +238,10 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
             } else {
                 // view is existed, reuse it
                 SongPerformanceViewTag songPerformanceViewTag = (SongPerformanceViewTag)view.getTag();
+
+                // need to reset song id in order to getting correct cong
+                songPerformanceViewTag.songId = sp.songId;
+
                 songRankTextView = songPerformanceViewTag.songRank;
                 titleTextView    = songPerformanceViewTag.title;
                 artistTextView   = songPerformanceViewTag.artist;

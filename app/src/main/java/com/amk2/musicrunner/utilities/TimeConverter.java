@@ -53,11 +53,32 @@ public class TimeConverter {
 
         return durationString;
     }
-
+/*
     public static String getDateString (long timeInMillis) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeInMillis);
         String day  = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.TAIWAN);
+        int month   = calendar.get(Calendar.MONTH) + 1;
+        int date    = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour    = calendar.get(Calendar.HOUR_OF_DAY);
+        int min     = calendar.get(Calendar.MINUTE);
+
+        String dateString = month + "/" + date + " " + day + " ";
+        if (hour < 10) {
+            dateString += "0";
+        }
+        dateString += (hour + ":");
+        if (min < 10) {
+            dateString += "0";
+        }
+        dateString += min;
+        return dateString;
+    }
+*/
+    public static String getDateString (long timeInMillis, Locale locale) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeInMillis);
+        String day  = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale);
         int month   = calendar.get(Calendar.MONTH) + 1;
         int date    = calendar.get(Calendar.DAY_OF_MONTH);
         int hour    = calendar.get(Calendar.HOUR_OF_DAY);

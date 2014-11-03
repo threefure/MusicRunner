@@ -27,6 +27,7 @@ import com.amk2.musicrunner.utilities.UnitConverter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by ktlee on 9/18/14.
@@ -62,6 +63,7 @@ public class MusicRankDetailActivity extends Activity {
     private SharedPreferences mSettingSharedPreferences;
     private Integer unitDistance;
     private Integer unitSpeedPace;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class MusicRankDetailActivity extends Activity {
     private void getSharedPreferences () {
         unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
+        language      = mSettingSharedPreferences.getString(SettingActivity.LANGUAGE, SettingActivity.SETTING_LANGUAGE_ENGLISH);
     }
 
     private void initActionBar() {
@@ -230,12 +233,17 @@ public class MusicRankDetailActivity extends Activity {
             speed = 0.0;
         }
 
+        // setting locale
+        Locale locale = Locale.US;
+        if (language != SettingActivity.SETTING_LANGUAGE_ENGLISH) {
+            locale = Locale.TAIWAN;
+        }
         // setting calories information
         caloriesTextView.setText(StringLib.truncateDoubleString(totalCalories.toString(), 2));
         bestCaloriesTextView.setText(StringLib.truncateDoubleString(bestCaloriesPerformance.toString(), 2));
         if (bestCaloriesEpoch != null) {
             calendar.setTimeInMillis(Long.parseLong(bestCaloriesEpoch));
-            bestCaloriesDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
+            bestCaloriesDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale) + " " +
                     calendar.get(Calendar.DAY_OF_MONTH));
         }
         averageCaloriesTextView.setText(StringLib.truncateDoubleString(averageCaloriesPerformance.toString(), 2));
@@ -248,7 +256,7 @@ public class MusicRankDetailActivity extends Activity {
         bestDistanceUnitTextView.setText(Constant.PaceSpeedMap.get(speedUnitString));
         if (bestDistanceEpoch != null) {
             calendar.setTimeInMillis(Long.parseLong(bestDistanceEpoch));
-            bestDistanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) + " " +
+            bestDistanceDateTextView.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale) + " " +
                     calendar.get(Calendar.DAY_OF_MONTH));
         }
         averageDistanceTextView.setText(StringLib.truncateDoubleString(speed.toString(), 2));
