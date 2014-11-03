@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/running_info_background_color">
+        android:background="@color/tiffany">
         <TextView
             android:id="@+id/finish_discard"
             android:text="@string/discard"
