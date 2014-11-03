@@ -215,7 +215,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                         // only refreshing information when user selected this week before
                         isThisWeekChecked = false;
 
-                        updateSummary(totalCalories + 500, totalDistance, totalDuration);
+                        updateSummary(totalCalories, totalDistance, totalDuration);
                         thisWeekRadioButton.setTextColor(getResources().getColor(R.color.radio_button));
                         totalRadioButton.setTextColor(getResources().getColor(R.color.white));
                     }

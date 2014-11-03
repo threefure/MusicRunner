@@ -290,7 +290,11 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                     viewTag.songTempo.setImageResource(R.drawable.medium);
                 } else if (ms.mBpm >= 130) {
                     viewTag.songTempo.setImageResource(R.drawable.fast);
+                } else {
+                    viewTag.songTempo.setImageResource(R.drawable.lay);
                 }
+            } else {
+                viewTag.songTempo.setImageResource(R.drawable.lay);
             }
             return view;
         }

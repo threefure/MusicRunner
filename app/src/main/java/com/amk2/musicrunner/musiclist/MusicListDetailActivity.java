@@ -349,7 +349,11 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                     songTempo.setImageResource(R.drawable.medium);
                 } else if (musicMetaData.mBpm >= 130){
                     songTempo.setImageResource(R.drawable.fast);
+                } else {
+                    songTempo.setImageResource(R.drawable.lay);
                 }
+            } else {
+                songTempo.setImageResource(R.drawable.lay);
             }
 
             return view;
