@@ -1,15 +1,18 @@
 package com.amk2.musicrunner.music;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.*;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +25,10 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.musiclist.MusicAddToPlaylistActivity;
 import com.amk2.musicrunner.musiclist.MusicListDetailActivity;
 import com.amk2.musicrunner.musiclist.MusicMetaData;
+import com.amk2.musicrunner.musiclist.PlaylistMetaData;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
 import com.amk2.musicrunner.utilities.MusicLib;
@@ -40,6 +45,7 @@ import java.util.HashMap;
  * Created by logicmelody on 2014/8/30.
  */
 public class MusicRankFragment extends Fragment implements OnSongRankPreparedListener{
+    public static final String UPDATE_MUSIC_RANK = "musiclist.update_music_rank";
     private static final String TAG = MusicRankFragment.class.getSimpleName();
     private double performanceRangeOffset = 0.0001;
 
@@ -52,6 +58,8 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
 
     private ArrayList<SongPerformance> mSongPerformanceList;
 
+    private Fragment self;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.music_rank_fragment, container, false);
@@ -61,9 +69,11 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        self = this;
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         unitDistance = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateRankReceiver, new IntentFilter(UPDATE_MUSIC_RANK));
         initViews();
         setViews();
     }
@@ -93,6 +103,15 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
         musicRankListAdapter = new MusicRankListAdapter(getActivity(), R.layout.music_rank_template, mSongPerformanceList);
         musicRankListView.setAdapter(musicRankListAdapter);
     }
+
+    private BroadcastReceiver mUpdateRankReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SongRankLoaderRunnable songRankLoaderRunnable = new SongRankLoaderRunnable(self);
+            Thread loaderThread = new Thread(songRankLoaderRunnable);
+            loaderThread.start();
+        }
+    };
 
     private Handler mSongRankUIHandler = new Handler();
 

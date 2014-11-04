@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.music.MusicRankFragment;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
@@ -227,9 +229,12 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        Intent intent;
         switch(view.getId()) {
             case R.id.finish_save:
                 saveToSQLiteDB();
+                intent = new Intent(MusicRankFragment.UPDATE_MUSIC_RANK);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 finish();
                 break;
             case R.id.finish_discard:
@@ -237,7 +242,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.finish_photo:
                 if (photoPath != null) {
-                    Intent intent = new Intent(this, ShowImageActivity.class);
+                    intent = new Intent(this, ShowImageActivity.class);
                     intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
                     startActivity(intent);
                 }
