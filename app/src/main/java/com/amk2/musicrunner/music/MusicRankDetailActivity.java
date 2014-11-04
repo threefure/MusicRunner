@@ -3,6 +3,7 @@ package com.amk2.musicrunner.music;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.musiclist.MusicAddToPlaylistActivity;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
@@ -32,7 +34,7 @@ import java.util.Set;
 /**
  * Created by ktlee on 9/18/14.
  */
-public class MusicRankDetailActivity extends Activity {
+public class MusicRankDetailActivity extends Activity implements View.OnClickListener {
     public static final String SONG_ID = "music.id";
 
     private ContentResolver mContentResolver;
@@ -275,6 +277,10 @@ public class MusicRankDetailActivity extends Activity {
         if (albumPhoto != null) {
             albumPhotoImageView.setImageBitmap(albumPhoto);
         }
+
+        // setting click event for add to playlist
+        addToPlaylistImageView.setTag(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
+        addToPlaylistImageView.setOnClickListener(this);
     }
 
     @Override
@@ -300,5 +306,17 @@ public class MusicRankDetailActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_to_playlist:
+                Long songRealId = (Long) view.getTag();
+                Intent intent = new Intent(this, MusicAddToPlaylistActivity.class);
+                intent.putExtra(MusicAddToPlaylistActivity.SONG_REAL_ID, songRealId);
+                startActivity(intent);
+                break;
+        }
     }
 }

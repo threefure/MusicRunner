@@ -153,5 +153,6 @@
     <string name="_30_mins_playlist">30分鐘清單</string>
     <string name="_1_hour_playlist">1小時清單</string>
     <string name="your_playlist">我的清單</string>
+    <string name="add_to_playlist">加到我的清單</string>
 
 </resources>

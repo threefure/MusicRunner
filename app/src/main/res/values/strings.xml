@@ -152,6 +152,7 @@
     <string name="ok">OK</string>
     <string name="_30_mins_playlist">30 Minutes</string>
     <string name="_1_hour_playlist">1 Hour</string>
-    <string name="your_playlist">Your Playlists</string>
+    <string name="your_playlist">My Playlists</string>
+    <string name="add_to_playlist">Add to my playlist</string>
 
 </resources>

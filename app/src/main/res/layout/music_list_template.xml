@@ -18,8 +18,8 @@
             <TextView
                 android:id="@+id/choose_playlist"
                 android:background="@drawable/playlist_selection_radio_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_centerVertical="true"
                 android:gravity="center"/>
         </LinearLayout>

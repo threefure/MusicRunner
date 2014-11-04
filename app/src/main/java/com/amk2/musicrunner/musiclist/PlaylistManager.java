@@ -177,7 +177,7 @@ public class PlaylistManager{
         return playlistMetaDatas;
     }
 
-    private Uri getPlaylistUri (String playlistName) {
+    public Uri getPlaylistUri (String playlistName) {
         Uri playlistUri = MusicLib.getPlaylistUri(mContext, playlistName);
         if (playlistUri == null) {
             playlistUri = MusicLib.createPlaylist(mContext, playlistName);
@@ -189,12 +189,12 @@ public class PlaylistManager{
         return playlistUri;
     }
 
-    private Uri getPlaylistMemberUri (Uri playlistUri) {
+    public Uri getPlaylistMemberUri (Uri playlistUri) {
         Long id = ContentUris.parseId(playlistUri);
         return MediaStore.Audio.Playlists.Members.getContentUri("external", id);
     }
 
-    private void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
+    public void addToPlaylist(Uri playlistMemberUri, Long songRealId, Integer playOrder) {
         Uri uri = MusicLib.insertSongToPlaylist(mContext, playlistMemberUri, songRealId, playOrder);
     }
 
