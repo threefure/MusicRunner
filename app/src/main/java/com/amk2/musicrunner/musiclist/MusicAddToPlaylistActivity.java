@@ -77,11 +77,15 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
         initViews();
         setViews();
 
-        if (mPlaylistMetaData.size() == 0) {
-            SongLoaderRunnable loader = new SongLoaderRunnable(this);
-            Thread loaderThread = new Thread(loader);
-            loaderThread.start();
-        }
+        SongLoaderRunnable loader = new SongLoaderRunnable(this);
+        Thread loaderThread = new Thread(loader);
+        loaderThread.start();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     private void initActionBar() {
@@ -359,7 +363,7 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
         }
     }
 
-    public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
+    public class SongLoaderRunnable implements Runnable {
         Context mContext;
         OnPlaylistPreparedListener mPlaylistPreparedListener;
 
@@ -371,21 +375,7 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
         @Override
         public void run() {
             Looper.prepare();
-            getLoaderManager().initLoader(MUSIC_LOADER_ID, null, this);
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return new CursorLoader(mContext, MusicLib.getMusicUri(), MUSIC_SELECT_PROJECTION, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
             PlaylistManager playlistManager = PlaylistManager.getInstance();
-            playlistManager.init();
-            playlistManager.setContext(mContext);
-            playlistManager.setCursor(cursor);
-            playlistManager.scan();
             ArrayList<Object> playlistMetaDatas = new ArrayList<Object>();
             playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string.your_playlist)));
             ArrayList<PlaylistMetaData> UGPlaylistMetaDatas = playlistManager.getUserGeneratedPlaylist();
@@ -395,11 +385,6 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
             //need to destroy loader so that onLoadFinished won't be called twice
             getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
             Thread.interrupted();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
         }
     }
 }
