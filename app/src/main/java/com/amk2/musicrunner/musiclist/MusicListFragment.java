@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,6 +141,35 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                     SongLoaderRunnable loader = new SongLoaderRunnable(self);
                     Thread loaderThread = new Thread(loader);
                     loaderThread.start();
+                }
+            } else if (extras.get(PlaylistManager.BPM_UPDATED) != null) {
+                boolean isBpmUpdated = (Boolean)extras.get(PlaylistManager.BPM_UPDATED);
+                Log.d(TAG, "bpm updated!!");
+                if (isBpmUpdated) {
+
+                    ArrayList<Object> playlistMetaDatas = new ArrayList<Object>();
+                    PlaylistManager playlistManager = PlaylistManager.getInstance();
+                    PlaylistMetaData halfHourSlowPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
+                    PlaylistMetaData halfHourMediumPlaylistMetaData = playlistManager.generate30MinsPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
+                    PlaylistMetaData oneHourSlowPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.SLOW_PACE_PLAYLIST);
+                    PlaylistMetaData oneHourMediumPlaylistMetaData = playlistManager.generate1HrPlaylist(PlaylistManager.MEDIUM_PACE_PLAYLIST);
+                    playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string._30_mins_playlist)));
+                    playlistMetaDatas.add(halfHourSlowPlaylistMetaData);
+                    playlistMetaDatas.add(halfHourMediumPlaylistMetaData);
+                    playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string._1_hour_playlist)));
+                    playlistMetaDatas.add(oneHourSlowPlaylistMetaData);
+                    playlistMetaDatas.add(oneHourMediumPlaylistMetaData);
+                    playlistMetaDatas.add(new PlaylistSectionData(getResources().getString(R.string.your_playlist)));
+                    ArrayList<PlaylistMetaData> UGPlaylistMetaDatas = playlistManager.getUserGeneratedPlaylist();
+                    playlistMetaDatas.addAll(UGPlaylistMetaDatas);
+
+                    mPlaylistMetaData = playlistMetaDatas;
+                    mPlaylistUIHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
+                        }
+                    });
                 }
             } else {
                 Long playlistId       = extras.getLong(MusicListDetailActivity.PLAYLIST_ID);
@@ -335,8 +365,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                         mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
                         view.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
                         ((TextView)view).setTextColor(getResources().getColor(R.color.white));
-                        mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
-                        ((TextView)mSelectedPlaylist).setTextColor(getResources().getColor(R.color.black));
+                        if (mSelectedPlaylist != null) {
+                            mSelectedPlaylist.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
+                            ((TextView) mSelectedPlaylist).setTextColor(getResources().getColor(R.color.black));
+                        }
                         mSelectedPlaylist = view;
                     }
                     break;

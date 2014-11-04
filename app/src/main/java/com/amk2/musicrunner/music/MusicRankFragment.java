@@ -119,7 +119,8 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
     public void OnSongRankPrepared(ArrayList<SongPerformance> songPerformanceList, Double averagePerformance) {
         mSongPerformanceList = songPerformanceList;
         if (songPerformanceList.size() > 0) {
-            musicRankInitialInformation.setVisibility(View.INVISIBLE);
+            musicRankInitialInformation.setVisibility(View.GONE);
+            musicRankListView.setVisibility(View.VISIBLE);
             mSongRankUIHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -128,6 +129,7 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
             });
         } else {
             musicRankInitialInformation.setVisibility(View.VISIBLE);
+            musicRankListView.setVisibility(View.GONE);
         }
     }
 

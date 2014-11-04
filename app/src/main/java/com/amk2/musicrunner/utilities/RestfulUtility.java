@@ -92,8 +92,8 @@ public class RestfulUtility {
                     URL url = new URL(urlStrings[0]);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestProperty("Content-Type", "application/json");
-                    conn.setReadTimeout(3000);
-                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(15000);
+                    conn.setConnectTimeout(15000);
                     conn.setDoInput(true);
                     conn.setDoOutput(true);
 

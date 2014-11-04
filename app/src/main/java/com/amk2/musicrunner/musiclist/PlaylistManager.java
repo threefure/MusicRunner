@@ -3,9 +3,13 @@ package com.amk2.musicrunner.musiclist;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.nfc.Tag;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,20 +27,22 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.Timer;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by daz on 10/7/14.
  */
 public class PlaylistManager{
+    public static final String BPM_UPDATED = "musiclist.playlistmanager.bpm_updated";
     public static final int MEDIUM_PACE_PLAYLIST = 0;
     public static final int SLOW_PACE_PLAYLIST   = 1;
     public static final int HALF_HOUR_PLAYLIST   = 2;
     public static final int ONE_HOUR_PLAYLIST    = 4;
-    public static final String HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "30mins Medium";
-    public static final String HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE = "30mins Slow";
-    public static final String ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "1hour Medium";
-    public static final String ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE = "1hour Slow";
+    public static final String HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "Half Hour Medium Pace Playlist";
+    public static final String HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE = "Half Hour Slow Pace Playlist";
+    public static final String ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "A Hour Medium Pace Playlist";
+    public static final String ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE = "A Hour Slow Pace Playlist";
     private static final String TAG = "PlaylistManager";
     private static final String TRACK_LIST = "trackList";
     private static final int HALF_HOUR_IN_MILLI = 1800000;
@@ -80,12 +86,64 @@ public class PlaylistManager{
         mMusicSongList = convertCursorToMusicSongList(mCursor);
         mTrackListWrapper = checkBpmForEachSong();
         if (mTrackListWrapper.has(TRACK_LIST)) {
+            HandlePostTrackInfoRunnable handlePostTrackInfoRunnable = new HandlePostTrackInfoRunnable(mTrackListWrapper);
+            Thread handlePostTrackInfoThread = new Thread(handlePostTrackInfoRunnable);
+            handlePostTrackInfoThread.start();
+        } else {
+            categorizePlaylists();
+        }
+    }
+
+    private class HandlePostTrackInfoRunnable implements Runnable {
+        JSONObject mTrackListWrapper;
+        public HandlePostTrackInfoRunnable (JSONObject mTrackListWrapper) {
+            this.mTrackListWrapper = mTrackListWrapper;
+        }
+        @Override
+        public void run() {
+            JSONArray trackList = null;
             try {
-                RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(mTrackListWrapper.toString());
+                trackList = mTrackListWrapper.getJSONArray(TRACK_LIST);
+                Integer NumberOfTracksInAChunk = 20;
+
+                int base = 0;
+                while (trackList.length() > (base + NumberOfTracksInAChunk)) {
+                    JSONArray trackListChunk = new JSONArray();
+                    JSONObject wrapperChunk = new JSONObject();
+                    for (int i = base; i < (base + NumberOfTracksInAChunk) && i < trackList.length(); i++) {
+                        trackListChunk.put(trackList.getJSONObject(i));
+                    }
+                    base += 10;
+                    wrapperChunk.put(TRACK_LIST, trackListChunk);
+                    PostTrackInfoRunnable postTrackInfoRunnable = new PostTrackInfoRunnable(wrapperChunk.toString());
+                    Thread postTrackInfoThread = new Thread(postTrackInfoRunnable);
+                    postTrackInfoThread.start();
+                    Thread.sleep(15000);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private class PostTrackInfoRunnable implements Runnable {
+        String postString;
+        public PostTrackInfoRunnable (String postString) {
+            this.postString = postString;
+        }
+        @Override
+        public void run() {
+            try {
+                RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(postString);
                 String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
                 JSONArray trackListArray = new JSONArray(trackListArrayString);
                 saveBpmForEachSong(trackListArray);
                 categorizePlaylists();
+
+                Intent intent = new Intent(MusicListFragment.UPDATE_PLAYLIST);
+                intent.putExtra(BPM_UPDATED, true);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -95,10 +153,7 @@ public class PlaylistManager{
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-        } else {
-            categorizePlaylists();
         }
-
     }
 
     public PlaylistMetaData generate30MinsPlaylist (Integer type) {
@@ -277,19 +332,24 @@ public class PlaylistManager{
         Double bpm;
         MusicSong ms;
         HashMap<String, String> songInfo;
+        mSlowPaceMusicSongList.clear();
+        mMediumPaceMusicSongList.clear();
+        mFastPaceMusicSongList.clear();
 
         for (int i = 0; i < length; i ++) {
             ms = mMusicSongList.get(i);
             songInfo = MusicLib.getSongInfo(mContext, ms.mTitle);
-            bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-            if (bpm == null || bpm < 0) {
-                //do nothing
-            } else if (bpm < 110.0) {
-                mSlowPaceMusicSongList.add(ms);
-            } else if (bpm >= 110.0 && bpm < 130.0) {
-                mMediumPaceMusicSongList.add(ms);
-            } else {
-                mFastPaceMusicSongList.add(ms);
+            if (songInfo != null) {
+                bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+                if (bpm == null || bpm < 0) {
+                    //do nothing
+                } else if (bpm < 110.0) {
+                    mSlowPaceMusicSongList.add(ms);
+                } else if (bpm >= 110.0 && bpm < 130.0) {
+                    mMediumPaceMusicSongList.add(ms);
+                } else {
+                    mFastPaceMusicSongList.add(ms);
+                }
             }
         }
     }
