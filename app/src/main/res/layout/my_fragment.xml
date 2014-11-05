@@ -22,7 +22,7 @@
 
                 <ImageView
                     android:id="@+id/user_icon"
-                    android:src="@drawable/app_icon"
+                    android:src="@drawable/dog_bird_head"
                     android:layout_width="70dp"
                     android:layout_height="70dp" />
                 <TextView

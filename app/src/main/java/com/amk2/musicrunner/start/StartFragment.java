@@ -93,7 +93,7 @@ public class StartFragment extends Fragment implements
 
         mLocationClient = new LocationClient(mActivity, this, this);
 
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.fox);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dog_front);
         markerOptions = new MarkerOptions();
         markerOptions.icon(bitmapDescriptor);
 
