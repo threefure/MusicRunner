@@ -189,9 +189,11 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         // Get a handle to the Map Fragment
         mMap = ((MapFragment) getFragmentManager()
                 .findFragmentById(R.id.finish_map)).getMap();
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        // Draw the map base on last run
-        mDrawRoute();
+        if (mMap != null) {
+            mMap.getUiSettings().setZoomControlsEnabled(false);
+            // Draw the map base on last run
+            mDrawRoute();
+        }
     }
 
     @Override
@@ -236,9 +238,15 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 intent = new Intent(MusicRankFragment.UPDATE_MUSIC_RANK);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 finish();
+                if (mMap != null) {
+                    MapFragmentRun.resetAllParam();
+                }
                 break;
             case R.id.finish_discard:
                 finish();
+                if (mMap != null) {
+                    MapFragmentRun.resetAllParam();
+                }
                 break;
             case R.id.finish_photo:
                 if (photoPath != null) {
@@ -251,7 +259,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 dispatchTakePictureIntent();
                 break;
         }
-        MapFragmentRun.resetAllParam();
+
     }
 
     private void dispatchTakePictureIntent() {

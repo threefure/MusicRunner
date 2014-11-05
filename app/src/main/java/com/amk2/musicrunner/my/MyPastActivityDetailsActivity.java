@@ -237,10 +237,12 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             musicRunnerLineMapView.setMusicJoints(songPerformanceArrayList);
         }
 
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        mLocationList = LocationUtils.parseRouteToLocation(route);
-        mColorList = LocationUtils.parseRouteColor(route);
-        mDrawRoute();
+        if (mMap != null) {
+            mMap.getUiSettings().setZoomControlsEnabled(false);
+            mLocationList = LocationUtils.parseRouteToLocation(route);
+            mColorList = LocationUtils.parseRouteColor(route);
+            mDrawRoute();
+        }
     }
 
     private void fetchSongPerformance() {

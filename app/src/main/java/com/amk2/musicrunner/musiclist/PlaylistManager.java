@@ -108,7 +108,7 @@ public class PlaylistManager{
                 Integer NumberOfTracksInAChunk = 20;
 
                 int base = 0;
-                while (trackList.length() > (base + NumberOfTracksInAChunk)) {
+                while (trackList.length() > base) {
                     JSONArray trackListChunk = new JSONArray();
                     JSONObject wrapperChunk = new JSONObject();
                     for (int i = base; i < (base + NumberOfTracksInAChunk) && i < trackList.length(); i++) {

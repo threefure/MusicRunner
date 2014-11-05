@@ -97,6 +97,7 @@ public class RestfulUtility {
                     conn.setDoInput(true);
                     conn.setDoOutput(true);
 
+                    Log.d("Restful api", "Calling: " + urlStrings[0]);
                     outputStream = conn.getOutputStream();
                     outputStream.write(body.getBytes("UTF-8"));
 

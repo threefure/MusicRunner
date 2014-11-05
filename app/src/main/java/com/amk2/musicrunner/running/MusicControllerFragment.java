@@ -283,7 +283,10 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
         Integer duration;
         Uri playlistMemberUri = MusicLib.getPlaylistMemberUriFromId(mPlaylistId);
         String[] projection = {
-                MediaStore.Audio.Playlists.Members.AUDIO_ID
+                MediaStore.Audio.Playlists.Members.AUDIO_ID,
+                MediaStore.Audio.Playlists.Members.TITLE,
+                MediaStore.Audio.Playlists.Members.ARTIST,
+                MediaStore.Audio.Playlists.Members.DURATION
         };
         Cursor cursor = mContentResolver.query(playlistMemberUri, projection, null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
@@ -291,9 +294,10 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
                 audio_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
                 musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
                 retriever.setDataSource(mActivity, musicUri);
-                title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.TITLE));//retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.ARTIST));//retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.DURATION));//Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+
                 songList.add(new MusicSong(audio_id, title, artist, duration));
             }
         }

@@ -21,6 +21,7 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -93,10 +94,6 @@ public class StartFragment extends Fragment implements
 
         mLocationClient = new LocationClient(mActivity, this, this);
 
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dog_front);
-        markerOptions = new MarkerOptions();
-        markerOptions.icon(bitmapDescriptor);
-
         findViews();
         initButtons();
     }
@@ -108,7 +105,6 @@ public class StartFragment extends Fragment implements
     private void findViews() {
         mGoRunningButton = (Button)mFragmentView.findViewById(R.id.start_go_running);
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.start_map)).getMap();
-        googleMap.getUiSettings().setZoomControlsEnabled(false);
     }
 
     private void updateMap() {
@@ -143,6 +139,11 @@ public class StartFragment extends Fragment implements
     public void onConnected(Bundle bundle) {
         mCurrentLocation = mLocationClient.getLastLocation();
         if (mCurrentLocation != null) {
+            googleMap.getUiSettings().setZoomControlsEnabled(false);
+
+            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dog_front);
+            markerOptions = new MarkerOptions();
+            markerOptions.icon(bitmapDescriptor);
             updateMap();
         }
     }

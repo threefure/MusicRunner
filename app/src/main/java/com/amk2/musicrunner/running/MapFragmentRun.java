@@ -151,7 +151,6 @@ public class MapFragmentRun extends Fragment implements
         if(!mLocationClient.isConnected()){
             // Connect the client.
             mLocationClient.connect();
-            mMap.setMyLocationEnabled(true);
         }
     }
 
@@ -196,6 +195,7 @@ public class MapFragmentRun extends Fragment implements
     public void onConnected(Bundle bundle) {
         makeText(this.getView().getContext(), "Connected", Toast.LENGTH_SHORT).show();
 
+        mMap.setMyLocationEnabled(true);
         startUpdates();
     }
 

@@ -238,7 +238,10 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             Uri musicUri;
             ArrayList<MusicMetaData> musicMetaDataArrayList = new ArrayList<MusicMetaData>();
             String[] projection = {
-                    MediaStore.Audio.Playlists.Members.AUDIO_ID
+                    MediaStore.Audio.Playlists.Members.AUDIO_ID,
+                    MediaStore.Audio.Playlists.Members.TITLE,
+                    MediaStore.Audio.Playlists.Members.ARTIST,
+                    MediaStore.Audio.Playlists.Members.DURATION
             };
             Cursor cursor = contentResolver.query(playlistMemberUri, projection, null, null, null);
             if (cursor != null && cursor.getCount() > 0) {
@@ -248,17 +251,19 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                     filePath = MusicLib.getMusicFilePath(context, musicUri);
 
                     retriever.setDataSource(context, musicUri);
-                    title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                    artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                    duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                    HashMap<String, String> songInfo = MusicLib.getSongInfo(context, title);
-                    if (songInfo != null && songInfo.get(MusicLib.BPM) != null) {
-                        bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
-                    }
-                    albumPhoto = MusicLib.getMusicAlbumArt(filePath);
+                    title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.TITLE));//retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                    artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.ARTIST));//retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                    duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.DURATION));//Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                    if (title != null) {
+                        HashMap<String, String> songInfo = MusicLib.getSongInfo(context, title);
+                        if (songInfo != null && songInfo.get(MusicLib.BPM) != null) {
+                            bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+                        }
+                        albumPhoto = MusicLib.getMusicAlbumArt(filePath);
 
-                    MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
-                    musicMetaDataArrayList.add(metaData);
+                        MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
+                        musicMetaDataArrayList.add(metaData);
+                    }
                     //listener.OnSongPrepared(metaData);
                 }
                 listener.OnSongLoadedFinished(musicMetaDataArrayList);

@@ -381,7 +381,8 @@ public class MusicLib {
         Integer duration = 0, tracks = 0;
         Uri musicUri;
         String[] projection = {
-                MediaStore.Audio.Playlists.Members.AUDIO_ID
+                MediaStore.Audio.Playlists.Members.AUDIO_ID,
+                MediaStore.Audio.Playlists.Members.DURATION
         };
         Cursor cursor = contentResolver.query(playlistMemberUri, projection, null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
@@ -390,7 +391,7 @@ public class MusicLib {
                 musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), audio_id);
 
                 retriever.setDataSource(context, musicUri);
-                duration += Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                duration += cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.DURATION));
                 tracks ++;
             }
         }

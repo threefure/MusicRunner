@@ -9,6 +9,7 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.running.MusicService;
 import com.amk2.musicrunner.running.RunningActivity;
 import com.amk2.musicrunner.location.LocationHelper;
+import com.google.android.gms.maps.MapsInitializer;
 
 import android.app.Activity;
 import android.app.ActivityManager;
