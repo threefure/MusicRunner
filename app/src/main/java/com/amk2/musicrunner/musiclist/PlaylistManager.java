@@ -86,12 +86,13 @@ public class PlaylistManager{
         mMusicSongList = convertCursorToMusicSongList(mCursor);
         mTrackListWrapper = checkBpmForEachSong();
         if (mTrackListWrapper.has(TRACK_LIST)) {
+            Log.d(TAG, "call api, " + mTrackListWrapper.toString());
             HandlePostTrackInfoRunnable handlePostTrackInfoRunnable = new HandlePostTrackInfoRunnable(mTrackListWrapper);
             Thread handlePostTrackInfoThread = new Thread(handlePostTrackInfoRunnable);
             handlePostTrackInfoThread.start();
-        } else {
-            categorizePlaylists();
         }
+        Log.d(TAG, "checking playlist");
+        categorizePlaylists();
     }
 
     private class HandlePostTrackInfoRunnable implements Runnable {
@@ -339,7 +340,7 @@ public class PlaylistManager{
         for (int i = 0; i < length; i ++) {
             ms = mMusicSongList.get(i);
             songInfo = MusicLib.getSongInfo(mContext, ms.mTitle);
-            if (songInfo != null) {
+            if (songInfo != null && songInfo.get(MusicLib.BPM) != null) {
                 bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
                 if (bpm == null || bpm < 0) {
                     //do nothing

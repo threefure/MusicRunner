@@ -230,7 +230,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         @Override
         public void run() {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            Double bpm;
+            Double bpm = -3.0;
             Long audio_id;
             String title, artist, filePath;
             Integer duration;
@@ -252,9 +252,10 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                     artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                     duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
                     HashMap<String, String> songInfo = MusicLib.getSongInfo(context, title);
-                    bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+                    if (songInfo != null && songInfo.get(MusicLib.BPM) != null) {
+                        bpm = Double.parseDouble(songInfo.get(MusicLib.BPM));
+                    }
                     albumPhoto = MusicLib.getMusicAlbumArt(filePath);
-
 
                     MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
                     musicMetaDataArrayList.add(metaData);

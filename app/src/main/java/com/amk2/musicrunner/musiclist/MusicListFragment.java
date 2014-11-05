@@ -196,15 +196,17 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
-        intent.putExtra(MusicListFragment.PLAYLIST_POSITION, position);
-        intent.putExtra(MusicListDetailActivity.PLAYLIST_ID, id);
-        startActivity(intent);
+        if (playlistPinnedSectionListAdapter.getItemViewType(position) == PlaylistPinnedSectionListAdapter.TYPE_PLAYLIST) {
+            Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
+            intent.putExtra(MusicListFragment.PLAYLIST_POSITION, position);
+            intent.putExtra(MusicListDetailActivity.PLAYLIST_ID, id);
+            startActivity(intent);
+        }
     }
 
     private class PlaylistPinnedSectionListAdapter extends ArrayAdapter<Object> implements PinnedSectionListAdapter, View.OnClickListener {
-        private final int TYPE_SECTION  = 0;
-        private final int TYPE_PLAYLIST = 1;
+        public static final int TYPE_SECTION  = 0;
+        public static final int TYPE_PLAYLIST = 1;
         SharedPreferences mPlaylistPreferences;
         private ArrayList<Object> mPlaylistArrayList;
         private View mSelectedPlaylist = null;
