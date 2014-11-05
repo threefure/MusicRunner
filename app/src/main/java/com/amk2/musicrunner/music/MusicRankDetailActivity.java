@@ -184,7 +184,9 @@ public class MusicRankDetailActivity extends Activity implements View.OnClickLis
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             bpmString = cursor.getString(cursor.getColumnIndex(MusicRunnerDBMetaData.MusicRunnerSongNameDB.COLUMN_NAME_BPM));
-            bpm = Double.parseDouble(bpmString);
+            if (bpmString != null) {
+                bpm = Double.parseDouble(bpmString);
+            }
         }
         cursor.close();
 
