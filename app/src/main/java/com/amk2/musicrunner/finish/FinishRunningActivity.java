@@ -40,6 +40,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.File;
@@ -192,7 +193,12 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         if (mMap != null) {
             mMap.getUiSettings().setZoomControlsEnabled(false);
             // Draw the map base on last run
-            mDrawRoute();
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    mDrawRoute();
+                }
+            });
         }
     }
 
@@ -293,23 +299,63 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
         ArrayList<Integer> mColorList = MapFragmentRun.getmColorList();
         if(polylines.size() > 0) {
             LatLng lastPosition = null;
+            Double east = -180.0, west = 180.0, south = 90.0, north = -90.0;
+            Integer lastColor = null;
+            PolylineOptions polylineOptions = new PolylineOptions().geodesic(true).width(10);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polylines.get(0), LocationUtils.CAMERA_PAD));
 
             for (int i = 0; i < polylines.size(); i++) {
-                if(lastPosition != null) {
-                    mMap.addPolyline(
-                            new PolylineOptions()
-                                    .geodesic(true)
-                                    .color(ColorGenerator
-                                    .generateColor(mColorList.get(i)))
-                                    .add(lastPosition)
-                                    .add(polylines.get(i))
-                    );
+                /*if(lastPosition != null) {
                     route = (route == null) ?
                             (LocationUtils.getLatLng(lastPosition, mColorList.get(i))) :
                             (route + LocationUtils.getLatLng(lastPosition, mColorList.get(i)));
+                }*/
+                route = (route == null) ?
+                        (LocationUtils.getLatLng(polylines.get(i), mColorList.get(i))) :
+                        (route + LocationUtils.getLatLng(polylines.get(i), mColorList.get(i)));
+
+                if (lastColor == null) {
+                    lastColor = ColorGenerator.generateColor(mColorList.get(i));
+                    polylineOptions.color(lastColor);
+                    polylineOptions.add(polylines.get(i));
+                } else {
+                    if (lastColor == ColorGenerator.generateColor(mColorList.get(i))) {
+                        polylineOptions.add(polylines.get(i));
+                    } else {
+                        lastColor = ColorGenerator.generateColor(mColorList.get(i));
+                        mMap.addPolyline(polylineOptions);
+                        polylineOptions = new PolylineOptions().geodesic(true).width(10).color(lastColor);
+                        polylineOptions.add(lastPosition);
+                        polylineOptions.add(polylines.get(i));
+                    }
                 }
+
+                if (polylines.get(i).longitude > east) {
+                    east = polylines.get(i).longitude;
+                }
+                if (polylines.get(i).longitude < west) {
+                    west = polylines.get(i).longitude;
+                }
+                if (polylines.get(i).latitude < south) {
+                    south = polylines.get(i).latitude;
+                }
+                if (polylines.get(i).latitude > north) {
+                    north = polylines.get(i).latitude;
+                }
+
                 lastPosition = polylines.get(i);
+            }
+            mMap.addPolyline(polylineOptions);
+
+            if (north != -180 && west != 180 && south != 90 && north != 90) {
+                LatLng southwest = new LatLng(south, west);
+                LatLng northeast = new LatLng(north, east);
+                LatLngBounds latLngBounds = new LatLngBounds(southwest, northeast);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 30));
+            } else {
+                if (lastPosition != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polylines.get(0), LocationUtils.CAMERA_PAD));
+                }
             }
         }
     }

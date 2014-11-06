@@ -2,12 +2,14 @@ package com.amk2.musicrunner.my;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -38,6 +40,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -127,7 +130,6 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
 
         mMap = ((MapFragment) getFragmentManager()
                 .findFragmentById(R.id.my_past_activity_details_map)).getMap();
-
         picPreviewImageView.setOnClickListener(this);
     }
 
@@ -241,7 +243,12 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             mMap.getUiSettings().setZoomControlsEnabled(false);
             mLocationList = LocationUtils.parseRouteToLocation(route);
             mColorList = LocationUtils.parseRouteColor(route);
-            mDrawRoute();
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    mDrawRoute();
+                }
+            });
         }
     }
 
@@ -346,21 +353,57 @@ public class MyPastActivityDetailsActivity extends Activity implements View.OnCl
             return;
 
         if(mLocationList.size() > 0) {
+            Double east = -180.0, west = 180.0, south = 90.0, north = -90.0;
             LatLng lastPosition = null;
-
+            Integer lastColor = null;
+            PolylineOptions polylineOptions = new PolylineOptions().geodesic(true).width(10);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocationList.get(0), LocationUtils.CAMERA_PAD));
             for (int i = 0; i < mLocationList.size(); i++) {
-                if(lastPosition != null) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, LocationUtils.CAMERA_PAD));
-                    mMap.addPolyline(
-                            new PolylineOptions()
-                                    .geodesic(true)
-                                    .color(ColorGenerator
-                                            .generateColor(mColorList.get(i)))
-                                    .add(lastPosition)
-                                    .add(mLocationList.get(i))
-                    );
+
+                if (lastColor == null) {
+                    lastColor = ColorGenerator.generateColor(mColorList.get(i));
+                    polylineOptions.color(lastColor);
+                    polylineOptions.add(mLocationList.get(i));
+                } else {
+                    if (lastColor == ColorGenerator.generateColor(mColorList.get(i))) {
+                        polylineOptions.add(mLocationList.get(i));
+                    } else {
+                        lastColor = ColorGenerator.generateColor(mColorList.get(i));
+                        mMap.addPolyline(polylineOptions);
+                        polylineOptions = new PolylineOptions().geodesic(true).width(10).color(lastColor);
+                        polylineOptions.add(lastPosition);
+                        polylineOptions.add(mLocationList.get(i));
+                    }
                 }
+
+                if (mLocationList.get(i).longitude > east) {
+                    east = mLocationList.get(i).longitude;
+                }
+                if (mLocationList.get(i).longitude < west) {
+                    west = mLocationList.get(i).longitude;
+                }
+                if (mLocationList.get(i).latitude < south) {
+                    south = mLocationList.get(i).latitude;
+                }
+                if (mLocationList.get(i).latitude > north) {
+                    north = mLocationList.get(i).latitude;
+                }
+
                 lastPosition = mLocationList.get(i);
+            }
+            mMap.addPolyline(polylineOptions);
+
+            Log.d(TAG, "north: " + north.toString() + " south: " + south.toString() + " east: " + east.toString() + " west: " + west.toString());
+            if (north != -180 && west != 180 && south != 90 && north != 90) {
+                LatLng southwest = new LatLng(south, west);
+                LatLng northeast = new LatLng(north, east);
+                LatLngBounds latLngBounds = new LatLngBounds(southwest, northeast);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 30));
+
+            } else {
+                if (lastPosition != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, LocationUtils.CAMERA_PAD));
+                }
             }
         }
     }
