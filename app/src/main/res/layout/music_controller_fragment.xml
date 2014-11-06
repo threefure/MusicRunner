@@ -123,13 +123,18 @@
                 android:text="@string/this_song_text"/-->
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/back_to_distance_button"
+        <LinearLayout
+            android:background="@drawable/arrow_button_clickable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_above="@+id/running_info_container"/>
+            android:layout_above="@+id/running_info_container">
+            <Button
+                android:id="@+id/back_to_distance_button"
+                android:background="@drawable/left_arrow"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/running_info_container"
             android:layout_width="match_parent"

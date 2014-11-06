@@ -42,7 +42,7 @@
                 style="@style/Running.StatisticUnitBackground">
                 <ImageButton
                     android:id="@+id/my_past_activity_details_camera"
-                    android:background="@drawable/camera"
+                    android:background="@drawable/initial_photo"
                     android:layout_width="42dp"
                     android:layout_height="35dp"/>
                 <ImageView

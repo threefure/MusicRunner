@@ -70,6 +70,8 @@
     <color name="music_info_easy_song_tag">#70BF41</color>
     <color name="music_info_red_title">#9D6A64</color>
     <color name="music_info_green_title">#7A8681</color>
+    <color name="arrow_bg">#557A8681</color>
+    <color name="arrow_bg_clicked">#997A8681</color>
 
     <!-- Past Record fragment -->
     <color name="light_yellow">#F3F781</color>

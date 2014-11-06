@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -121,6 +122,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
     private Integer unitSpeedPace;
     private Integer autoCuePeriod;
     private String autoCuePeriodString;
+
+    private RadioGroup runningPagingRadioGroup;
 
     //private
     private Double weight;
@@ -259,6 +262,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         resumeButton.setOnClickListener(this);
         //picPreviewImageView.setOnClickListener(this);
         cameraImageButton.setOnClickListener(this);
+
+        runningPagingRadioGroup = (RadioGroup) findViewById(R.id.running_paging_radio_group);
 
     }
 
@@ -454,7 +459,18 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
     @Override
     public void onPageSelected(int position) {
-
+        // pagination switch on the bottom of running page
+        switch (position) {
+            case RunningPageState.MAP:
+                runningPagingRadioGroup.check(R.id.map_radio_button);
+                break;
+            case RunningPageState.DISTANCE:
+                runningPagingRadioGroup.check(R.id.straight_line_radio_button);
+                break;
+            case RunningPageState.MUSIC:
+                runningPagingRadioGroup.check(R.id.music_controller_radio_button);
+                break;
+        }
     }
 
     @Override

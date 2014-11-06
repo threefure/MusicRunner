@@ -110,6 +110,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <RadioGroup
+            android:id="@+id/running_paging_radio_group"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="75dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/map_radio_button"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                style="@style/Running.RadioButton"/>
+            <RadioButton
+                android:id="@+id/straight_line_radio_button"
+                android:checked="true"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                style="@style/Running.RadioButton" />
+            <RadioButton
+                android:id="@+id/music_controller_radio_button"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="0dp"
+                style="@style/Running.RadioButton" />
+        </RadioGroup>
         <RelativeLayout
             android:id="@+id/pause_container"
             style="@style/Running.ControlButtonContainer">
