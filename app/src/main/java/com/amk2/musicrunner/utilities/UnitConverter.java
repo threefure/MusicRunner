@@ -2,6 +2,7 @@ package com.amk2.musicrunner.utilities;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.WindowManager;
 
 /**
@@ -29,27 +30,8 @@ public class UnitConverter {
         return dp;
     }
 
-    public static double getPixelsFromDP(Context context, double dp) {
-        /*double pixels;
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(metrics);
-        switch(metrics.densityDpi){
-            case DisplayMetrics.DENSITY_LOW:
-                pixels = dp / 0.75;
-                break;
-            case DisplayMetrics.DENSITY_MEDIUM:
-                pixels = dp;
-                break;
-            case DisplayMetrics.DENSITY_HIGH:
-                pixels = dp / 1.5;
-                break;
-            default:
-                pixels = dp;
-        }*/
-        final float scale = context.getResources().getDisplayMetrics().density;
-        float pixels = (int) (dp * scale + 0.5f);
-        return pixels;
+    public static double getPixelsFromDP(Context context, float dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
     public static double getKGFromLB (double lb) {
