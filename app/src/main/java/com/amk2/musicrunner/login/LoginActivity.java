@@ -3,7 +3,12 @@ package com.amk2.musicrunner.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -25,6 +30,8 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +50,23 @@ public class LoginActivity extends Activity {
             Intent redirectIntent = new Intent(this,MusicRunnerActivity.class);
             startActivityForResult(redirectIntent,MUSIC_RUNNER_MAIN_REQUEST);
         }
+
+        /*PackageInfo info = null;
+        try {
+            info = getPackageManager().getPackageInfo(
+                    "com.amk2.musicrunner",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }*/
+
     }
 
     public void facebookLogin(View view){
