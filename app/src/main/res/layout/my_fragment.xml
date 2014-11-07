@@ -55,7 +55,7 @@
                 android:layout_height="200dp">
                 <TextView
                     android:id="@+id/laps"
-                    android:text="16 Laps, for demo purpose"
+                    android:text="16 Laps"
                     android:textSize="30dp"
                     android:textColor="@color/tiffany"
                     android:background="@drawable/laps_background"
