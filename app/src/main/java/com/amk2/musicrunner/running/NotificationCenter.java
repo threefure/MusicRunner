@@ -55,8 +55,7 @@ public class NotificationCenter {
         soundMap.put("mi", mSoundPool.load(context, R.raw.mile, 1));
         soundMap.put("dot", mSoundPool.load(context, R.raw.point, 1));
         soundMap.put("avgSpeed", mSoundPool.load(context, R.raw.averagespeed, 1));
-        // TODO need to change to average pace
-        soundMap.put("avgPace", mSoundPool.load(context, R.raw.averagespeed, 1));
+        soundMap.put("avgPace", mSoundPool.load(context, R.raw.averagepace, 1));
         soundMap.put("every", mSoundPool.load(context, R.raw.every, 1));
         soundMap.put("consumeCalories", mSoundPool.load(context, R.raw.calorieburned, 1));
         soundMap.put("kcal", mSoundPool.load(context, R.raw.kcal, 1));
@@ -64,7 +63,15 @@ public class NotificationCenter {
         soundMap.put("thousand", mSoundPool.load(context, R.raw.thousand, 1));
 
         if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
-            // TODO put english special sound here
+            soundMap.put("11", mSoundPool.load(context, R.raw.eleven, 1));
+            soundMap.put("12", mSoundPool.load(context, R.raw.twelve, 1));
+            soundMap.put("13", mSoundPool.load(context, R.raw.thirteen, 1));
+            soundMap.put("14", mSoundPool.load(context, R.raw.fourteen, 1));
+            soundMap.put("15", mSoundPool.load(context, R.raw.fifteen, 1));
+            soundMap.put("16", mSoundPool.load(context, R.raw.sixteen, 1));
+            soundMap.put("17", mSoundPool.load(context, R.raw.seventeen, 1));
+            soundMap.put("18", mSoundPool.load(context, R.raw.eighteen, 1));
+            soundMap.put("19", mSoundPool.load(context, R.raw.nineteen, 1));
             soundMap.put("20", mSoundPool.load(context, R.raw.twenty, 1));
             soundMap.put("30", mSoundPool.load(context, R.raw.thirty, 1));
             soundMap.put("40", mSoundPool.load(context, R.raw.forty, 1));
@@ -161,9 +168,9 @@ public class NotificationCenter {
 
             //play calorie number
             if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
-                playNumberInEng(distance);
+                playNumberInEng(calories);
             } else {
-                playNumber(distance);
+                playNumber(calories);
             }
             this.play(soundMap.get("kcal"), 1500);
         }
@@ -183,9 +190,9 @@ public class NotificationCenter {
                 }
 
                 if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
-                    playNumberInEng(distance);
+                    playNumberInEng(speed);
                 } else {
-                    playNumber(distance);
+                    playNumber(speed);
                 }
 
                 this.play(soundMap.get("min"), 1000);
@@ -193,9 +200,9 @@ public class NotificationCenter {
                 this.play(soundMap.get("avgSpeed"), 1200);
                 // play speed
                 if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
-                    playNumberInEng(distance);
+                    playNumberInEng(speed);
                 } else {
-                    playNumber(distance);
+                    playNumber(speed);
                 }
 
                 if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
@@ -230,12 +237,13 @@ public class NotificationCenter {
                 isLTTen = true;
             }
             if (number >= 10) {
-                // second digit
-                toPlay = number.intValue() / 10;
+                // 10 ~ 19
+                toPlay = number.intValue();
                 this.play(soundMap.get(toPlay.toString()), 700);
 
                 // ten
-                this.play(soundMap.get("10"), 700);
+                //this.play(soundMap.get("10"), 700);
+                number -= toPlay.doubleValue();
                 isLTTen = true;
             }
             if (number > 0) {

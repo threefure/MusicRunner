@@ -317,8 +317,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     durationTextView.setText(durationString);
 
                     //update distance
-                    //distance += 0.1;
-                    distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    distance += 0.2;
+                    //distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
                         distance = UnitConverter.getMIFromKM(distance);
                     }
@@ -348,7 +348,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
 
                     actualSec = totalSec % 60;
                     actualMin = totalSec / 60;
-                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
+                    //if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
+                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE) == 0) {
                         notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;

@@ -113,6 +113,8 @@ public class StartFragment extends Fragment implements
         markerOptions.position(currentLatLng);
         if (marker == null) {
             marker = googleMap.addMarker(markerOptions);
+        } else {
+            marker.setPosition(currentLatLng);
         }
     }
 
