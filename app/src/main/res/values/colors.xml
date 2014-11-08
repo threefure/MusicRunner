@@ -21,7 +21,8 @@
     <color name="rice_white">#FCFDFC</color>
     <color name="tiffany">#0AD7A9</color>
     <color name="tiffany_press">#50E3C2</color>
-    <color name="court_red">#EA5544</color>
+    <color name="court_red">#FA8072</color>
+    <color name="court_green">#50C878</color>
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>
@@ -97,5 +98,8 @@
     <color name="button_border">#979797</color>
     <color name="radio_button">#D8D8D8</color>
     <color name="radio_button_selected">#50E3C2</color>
+
+    <!-- User instruction -->
+    <color name="user_instruction_background">#77000000</color>
 
 </resources>

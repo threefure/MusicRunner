@@ -264,6 +264,7 @@
     </style>
 
     <style name="My.RadioButton" parent="Setting.RadioButton">
+        <item name="android:textSize">16dp</item>
         <item name="android:background">@drawable/my_radio_button</item>
     </style>
     <style name="Running.RadioButton" parent="Setting.RadioButton">

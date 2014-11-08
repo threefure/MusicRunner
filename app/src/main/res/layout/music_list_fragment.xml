@@ -18,5 +18,58 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"/>
+    <!--RelativeLayout
+        android:id="@+id/user_instruction"
+        android:background="@color/user_instruction_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/create_playlist_focus"
+            android:background="@drawable/user_instruction_focus"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <TextView
+            android:text="Create Playlist!"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_below="@+id/create_playlist_focus"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true" />
+
+        <LinearLayout
+            android:id="@+id/_30_minutes_playlist_focus"
+            android:background="@drawable/user_instruction_focus"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="10dp"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+        </LinearLayout>
+        <TextView
+            android:text="Auto-generated playlist!"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_below="@+id/_30_minutes_playlist_focus"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:text="Got it!"
+            android:textColor="@color/white"
+            android:background="@drawable/past_activities_button"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"/>
+    </RelativeLayout-->
 
 </RelativeLayout>

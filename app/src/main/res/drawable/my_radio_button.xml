@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/playlist_selection_radio_button_selected"
-        android:state_checked="true">
+    <item android:state_checked="true">
         <shape android:shape="rectangle">
+            <solid android:color="@color/tiffany"></solid>
             <stroke android:width="1dp" android:color="@color/radio_button"></stroke>
-            <solid android:color="@color/radio_button_selected"></solid>
             <corners android:radius="8dp"></corners>
         </shape>
     </item>

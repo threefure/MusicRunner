@@ -88,6 +88,8 @@
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">708954652520589</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="skip">試試看！</string>
+    <string name="login">登入</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
@@ -114,6 +116,7 @@
     <string name="auto_cue">自動提醒</string>
     <string name="pace">步速</string>
     <string name="logout">登出</string>
+    <string name="logout_statement">您確定要登出嗎？</string>
 
     <!-- Create Playlist -->
     <string name="create_playlist_name">音樂清單名稱</string>

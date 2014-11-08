@@ -161,6 +161,22 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
     </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center">
+        <Button
+            android:id="@+id/login_skip"
+            android:text="@string/skip"
+            android:textSize="18dp"
+            android:textColor="@color/darkgray"
+            android:background="@null"
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:layout_height="50dp"/>
+    </LinearLayout>
     <TextView
         android:id="@+id/loginPageStatus"
         android:layout_weight="1"

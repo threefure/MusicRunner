@@ -11,6 +11,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -35,20 +36,39 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends Activity {
-
+public class LoginActivity extends Activity implements View.OnClickListener{
+    public static final String LOGIN = "login";
+    public static final String STATUS = "status";
+    public static final int STATUS_NONE = 0;
+    public static final int STATUS_LOGIN = 1;
+    public static final int STATUS_LOGOUT = 2;
     public static final int MUSIC_RUNNER_MAIN_REQUEST = 100;
+    public static final int FACEBOOK_LOGIN_REQUEST = 101;
 
+    private Button skipButton;
+    private SharedPreferences loginSharedPreferences;
+    private int loginStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        loginSharedPreferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
+        loginStatus = loginSharedPreferences.getInt(STATUS, STATUS_NONE);
+        if (loginStatus == STATUS_NONE) {
+            initViews();
+            setViews();
 
-        //if sharedpreference has value, then login automatically
-        String userAccount = SharedPreferencesUtility.getAccount(this);
-        if(StringLib.hasValue(userAccount)){
-            Intent redirectIntent = new Intent(this,MusicRunnerActivity.class);
-            startActivityForResult(redirectIntent,MUSIC_RUNNER_MAIN_REQUEST);
+            //if sharedpreference has value, then login automatically
+            String userAccount = SharedPreferencesUtility.getAccount(this);
+            if (StringLib.hasValue(userAccount)) {
+                Intent redirectIntent = new Intent(this, MusicRunnerActivity.class);
+                startActivityForResult(redirectIntent, MUSIC_RUNNER_MAIN_REQUEST);
+                finish();
+            }
+        } else {
+            Intent intent = new Intent(this, MusicRunnerActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         /*PackageInfo info = null;
@@ -69,9 +89,17 @@ public class LoginActivity extends Activity {
 
     }
 
+    private void initViews () {
+        skipButton = (Button) findViewById(R.id.login_skip);
+    }
+
+    private void setViews () {
+        skipButton.setOnClickListener(this);
+    }
+
     public void facebookLogin(View view){
         Intent intent = new Intent(this, FBLogin.class);
-        startActivityForResult(intent,MUSIC_RUNNER_MAIN_REQUEST);
+        startActivityForResult(intent, FACEBOOK_LOGIN_REQUEST);
     }
 
     public void registerAccount(View view) {
@@ -196,6 +224,23 @@ public class LoginActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if(MUSIC_RUNNER_MAIN_REQUEST == requestCode && RESULT_OK == resultCode) {
             finish();
+        } else if (FACEBOOK_LOGIN_REQUEST == requestCode && RESULT_OK == resultCode) {
+            loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
+            Intent intent = new Intent(this, MusicRunnerActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.login_skip:
+                loginSharedPreferences.edit().putInt(STATUS, STATUS_LOGOUT).commit();
+                Intent intent = new Intent(this, MusicRunnerActivity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
     }
 }

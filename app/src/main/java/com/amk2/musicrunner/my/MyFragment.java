@@ -3,6 +3,7 @@ package com.amk2.musicrunner.my;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.StringLib;
@@ -52,6 +54,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private TextView distanceTextView;
     private TextView distanceUnitTextView;
     private Button pastActivitiesButton;
+    private Button loginButton;
+
+    private LinearLayout userInfoContainer;
+    private LinearLayout loginContainer;
 
     private Integer totalTimes;
     private Integer totalDuration;
@@ -66,8 +72,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     //private Double weeklySpeed;
 
     private SharedPreferences mSettingSharedPreferences;
+    private SharedPreferences mLoginSharedPreferences;
     private Integer unitDistance;
     private Integer unitSpeedPace;
+    private Integer loginStatus;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,6 +92,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private void initialize() {
         mContentResolver = getActivity().getContentResolver();
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        mLoginSharedPreferences   = getActivity().getSharedPreferences(LoginActivity.LOGIN, Context.MODE_PRIVATE);
         initViews();
         getSharedPreferences();
         getTotalDataFromDB();
@@ -109,9 +118,15 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         distanceUnitTextView       = (TextView) thisView.findViewById(R.id.distance_unit);
 
         pastActivitiesButton       = (Button) thisView.findViewById(R.id.past_activities_button);
+        loginButton                = (Button) thisView.findViewById(R.id.login_button);
+
+        userInfoContainer          = (LinearLayout) thisView.findViewById(R.id.user_info_container);
+        loginContainer             = (LinearLayout) thisView.findViewById(R.id.login_container);
+
 
         thisWeekTotalRadioGroup.setOnCheckedChangeListener(this);
         pastActivitiesButton.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
     }
 
     public void setViews () {
@@ -124,11 +139,22 @@ public class MyFragment extends Fragment implements View.OnClickListener,
 
         updateSummary(weeklyCalories, weeklyDistance, weeklyDuration);
         thisWeekRadioButton.setTextColor(getResources().getColor(R.color.white));
+
+        if (loginStatus == LoginActivity.STATUS_LOGIN) {
+            loginContainer.setVisibility(View.GONE);
+            userInfoContainer.setVisibility(View.VISIBLE);
+        } else {
+            loginContainer.setVisibility(View.VISIBLE);
+            userInfoContainer.setVisibility(View.GONE);
+        }
     }
 
     private void getSharedPreferences () {
         unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
+        loginStatus   = mLoginSharedPreferences.getInt(LoginActivity.STATUS, LoginActivity.STATUS_LOGOUT);
+
+        Log.d(TAG, "login status " + loginStatus.toString());
     }
 
     public void getTotalDataFromDB () {
@@ -192,6 +218,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.past_activities_button:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
+                break;
+            case R.id.login_button:
+                mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
+                startActivity(new Intent(mActivity, LoginActivity.class));
                 break;
         }
     }

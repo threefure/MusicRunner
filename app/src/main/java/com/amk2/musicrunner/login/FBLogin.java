@@ -61,14 +61,20 @@ public class FBLogin extends Activity {
 
                                 HttpResponse httpResponse = RestfulUtility.restfulPostRequest(RestfulUtility.FACEBOOK_LOGIN, pairs);
 
-                                Intent intent = new Intent(thisActivity, MusicRunnerActivity.class);
-                                thisActivity.startActivity(intent);
+                                //Intent intent = new Intent(thisActivity, MusicRunnerActivity.class);
+                                //thisActivity.startActivity(intent);
+                                fbLoginCompleted();
                             }
                         }
                     }).executeAsync();
                 }
             }
         });
+    }
+
+    private void fbLoginCompleted () {
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override

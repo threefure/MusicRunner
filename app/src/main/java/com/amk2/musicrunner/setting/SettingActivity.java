@@ -28,7 +28,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
 import com.amk2.musicrunner.views.DatePickerFragment;
@@ -96,10 +98,13 @@ public class SettingActivity extends Activity implements
     private Button logoutButton;
 
     private SharedPreferences mSettingSharedPreferences;
+    private SharedPreferences mAccountSharedPreferences;
+    private SharedPreferences mLoginSharedPreferences;
     private ArrayAdapter<CharSequence> autoCueArrayAdapter;
     private ArrayAdapter<CharSequence> languageArrayAdapter;
     private Calendar calendar;
     private Configuration configuration;
+    private String usedLanguage;
 
     LayoutInflater inflater;
 
@@ -121,6 +126,11 @@ public class SettingActivity extends Activity implements
         Intent intent = new Intent();
         intent.putExtra("config", configuration);
         setResult(RESULT_OK, intent);
+
+        CharSequence language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
+        if (!usedLanguage.equals(language)) {
+            restartApp();
+        }
         super.onBackPressed();
     }
 
@@ -129,6 +139,8 @@ public class SettingActivity extends Activity implements
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         calendar = Calendar.getInstance();
         configuration = getResources().getConfiguration();
+        mAccountSharedPreferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
+        mLoginSharedPreferences   = getSharedPreferences(LoginActivity.LOGIN, MODE_PRIVATE);
         initActionBar();
         initViews();
         setViews();
@@ -163,6 +175,7 @@ public class SettingActivity extends Activity implements
         birthDateRelativeLayout = (RelativeLayout) findViewById(R.id.setting_birth_date);
 
         logoutButton = (Button) findViewById(R.id.logout);
+        logoutButton.setOnClickListener(this);
     }
 
     private void setViews () {
@@ -179,6 +192,8 @@ public class SettingActivity extends Activity implements
         CharSequence autoCue  = mSettingSharedPreferences.getString(AUTO_CUE, SETTING_AUTO_CUE_5_MINUTES);
         CharSequence language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
         Boolean autoCueToggle = mSettingSharedPreferences.getBoolean(AUTO_CUE_TOGGLE, true);
+
+        usedLanguage = language.toString();
 
         accountTextView.setText(account);
 
@@ -375,6 +390,24 @@ public class SettingActivity extends Activity implements
                 DatePickerDialog datePickerDialog = new DatePickerDialog(this, this, year, month, day);
                 datePickerDialog.show();
                 break;
+            case R.id.logout:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle(R.string.logout_statement)
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //do nothing
+                        }
+                    })
+                    .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mAccountSharedPreferences.edit().remove(Constant.ACCOUNT_PARAMS).commit();
+                            mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
+                            restartApp();
+                        }
+                    }).show();
+                break;
         }
     }
 
@@ -499,5 +532,12 @@ public class SettingActivity extends Activity implements
                 }
                 break;
         }
+    }
+
+    private void restartApp () {
+        Intent intent = getBaseContext().getPackageManager().getLaunchIntentForPackage(
+                getBaseContext().getPackageName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

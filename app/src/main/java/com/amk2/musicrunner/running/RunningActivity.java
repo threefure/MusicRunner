@@ -317,8 +317,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
                     durationTextView.setText(durationString);
 
                     //update distance
-                    distance += 0.2;
-                    //distance = MapFragmentRun.getmTotalDistance() * 0.001;
+                    //distance += 0.2;
+                    distance = MapFragmentRun.getmTotalDistance() * 0.001;
                     if (unitDistance == SettingActivity.SETTING_DISTANCE_MI) {
                         distance = UnitConverter.getMIFromKM(distance);
                     }

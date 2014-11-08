@@ -88,6 +88,8 @@
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">708954652520589</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="skip">Skip!</string>
+    <string name="login">Login</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
@@ -114,6 +116,7 @@
     <string name="auto_cue">Auto Cue</string>
     <string name="pace">Pace</string>
     <string name="logout">Logout</string>
+    <string name="logout_statement">Are you sure you want to log out of your account?</string>
 
     <!-- Create Playlist -->
     <string name="create_playlist_name">Playlist Name</string>
