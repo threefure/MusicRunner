@@ -44,7 +44,7 @@
                     android:id="@+id/login_button"
                     android:text="@string/login"
                     android:textSize="20dp"
-                    android:textColor="@color/radio_button"
+                    android:textColor="@color/very_light_gray"
                     android:layout_width="150dp"
                     android:layout_height="50dp"
                     android:background="@drawable/login_button"/>
@@ -57,30 +57,40 @@
                 <RadioButton
                     android:id="@+id/this_week_radio_button"
                     android:text="@string/my_running_this_week"
-                    android:textColor="@color/radio_button"
+                    android:textColor="@color/very_light_gray"
                     android:layout_width="100dp"
                     android:layout_marginLeft="0dp"
                     style="@style/My.RadioButton"/>
                 <RadioButton
                     android:id="@+id/total_radio_button"
                     android:text="@string/total"
-                    android:textColor="@color/radio_button"
+                    android:textColor="@color/very_light_gray"
                     android:layout_width="100dp"
                     style="@style/My.RadioButton"/>
             </RadioGroup>
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="210dp">
                 <TextView
                     android:id="@+id/laps"
                     android:text="16 Laps"
                     android:textSize="30dp"
                     android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
                     android:background="@drawable/laps_background"
                     android:layout_width="250dp"
                     android:layout_height="160dp"
                     android:gravity="center"
                     android:layout_centerInParent="true"/>
+                <TextView
+                    android:id="@+id/laps_unit_hint"
+                    android:text="1 laps = 0.8 km"
+                    android:textSize="16dp"
+                    android:textColor="@color/gray"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/laps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="match_parent"

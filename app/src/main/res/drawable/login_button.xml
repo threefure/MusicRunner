@@ -9,7 +9,7 @@
     </item>
     <item>
         <shape>
-            <stroke android:color="@color/radio_button" android:width="1dp"/>
+            <stroke android:color="@color/very_light_gray" android:width="1dp"/>
             <solid android:color="@color/white"/>
             <corners android:radius="15dp"/>
         </shape>

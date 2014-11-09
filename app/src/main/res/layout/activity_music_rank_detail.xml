@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:textColor="@color/button_border"/>
+                    android:textColor="@color/iron_gray"/>
                 <TextView
                     android:text="@string/best"
                     android:textSize="14dp"
@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:textColor="@color/button_border"/>
+                    android:textColor="@color/iron_gray"/>
                 <TextView
                     android:text="@string/average"
                     android:textSize="14dp"
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:textColor="@color/button_border"/>
+                    android:textColor="@color/iron_gray"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

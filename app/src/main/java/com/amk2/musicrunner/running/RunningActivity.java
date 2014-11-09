@@ -357,7 +357,7 @@ public class RunningActivity extends Activity implements
                     actualSec = totalSec % 60;
                     actualMin = totalSec / 60;
                     //if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
-                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE) == 0) {
+                    if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
                         notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;

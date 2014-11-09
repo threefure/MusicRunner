@@ -226,7 +226,7 @@ public class MapFragmentRun extends Fragment implements
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, LocationUtils.CAMERA_PAD));
 
         mMarker = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fox))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.dog_front))
                 .anchor(0.0f, 1.0f)
                 .position(curLoc).title("Yo"));
 

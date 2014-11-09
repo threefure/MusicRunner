@@ -78,6 +78,7 @@ public class SettingActivity extends Activity implements
 
     private String weightUnit = "";
     private String heightUnit = "";
+    private boolean isChanged = false;
 
     private TextView accountTextView;
     private TextView facebookTextView;
@@ -128,9 +129,9 @@ public class SettingActivity extends Activity implements
         setResult(RESULT_OK, intent);
 
         CharSequence language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
-        if (!usedLanguage.equals(language)) {
+        //if (!usedLanguage.equals(language)) {
             restartApp();
-        }
+        //}
         super.onBackPressed();
     }
 

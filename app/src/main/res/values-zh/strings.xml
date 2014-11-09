@@ -15,6 +15,7 @@
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
     <string name="go_running_button_text">跑吧</string>
+    <string name="you_are_now_listening_to">現正聽的音樂清單</string>
 
     <!-- Running Activity -->
     <string name="initial_duration">00 : 00 : 00</string>
@@ -67,6 +68,7 @@
     <string name="my_running_this_week">本週記錄</string>
     <string name="my_running_past_activities">過去活動</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="laps">圈</string>
 
     <!-- Latitude, longitude format -->
     <string name="latitude_longitude">%1$.8f, %2$.8f</string>

@@ -91,6 +91,7 @@ public class Constant {
         AutoCueMap.put("25 Minutes", 25);
         AutoCueMap.put("30 Minutes", 30);
     }
-
+    public static final String PLAYLIST = "playlist";
+    public static final String PLAYLIST_ID = "id";
 
 }

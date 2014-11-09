@@ -2,19 +2,31 @@ package com.amk2.musicrunner.start;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.musiclist.MusicListFragment;
 import com.amk2.musicrunner.running.RunningActivity;
+import com.amk2.musicrunner.utilities.MusicLib;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -28,6 +40,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by daz on 2014/4/22.
@@ -47,11 +61,16 @@ public class StartFragment extends Fragment implements
     private Activity mActivity;
     private View mFragmentView;
     private Button mGoRunningButton;
+    private TextView mPlaylistTitleTextView;
     private Marker marker = null;
     private MarkerOptions markerOptions;
 
+    private SharedPreferences mPlaylistSharedPreferences;
+    private Long playlistId;
+
     private LocationClient mLocationClient;
     private Location mCurrentLocation;
+    private Handler handler = new Handler();
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -64,6 +83,9 @@ public class StartFragment extends Fragment implements
     @Override
     public void onActivityCreated (Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
+        mPlaylistSharedPreferences = getActivity().getSharedPreferences(Constant.PLAYLIST, Context.MODE_PRIVATE);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mPlaylistChangedReceiver, new IntentFilter(MusicListFragment.CHANGE_PLAYLIST));
+        playlistId = mPlaylistSharedPreferences.getLong(Constant.PLAYLIST_ID, -1);
         initialize();
     }
 
@@ -96,6 +118,7 @@ public class StartFragment extends Fragment implements
         mLocationClient = new LocationClient(mActivity, this, this);
 
         findViews();
+        setViews();
         initButtons();
     }
 
@@ -105,7 +128,17 @@ public class StartFragment extends Fragment implements
 
     private void findViews() {
         mGoRunningButton = (Button)mFragmentView.findViewById(R.id.start_go_running);
+        mPlaylistTitleTextView = (TextView) mFragmentView.findViewById(R.id.chosen_playlist);
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.start_map)).getMap();
+    }
+
+    private void setViews() {
+        if (playlistId != -1) {
+            Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
+            String playlistName = MusicLib.getPlaylistName(getActivity(), playlistUri);
+            mPlaylistTitleTextView.setText(playlistName);
+        }
+
     }
 
     private void updateMap() {
@@ -190,4 +223,19 @@ public class StartFragment extends Fragment implements
             updateMap();
         }
     }
+
+    private void updatePlaylistTextView() {
+        Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
+        String playlistName = MusicLib.getPlaylistName(getActivity(), playlistUri);
+        mPlaylistTitleTextView.setText(playlistName);
+    }
+
+    private BroadcastReceiver mPlaylistChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            playlistId = extras.getLong(MusicListFragment.PLAYLIST_ID);
+            updatePlaylistTextView();
+        }
+    };
 }

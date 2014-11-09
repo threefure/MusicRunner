@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnPlaylistPreparedListener;
@@ -39,8 +40,10 @@ import java.util.ArrayList;
 public class MusicListFragment extends Fragment implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ View.OnClickListener, OnPlaylistPreparedListener, AdapterView.OnItemClickListener {
     public static final String CREATE_PLAYLIST = "com.amk2.music.create_playlist";
     public static final String UPDATE_PLAYLIST = "com.amk2.music.update_playlist";
+    public static final String CHANGE_PLAYLIST = "com.amk2.music.change_playlist";
     public static final String PLAYLIST_URI    = "playlist_uri";
     public static final String PLAYLIST_POSITION = "playlist_position";
+    public static final String PLAYLIST_ID = "playlist_id";
     private static final String TAG = "MusicListFragment";
     private static final int MUSIC_LOADER_ID = 1;
 
@@ -215,7 +218,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         public PlaylistPinnedSectionListAdapter(Context context, int resource, ArrayList<Object> list) {
             super(context, resource, list);
             mContext = context;
-            mPlaylistPreferences = mContext.getSharedPreferences("playlist", 0);
+            mPlaylistPreferences = mContext.getSharedPreferences(Constant.PLAYLIST, 0);
             mPlaylistArrayList = list;
             initSelectedPlaylist();
         }
@@ -227,10 +230,10 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
         }
 
         public void initSelectedPlaylist () {
-            Long id = mPlaylistPreferences.getLong("id", -1);
+            Long id = mPlaylistPreferences.getLong(Constant.PLAYLIST_ID, -1);
             if (id == -1 && mPlaylistArrayList.size() > 0) {
                 id = ((PlaylistMetaData)mPlaylistArrayList.get(1)).mId;
-                mPlaylistPreferences.edit().remove("id").putLong("id", id).commit();
+                mPlaylistPreferences.edit().remove(Constant.PLAYLIST_ID).putLong(Constant.PLAYLIST_ID, id).commit();
             }
         }
 
@@ -270,7 +273,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            Long selectedPlaylist = mPlaylistPreferences.getLong("id", -1);
+            Long selectedPlaylist = mPlaylistPreferences.getLong(Constant.PLAYLIST_ID, -1);
             if (view == null) {
                 if (getItemViewType(i) == TYPE_PLAYLIST) {
                     view = inflater.inflate(R.layout.music_list_template, null);
@@ -362,9 +365,9 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             switch (view.getId()) {
                 case R.id.choose_playlist:
                     Long newPlaylistId = (Long) view.getTag();
-                    Long oldPlaylistId = mPlaylistPreferences.getLong("id", -1);
+                    Long oldPlaylistId = mPlaylistPreferences.getLong(Constant.PLAYLIST_ID, -1);
                     if (!oldPlaylistId.equals(newPlaylistId)) {
-                        mPlaylistPreferences.edit().remove("id").putLong("id", newPlaylistId).commit();
+                        mPlaylistPreferences.edit().remove(Constant.PLAYLIST_ID).putLong(Constant.PLAYLIST_ID, newPlaylistId).commit();
                         view.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button_selected));
                         ((TextView)view).setTextColor(getResources().getColor(R.color.white));
                         if (mSelectedPlaylist != null) {
@@ -372,6 +375,8 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                             ((TextView) mSelectedPlaylist).setTextColor(getResources().getColor(R.color.black));
                         }
                         mSelectedPlaylist = view;
+
+                        notifyPlaylistChanged(newPlaylistId);
                     }
                     break;
             }
@@ -393,6 +398,12 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
                 mTitleTextView = title;
             }
         }
+    }
+
+    private void notifyPlaylistChanged (Long playlistId) {
+        Intent intent = new Intent(CHANGE_PLAYLIST);
+        intent.putExtra(PLAYLIST_ID, playlistId);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
     public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {

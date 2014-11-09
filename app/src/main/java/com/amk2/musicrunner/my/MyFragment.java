@@ -14,16 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.setting.SettingActivity;
@@ -31,8 +26,6 @@ import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEve
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.utilities.UnitConverter;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
@@ -42,6 +35,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private final String TAG = "MyFragment";
     private Activity mActivity;
     private ContentResolver mContentResolver;
+    private String LAPS;
 
     private boolean isThisWeekChecked = true;
 
@@ -49,6 +43,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private RadioButton thisWeekRadioButton;
     private RadioButton totalRadioButton;
 
+    private TextView lapsTextView;
+    private TextView lapsUnitHintTextView;
     private TextView caloriesTextView;
     private TextView durationTextView;
     private TextView distanceTextView;
@@ -77,6 +73,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private Integer unitSpeedPace;
     private Integer loginStatus;
 
+    private Handler handler = new Handler();
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.my_fragment, container, false);
@@ -93,6 +91,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         mContentResolver = getActivity().getContentResolver();
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         mLoginSharedPreferences   = getActivity().getSharedPreferences(LoginActivity.LOGIN, Context.MODE_PRIVATE);
+        LAPS = getString(R.string.laps);
         initViews();
         getSharedPreferences();
         getTotalDataFromDB();
@@ -112,6 +111,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         thisWeekRadioButton        = (RadioButton) thisView.findViewById(R.id.this_week_radio_button);
         totalRadioButton           = (RadioButton) thisView.findViewById(R.id.total_radio_button);
 
+        lapsTextView               = (TextView) thisView.findViewById(R.id.laps);
+        lapsUnitHintTextView       = (TextView) thisView.findViewById(R.id.laps_unit_hint);
         caloriesTextView           = (TextView) thisView.findViewById(R.id.calories);
         durationTextView           = (TextView) thisView.findViewById(R.id.duration);
         distanceTextView           = (TextView) thisView.findViewById(R.id.distance);
@@ -130,11 +131,14 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     }
 
     public void setViews () {
+        String lapsUnitHintString = "1 " + LAPS + " = ";
         thisWeekTotalRadioGroup.check(R.id.this_week_radio_button);
         if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
             distanceUnitTextView.setText(R.string.km);
+            lapsUnitHintString += ("0.8 " + getString(R.string.km));
         } else {
             distanceUnitTextView.setText(R.string.mi);
+            lapsUnitHintString += ("0.5 " + getString(R.string.mi));
         }
 
         updateSummary(weeklyCalories, weeklyDistance, weeklyDuration);
@@ -147,6 +151,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
             loginContainer.setVisibility(View.VISIBLE);
             userInfoContainer.setVisibility(View.GONE);
         }
+
+        lapsUnitHintTextView.setText(lapsUnitHintString);
     }
 
     private void getSharedPreferences () {
@@ -211,6 +217,51 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         String durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(duration));
         durationTextView.setText(durationString);
         distanceTextView.setText(StringLib.truncateDoubleString(distance.toString(), 2));
+
+        GetLapsRunnable getLapsRunnable = new GetLapsRunnable(distance);
+        Thread getLapsThread = new Thread(getLapsRunnable);
+        getLapsThread.start();
+    }
+
+    public void updateLaps (Double laps) {
+        final String lapsString = laps.toString();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                lapsTextView.setText(lapsString + " " + LAPS);
+            }
+        });
+
+    }
+
+    public class GetLapsRunnable implements Runnable {
+        Double shownDistance;
+        Double distance;
+        Double lapUnit;
+        public GetLapsRunnable (Double distance) {
+            if (unitDistance == SettingActivity.SETTING_DISTANCE_KM) {
+                this.distance = distance;
+                lapUnit = 0.8;
+            } else {
+                this.distance = UnitConverter.getMIFromKM(distance);
+                lapUnit = 0.5;
+            }
+            shownDistance = 0.0;
+        }
+        @Override
+        public void run() {
+            try {
+                updateLaps(0.0);
+                while (distance > lapUnit) {
+                    shownDistance ++;
+                    updateLaps(shownDistance);
+                    distance -= lapUnit;
+                    Thread.sleep(20);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -238,7 +289,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
 
                         updateSummary(weeklyCalories, weeklyDistance, weeklyDuration);
                         thisWeekRadioButton.setTextColor(getResources().getColor(R.color.white));
-                        totalRadioButton.setTextColor(getResources().getColor(R.color.radio_button));
+                        totalRadioButton.setTextColor(getResources().getColor(R.color.very_light_gray));
                     }
                 } else if (id == R.id.total_radio_button) {
                     if (isThisWeekChecked) {
@@ -246,7 +297,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                         isThisWeekChecked = false;
 
                         updateSummary(totalCalories, totalDistance, totalDuration);
-                        thisWeekRadioButton.setTextColor(getResources().getColor(R.color.radio_button));
+                        thisWeekRadioButton.setTextColor(getResources().getColor(R.color.very_light_gray));
                         totalRadioButton.setTextColor(getResources().getColor(R.color.white));
                     }
                 }
