@@ -10,9 +10,35 @@
         android:layout_height="wrap_content"/>
 
     <com.amk2.musicrunner.views.GifView
-        custom:gif_src="@raw/running_noturn"
+        custom:gif_src="@drawable/runzai"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>
 
+    <LinearLayout
+        android:background="@drawable/arrow_button_clickable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+        <Button
+            android:id="@+id/to_music_player_button"
+            android:background="@drawable/right_arrow"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:background="@drawable/arrow_button_clickable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" >
+        <Button
+            android:id="@+id/to_map_button"
+            android:background="@drawable/left_arrow"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
 </RelativeLayout>

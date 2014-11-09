@@ -17,7 +17,7 @@
         android:id="@+id/music_controller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/music_control_container"
@@ -124,18 +124,6 @@
 
         </LinearLayout>
         <LinearLayout
-            android:background="@drawable/arrow_button_clickable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/running_info_container">
-            <Button
-                android:id="@+id/back_to_distance_button"
-                android:background="@drawable/left_arrow"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"/>
-        </LinearLayout>
-        <LinearLayout
             android:id="@+id/running_info_container"
             android:layout_width="match_parent"
             android:layout_height="90dp"
@@ -207,6 +195,18 @@
                     style="@style/Running.StatisticUnits"/>
             </LinearLayout-->
 
+        </LinearLayout>
+        <LinearLayout
+            android:background="@drawable/arrow_button_clickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+            <Button
+                android:id="@+id/back_to_distance_button"
+                android:background="@drawable/left_arrow"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"/>
         </LinearLayout>
 
     </RelativeLayout>

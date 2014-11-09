@@ -50,7 +50,13 @@ import java.util.TimerTask;
 /**
  * Created by ktlee on 5/10/14.
  */
-public class RunningActivity extends Activity implements ViewPager.OnPageChangeListener, View.OnClickListener, MusicControllerFragment.OnChangeSongListener, DistanceFragment.OnBackToDistanceListener {
+public class RunningActivity extends Activity implements
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener,
+        MusicControllerFragment.OnChangeSongListener,
+        DistanceFragment.OnBackToDistanceListener,
+        MusicControllerFragment.OnChangeToMusicControllerListener,
+        MapFragmentRun.OnChangeToMapListener{
 
     public final String TAG = "RunningActivity";
 
@@ -216,6 +222,8 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
             mDistanceFragment = new DistanceFragment();
             transaction.add(R.id.running_view_pager, mDistanceFragment, RunningFragmentTag.DISTANCE_FRAGMENT_TAG);
         }
+        mDistanceFragment.setOnChangeToMusicControllerListener(this);
+        mDistanceFragment.setOnChangeToMapListener(this);
 
         // Init MusicControllerFragment
         mMusicControllerFragment = (MusicControllerFragment)mFragmentManager.findFragmentByTag(RunningFragmentTag.MUSIC_FRAGMENT_TAG);
@@ -563,4 +571,13 @@ public class RunningActivity extends Activity implements ViewPager.OnPageChangeL
         mRunningViewPager.setCurrentItem(RunningPageState.DISTANCE);
     }
 
+    @Override
+    public void onChangeToMusicController() {
+        mRunningViewPager.setCurrentItem(RunningPageState.MUSIC);
+    }
+
+    @Override
+    public void onChangeToMap() {
+        mRunningViewPager.setCurrentItem(RunningPageState.MAP);
+    }
 }

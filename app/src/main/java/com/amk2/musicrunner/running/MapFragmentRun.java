@@ -74,6 +74,10 @@ public class MapFragmentRun extends Fragment implements
 
     boolean mUpdatesRequested = false;
 
+    public interface OnChangeToMapListener {
+        public void onChangeToMap ();
+    }
+
     public void setOnBackToDistanceListener(OnBackToDistanceListener listener) {
         mOnBackToDistanceListener = listener;
     }

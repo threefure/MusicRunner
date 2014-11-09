@@ -24,6 +24,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -109,7 +110,8 @@ public class StartFragment extends Fragment implements
 
     private void updateMap() {
         LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16), 2, this);
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentLatLng, 17, 70, 0)));
+
         markerOptions.position(currentLatLng);
         if (marker == null) {
             marker = googleMap.addMarker(markerOptions);

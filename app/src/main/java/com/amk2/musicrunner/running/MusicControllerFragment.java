@@ -57,6 +57,11 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
     public interface OnChangeSongListener {
         void onChangeMusicSong(MusicRecord previousRecord);
     }
+
+    public interface OnChangeToMusicControllerListener {
+        void onChangeToMusicController();
+    }
+
     private OnChangeSongListener mOnChangeSongListener;
     private OnBackToDistanceListener mOnBackToDistanceListener;
 

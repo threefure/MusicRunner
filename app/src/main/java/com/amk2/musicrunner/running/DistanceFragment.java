@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.amk2.musicrunner.R;
@@ -20,9 +21,13 @@ import java.util.AbstractMap;
 /**
  * Created by logicmelody on 2014/8/31.
  */
-public class DistanceFragment extends Fragment {
+public class DistanceFragment extends Fragment implements View.OnClickListener{
+    private MusicControllerFragment.OnChangeToMusicControllerListener mOnChangeToMusicControllerListener;
+    private MapFragmentRun.OnChangeToMapListener mOnChangeToMapListener;
 
     private MusicRunnerLineRunningView dottedLineView;
+    private Button toMusicPlayerButton;
+    private Button toMapButton;
 
     public int getP_speed() {
         return p_speed;
@@ -47,7 +52,12 @@ public class DistanceFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         dottedLineView = (MusicRunnerLineRunningView) getView().findViewById(R.id.music_runner_line_running_view);
+        toMusicPlayerButton = (Button) getView().findViewById(R.id.to_music_player_button);
+        toMapButton         = (Button) getView().findViewById(R.id.to_map_button);
         distanceFragmentThread.start();
+
+        toMusicPlayerButton.setOnClickListener(this);
+        toMapButton.setOnClickListener(this);
     }
 
     @Override
@@ -71,4 +81,23 @@ public class DistanceFragment extends Fragment {
     });
 
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.to_map_button:
+                mOnChangeToMapListener.onChangeToMap();
+                break;
+            case R.id.to_music_player_button:
+                mOnChangeToMusicControllerListener.onChangeToMusicController();
+                break;
+        }
+    }
+
+    public void setOnChangeToMusicControllerListener (MusicControllerFragment.OnChangeToMusicControllerListener listener) {
+        mOnChangeToMusicControllerListener = listener;
+    }
+
+    public void setOnChangeToMapListener (MapFragmentRun.OnChangeToMapListener listener) {
+        mOnChangeToMapListener = listener;
+    }
 }
