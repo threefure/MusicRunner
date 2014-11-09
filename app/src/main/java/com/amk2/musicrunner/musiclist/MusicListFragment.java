@@ -139,7 +139,7 @@ public class MusicListFragment extends Fragment implements /*LoaderManager.Loade
             playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
 
             Intent addMusicToPlaylistIntent = new Intent(getActivity(), MusicListDetailActivity.class);
-            addMusicToPlaylistIntent.putExtra(MusicListFragment.PLAYLIST_POSITION, 0);
+            addMusicToPlaylistIntent.putExtra(MusicListFragment.PLAYLIST_POSITION, 7);
             addMusicToPlaylistIntent.putExtra(MusicListDetailActivity.PLAYLIST_ID, playlistId);
             startActivity(addMusicToPlaylistIntent);
         }
