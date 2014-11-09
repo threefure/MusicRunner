@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.login;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
@@ -45,30 +47,36 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     public static final int MUSIC_RUNNER_MAIN_REQUEST = 100;
     public static final int FACEBOOK_LOGIN_REQUEST = 101;
 
+    private ActionBar mActionBar;
     private Button skipButton;
+    private LinearLayout signUpWithFacebook;
+
     private SharedPreferences loginSharedPreferences;
     private int loginStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
+        mActionBar = getActionBar();
         loginSharedPreferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         loginStatus = loginSharedPreferences.getInt(STATUS, STATUS_NONE);
-        if (loginStatus == STATUS_NONE) {
-            initViews();
-            setViews();
 
+        if (loginStatus == STATUS_NONE) {
             //if sharedpreference has value, then login automatically
             String userAccount = SharedPreferencesUtility.getAccount(this);
             if (StringLib.hasValue(userAccount)) {
                 Intent redirectIntent = new Intent(this, MusicRunnerActivity.class);
-                startActivityForResult(redirectIntent, MUSIC_RUNNER_MAIN_REQUEST);
-                finish();
+                redirectIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(redirectIntent);
+            } else {
+                initViews();
+                setActionBar();
+                setViews();
             }
         } else {
             Intent intent = new Intent(this, MusicRunnerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-            finish();
         }
 
         /*PackageInfo info = null;
@@ -91,10 +99,16 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private void initViews () {
         skipButton = (Button) findViewById(R.id.login_skip);
+        signUpWithFacebook = (LinearLayout) findViewById(R.id.sign_up_with_fb);
     }
 
     private void setViews () {
         skipButton.setOnClickListener(this);
+        signUpWithFacebook.setOnClickListener(this);
+    }
+
+    private void setActionBar () {
+        mActionBar.hide();
     }
 
     public void facebookLogin(View view){
@@ -222,24 +236,28 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(MUSIC_RUNNER_MAIN_REQUEST == requestCode && RESULT_OK == resultCode) {
-            finish();
-        } else if (FACEBOOK_LOGIN_REQUEST == requestCode && RESULT_OK == resultCode) {
+        if (FACEBOOK_LOGIN_REQUEST == requestCode && RESULT_OK == resultCode) {
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-            finish();
         }
     }
 
     @Override
     public void onClick(View view) {
+        Intent intent;
         switch (view.getId()) {
             case R.id.login_skip:
                 loginSharedPreferences.edit().putInt(STATUS, STATUS_LOGOUT).commit();
-                Intent intent = new Intent(this, MusicRunnerActivity.class);
+                intent = new Intent(this, MusicRunnerActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
+                break;
+            case R.id.sign_up_with_fb:
+                intent = new Intent(this, FBLogin.class);
+                startActivityForResult(intent, FACEBOOK_LOGIN_REQUEST);
                 break;
         }
     }

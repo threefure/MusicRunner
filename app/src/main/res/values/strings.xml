@@ -91,8 +91,12 @@
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">708954652520589</string>
     <string name="title_activity_setting">SettingActivity</string>
-    <string name="skip">Skip!</string>
+    <string name="skip">Skip</string>
     <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget your password?</string>
+    <string name="sign_up_with_email">Sign Up with E-mail</string>
+    <string name="sign_up_with_fb">Sign Up with Facebook</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>

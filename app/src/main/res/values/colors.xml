@@ -102,4 +102,8 @@
     <!-- User instruction -->
     <color name="user_instruction_background">#77000000</color>
 
+    <!-- Login Activity -->
+    <color name="login_edit_text">#99FFFFFF</color>
+    <color name="fb_blue">#4A90E2</color>
+
 </resources>

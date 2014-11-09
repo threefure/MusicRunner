@@ -91,8 +91,12 @@
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">708954652520589</string>
     <string name="title_activity_setting">SettingActivity</string>
-    <string name="skip">試試看！</string>
+    <string name="skip">試試看</string>
     <string name="login">登入</string>
+    <string name="password">密碼</string>
+    <string name="forget_password">忘了密碼？</string>
+    <string name="sign_up_with_email">E-mail註冊</string>
+    <string name="sign_up_with_fb">Facebook註冊</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
