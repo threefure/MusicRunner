@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -43,6 +44,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private RadioButton thisWeekRadioButton;
     private RadioButton totalRadioButton;
 
+    private ImageView userIconImageView;
     private TextView lapsTextView;
     private TextView lapsUnitHintTextView;
     private TextView caloriesTextView;
@@ -111,6 +113,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         thisWeekRadioButton        = (RadioButton) thisView.findViewById(R.id.this_week_radio_button);
         totalRadioButton           = (RadioButton) thisView.findViewById(R.id.total_radio_button);
 
+        userIconImageView          = (ImageView) thisView.findViewById(R.id.user_icon);
         lapsTextView               = (TextView) thisView.findViewById(R.id.laps);
         lapsUnitHintTextView       = (TextView) thisView.findViewById(R.id.laps_unit_hint);
         caloriesTextView           = (TextView) thisView.findViewById(R.id.calories);
@@ -125,6 +128,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         loginContainer             = (LinearLayout) thisView.findViewById(R.id.login_container);
 
 
+        userIconImageView.setOnClickListener(this);
         thisWeekTotalRadioGroup.setOnCheckedChangeListener(this);
         pastActivitiesButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
@@ -275,6 +279,9 @@ public class MyFragment extends Fragment implements View.OnClickListener,
             case R.id.login_button:
                 mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
                 startActivity(new Intent(mActivity, LoginActivity.class));
+                break;
+            case R.id.user_icon:
+                startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
         }
     }

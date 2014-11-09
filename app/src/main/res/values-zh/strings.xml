@@ -16,6 +16,7 @@
     <string name="humidity">Humidity</string>
     <string name="go_running_button_text">跑吧</string>
     <string name="you_are_now_listening_to">現正聽的音樂清單</string>
+    <string name="no_playlist_selected">無選取音樂清單，按我選取！</string>
 
     <!-- Running Activity -->
     <string name="initial_duration">00 : 00 : 00</string>

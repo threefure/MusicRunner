@@ -16,6 +16,7 @@
     <string name="humidity">Humidity</string>
     <string name="go_running_button_text">Go Running</string>
     <string name="you_are_now_listening_to">Chosen Playlist</string>
+    <string name="no_playlist_selected">No playlist selected! Click to pick one!</string>
 
     <!-- Running Activity -->
     <string name="initial_duration">00 : 00 : 00</string>

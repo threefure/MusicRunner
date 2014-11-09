@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,6 +161,7 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
                     }
                 }
                 if (isUpdatePlaylist) {
+                    Log.d("add to playlist", "update");
                     Intent intent = new Intent(MusicListFragment.UPDATE_PLAYLIST);
                     intent.putExtra(UPDATE_ALL_PLAYLIST, true);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

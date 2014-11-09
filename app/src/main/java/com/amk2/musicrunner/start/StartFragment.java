@@ -147,6 +147,8 @@ public class StartFragment extends Fragment implements
             Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
             String playlistName = MusicLib.getPlaylistName(getActivity(), playlistUri);
             mPlaylistTitleTextView.setText(playlistName);
+        } else {
+            mPlaylistTitleTextView.setText(R.string.no_playlist_selected);
         }
         chosenPlaylistContainerLinearLayout.setOnClickListener(this);
     }

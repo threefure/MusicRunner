@@ -6,7 +6,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:background="@color/white">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,6 +25,8 @@
                 <ImageView
                     android:id="@+id/user_icon"
                     android:src="@drawable/dog_bird_head"
+                    android:background="@drawable/shadow_button"
+                    android:padding="3dp"
                     android:layout_width="70dp"
                     android:layout_height="70dp" />
                 <TextView
@@ -168,7 +171,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginBottom="50dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
                 <Button
                     android:id="@+id/past_activities_button"
                     android:text="@string/my_running_past_activities"
