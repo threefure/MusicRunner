@@ -66,7 +66,7 @@ public final class LocationUtils {
     // A fast interval ceiling
     public static final int FAST_CEILING_IN_SECONDS = 1;
 
-    public static final int LINE_WIDTH = 10;
+    public static final int LINE_WIDTH = 20;
     public static final int TOLERANCE_TIMES = 5;
     public static final double MIN_DISTANCE = 1;
     public static final int METER_CONVERSTION = 1609;

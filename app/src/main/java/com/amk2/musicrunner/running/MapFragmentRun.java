@@ -13,6 +13,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -213,6 +215,8 @@ public class MapFragmentRun extends Fragment implements
     public void onLocationChanged(Location location) {
         double lat = location.getLatitude();
         double lng = location.getLongitude();
+        // calculate speed for km/min
+        mSpeed = location.getSpeed() * 60 / 1000;
 
         LatLng curLoc = new LatLng(lat, lng);
 
@@ -226,12 +230,11 @@ public class MapFragmentRun extends Fragment implements
                 .anchor(0.0f, 1.0f)
                 .position(curLoc).title("Yo"));
 
-
-        Log.e("onLocationChanged!!!", String.valueOf(lat) + String.valueOf(lng));
         drawLine(curLoc);
     }
 
     private void drawLine(LatLng curr) {
+
         double distance;
         if (mTrackList == null) {
             mTrackList = new ArrayList<LatLng>();
@@ -244,14 +247,21 @@ public class MapFragmentRun extends Fragment implements
             mTrackList.add(new LatLng(curr.latitude, curr.longitude));
             mColorList.add(mColor);
         } else {
-            distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
-
             // draw the line, and save it.
-            if (distance > LocationUtils.MIN_DISTANCE) {
+            if (mSpeed > 0) {
+                distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
                 mTotalDistance += distance;
-                mSpeed = distance / LocationUtils.UPDATE_INTERVAL_IN_SECONDS;
                 mTrackList.add(curr);
                 mColorList.add(mColor);
+
+                CircleOptions circleOptions = new CircleOptions()
+                        .center((new LatLng(mlastLoc.latitude, mlastLoc.longitude)))
+                        .fillColor(ColorGenerator.generateColor(mColor))
+                        .strokeColor(ColorGenerator.generateColor(mColor))
+                        .radius((LocationUtils.LINE_WIDTH * 0.01));
+
+                mMap.addCircle(circleOptions);
+
                 PolylineOptions polylineOpt = new PolylineOptions();
                 polylineOpt.add(mlastLoc).add(curr);
                 polylineOpt.color(ColorGenerator.generateColor(mColor));
@@ -260,8 +270,6 @@ public class MapFragmentRun extends Fragment implements
                 line.setWidth(LocationUtils.LINE_WIDTH);
 
                 mlastLoc = curr;
-            } else {
-                mSpeed = 0;
             }
         }
     }
