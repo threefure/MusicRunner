@@ -293,4 +293,11 @@
         <item name="android:layout_marginLeft">30dp</item>
         <item name="android:layout_marginRight">30dp</item>
     </style>
+    <style name="Login.GenderRadioButton" parent="Login.EditTextContainer">
+        <item name="android:background">@drawable/login_gender_radio_button</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
 </resources>

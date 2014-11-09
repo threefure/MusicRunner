@@ -49,6 +49,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private ActionBar mActionBar;
     private Button skipButton;
+    private LinearLayout signUpWithEmail;
     private LinearLayout signUpWithFacebook;
 
     private SharedPreferences loginSharedPreferences;
@@ -99,11 +100,13 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private void initViews () {
         skipButton = (Button) findViewById(R.id.login_skip);
+        signUpWithEmail    = (LinearLayout) findViewById(R.id.sign_up_with_email);
         signUpWithFacebook = (LinearLayout) findViewById(R.id.sign_up_with_fb);
     }
 
     private void setViews () {
         skipButton.setOnClickListener(this);
+        signUpWithEmail.setOnClickListener(this);
         signUpWithFacebook.setOnClickListener(this);
     }
 
@@ -258,6 +261,10 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             case R.id.sign_up_with_fb:
                 intent = new Intent(this, FBLogin.class);
                 startActivityForResult(intent, FACEBOOK_LOGIN_REQUEST);
+                break;
+            case R.id.sign_up_with_email:
+                intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
                 break;
         }
     }
