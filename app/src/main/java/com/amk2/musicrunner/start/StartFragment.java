@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,21 +57,29 @@ public class StartFragment extends Fragment implements
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    private GoogleMap googleMap;
+
+
+    private Long playlistId;
 
     private Activity mActivity;
     private View mFragmentView;
+
     private Button mGoRunningButton;
     private TextView mPlaylistTitleTextView;
-    private Marker marker = null;
-    private MarkerOptions markerOptions;
+    private LinearLayout chosenPlaylistContainerLinearLayout;
 
     private SharedPreferences mPlaylistSharedPreferences;
-    private Long playlistId;
+    private OnGoToPlaylistTabListener mOnGoToPlaylistTabListener;
 
+    private GoogleMap googleMap;
+    private Marker marker = null;
+    private MarkerOptions markerOptions;
     private LocationClient mLocationClient;
     private Location mCurrentLocation;
-    private Handler handler = new Handler();
+
+    public interface OnGoToPlaylistTabListener {
+        public void OnGoToPlaylistTab();
+    }
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -127,9 +136,10 @@ public class StartFragment extends Fragment implements
     }
 
     private void findViews() {
-        mGoRunningButton = (Button)mFragmentView.findViewById(R.id.start_go_running);
-        mPlaylistTitleTextView = (TextView) mFragmentView.findViewById(R.id.chosen_playlist);
-        googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.start_map)).getMap();
+        mGoRunningButton                    = (Button)mFragmentView.findViewById(R.id.start_go_running);
+        chosenPlaylistContainerLinearLayout = (LinearLayout) mFragmentView.findViewById(R.id.chosen_playlist_container);
+        mPlaylistTitleTextView              = (TextView) mFragmentView.findViewById(R.id.chosen_playlist);
+        googleMap                           = ((MapFragment) getFragmentManager().findFragmentById(R.id.start_map)).getMap();
     }
 
     private void setViews() {
@@ -138,7 +148,7 @@ public class StartFragment extends Fragment implements
             String playlistName = MusicLib.getPlaylistName(getActivity(), playlistUri);
             mPlaylistTitleTextView.setText(playlistName);
         }
-
+        chosenPlaylistContainerLinearLayout.setOnClickListener(this);
     }
 
     private void updateMap() {
@@ -158,6 +168,9 @@ public class StartFragment extends Fragment implements
         switch(view.getId()) {
             case R.id.start_go_running:
                 startActivity(new Intent(mActivity, RunningActivity.class));
+                break;
+            case R.id.chosen_playlist_container:
+                mOnGoToPlaylistTabListener.OnGoToPlaylistTab();
                 break;
         }
     }
@@ -238,4 +251,8 @@ public class StartFragment extends Fragment implements
             updatePlaylistTextView();
         }
     };
+
+    public void setOnGoToPlaylistTabListener (OnGoToPlaylistTabListener listener) {
+        mOnGoToPlaylistTabListener = listener;
+    }
 }

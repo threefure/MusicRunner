@@ -32,7 +32,8 @@ import android.widget.TabHost;
  *
  * @author DannyLin
  */
-public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, View.OnClickListener {
+public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, View.OnClickListener,
+            StartFragment.OnGoToPlaylistTabListener{
 
     public static final int REQUEST_SETTING = 1;
 
@@ -129,6 +130,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             mStartFragment = new StartFragment();
             transaction.add(R.id.tab_pager, mStartFragment, FragmentTag.START_FRAGMENT_TAG);
         }
+        mStartFragment.setOnGoToPlaylistTabListener(this);
 
         // Init MyFragment
         mMyFragment = (MyFragment) mFragmentManager.findFragmentByTag(FragmentTag.MY_FRAGMENT_TAG);
@@ -395,5 +397,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
                 mMainActivity.startActivityForResult(new Intent(mMainActivity, SettingActivity.class), REQUEST_SETTING);
                 break;
         }
+    }
+
+    @Override
+    public void OnGoToPlaylistTab() {
+        mViewPager.setCurrentItem(TabState.MUSIC_LIST);
     }
 }
