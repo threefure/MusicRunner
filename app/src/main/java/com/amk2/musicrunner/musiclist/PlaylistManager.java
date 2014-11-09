@@ -212,9 +212,11 @@ public class PlaylistManager{
         Uri playlistUri;
         String playlistName;
         String[] projection = {
-            MediaStore.Audio.Playlists._ID
+            MediaStore.Audio.Playlists._ID,
+            MediaStore.Audio.Playlists.DATE_ADDED
         };
-        Cursor cursor = contentResolver.query(allPlaylistUri, projection, null, null, null);
+        String orderBy = MediaStore.Audio.Playlists.DATE_ADDED + " DESC";
+        Cursor cursor = contentResolver.query(allPlaylistUri, projection, null, null, orderBy);
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 playlistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));

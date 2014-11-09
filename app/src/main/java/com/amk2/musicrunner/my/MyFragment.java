@@ -224,7 +224,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     }
 
     public void updateLaps (Double laps) {
-        final String lapsString = laps.toString();
+        final String lapsString = StringLib.truncateDoubleString(laps.toString(), 1);
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -258,6 +258,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                     distance -= lapUnit;
                     Thread.sleep(20);
                 }
+                shownDistance += (distance/lapUnit);
+                updateLaps(shownDistance);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

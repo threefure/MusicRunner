@@ -126,7 +126,7 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
     private Handler handler = new Handler();
 
     @Override
-    public void OnPlaylistPrepared(ArrayList<Object> playlistMetaDataHashMap) {
+    public void OnPlaylistPrepared(ArrayList<Object> playlistMetaDataHashMap, ArrayList<PlaylistMetaData> UGPlaylistMetaData) {
         mPlaylistMetaData = playlistMetaDataHashMap;
         handler.post(new Runnable() {
             @Override
@@ -381,7 +381,7 @@ public class MusicAddToPlaylistActivity extends Activity implements OnPlaylistPr
             ArrayList<PlaylistMetaData> UGPlaylistMetaDatas = playlistManager.getUserGeneratedPlaylist();
             playlistMetaDatas.addAll(UGPlaylistMetaDatas);
 
-            mPlaylistPreparedListener.OnPlaylistPrepared(playlistMetaDatas);
+            mPlaylistPreparedListener.OnPlaylistPrepared(playlistMetaDatas, null);
             //need to destroy loader so that onLoadFinished won't be called twice
             getLoaderManager().destroyLoader(MUSIC_LOADER_ID);
             Thread.interrupted();
