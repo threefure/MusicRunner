@@ -15,15 +15,23 @@ import android.os.*;
 import android.os.Process;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
@@ -47,6 +55,8 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
     private static final int ADD_MUSIC = 1;
     private static final int UPDATE_INFO = 2;
+    private static final int LEFT  = 0;
+    private static final int RIGHT = 1;
 
     private boolean isPlaylistUpdated = false;
     private Integer tracks;
@@ -208,13 +218,17 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
     @Override
     public void onActivityResult (int reqCode, int resCode, Intent data) {
         if (reqCode == REQUEST_ADD_MUSIC_TO_PLAYLIST && resCode == RESULT_OK) {
-            isPlaylistUpdated = true;
-            duration = 0;
-            tracks = 0;
-            PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
-            Thread loaderThread = new Thread(loader);
-            loaderThread.start();
+            updatePlaylist();
         }
+    }
+
+    private void updatePlaylist () {
+        isPlaylistUpdated = true;
+        duration = 0;
+        tracks = 0;
+        PlaylistLoaderRunnable loader = new PlaylistLoaderRunnable(this);
+        Thread loaderThread = new Thread(loader);
+        loaderThread.start();
     }
 
     public class PlaylistLoaderRunnable implements Runnable{
@@ -261,24 +275,28 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                         }
                         albumPhoto = MusicLib.getMusicAlbumArt(filePath);
 
-                        MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto);
+                        MusicMetaData metaData = new MusicMetaData(title, artist, duration, bpm, albumPhoto, audio_id);
                         musicMetaDataArrayList.add(metaData);
                     }
-                    //listener.OnSongPrepared(metaData);
                 }
                 listener.OnSongLoadedFinished(musicMetaDataArrayList);
+            } else {
+                listener.OnSongLoadedFinished(new ArrayList<MusicMetaData>());
             }
             cursor.close();
             Thread.interrupted();
         }
     }
 
-    private class PlaylistDetailAdapter extends ArrayAdapter<MusicMetaData> {
+    private class PlaylistDetailAdapter extends ArrayAdapter<MusicMetaData> implements View.OnTouchListener, View.OnClickListener {
+        private View mSwipeView;
         private ArrayList<MusicMetaData> mMusicMetaDataArrayList;
+        private boolean isMove = false, isOpened = false;
+        private float originX, offset;
+        private int maxOffset = -1, direction;
 
         public PlaylistDetailAdapter(Context context, int resource, ArrayList<MusicMetaData> musicMeatDataArrayList) {
             super(context, resource);
-
             mMusicMetaDataArrayList = musicMeatDataArrayList;
         }
 
@@ -310,6 +328,8 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             TextView artist;
             ImageView albumPhoto;
             ImageView songTempo;
+            RelativeLayout songContainer;
+            Button deleteButton;
             if (view == null) {
                 // inflate the view
                 view = inflater.inflate(R.layout.music_list_item_template, null);
@@ -318,11 +338,15 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 artist          = (TextView) view.findViewById(R.id.artist);
                 albumPhoto     = (ImageView) view.findViewById(R.id.album_photo);
                 songTempo      = (ImageView) view.findViewById(R.id.song_tempo);
+                songContainer  = (RelativeLayout) view.findViewById(R.id.song_container);
+                deleteButton   = (Button) view.findViewById(R.id.delete);
 
                 // setting tag for song view
-                SongViewTag songViewTag = new SongViewTag(songIndexNumber, title, artist, albumPhoto, songTempo);
+                SongViewTag songViewTag = new SongViewTag(songIndexNumber, title, artist, albumPhoto, songTempo, songContainer, deleteButton);
                 view.setTag(songViewTag);
 
+                PositionAndIdViewTag positionAndIdViewTag = new PositionAndIdViewTag(i, musicMetaData.mAudioId);
+                deleteButton.setTag(positionAndIdViewTag);
 
             } else {
                 //reuse the view
@@ -332,6 +356,13 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 artist          = songViewTag.artist;
                 albumPhoto      = songViewTag.albumPhoto;
                 songTempo       = songViewTag.songTempo;
+                songContainer   = songViewTag.songContainer;
+                deleteButton    = songViewTag.deleteButton;
+
+                PositionAndIdViewTag positionAndIdViewTag = (PositionAndIdViewTag) deleteButton.getTag();
+                positionAndIdViewTag.audioId = musicMetaData.mAudioId;
+                positionAndIdViewTag.position = i;
+                deleteButton.setTag(positionAndIdViewTag);
             }
 
             // setting song index
@@ -362,7 +393,100 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 songTempo.setImageResource(R.drawable.lay);
             }
 
+            // setting swipe feature for songContainer
+            songContainer.setOnTouchListener(this);
+
+            if (maxOffset == -1) {
+                maxOffset = deleteButton.getLayoutParams().width;
+            }
+
+            deleteButton.setOnClickListener(this);
+
             return view;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            int action = MotionEventCompat.getActionMasked(motionEvent);
+            switch(action) {
+                case (MotionEvent.ACTION_DOWN) :
+                    if (isOpened && view != mSwipeView) {
+                        isOpened = false;
+                        mSwipeView.setX(mSwipeView.getX() + maxOffset);
+                    }
+                    offset = 0;
+                    originX = motionEvent.getX();
+                    return true;
+                case (MotionEvent.ACTION_MOVE) :
+                    motionEvent.getAction();
+                    offset = motionEvent.getX() - originX;
+                    if (isOpened) {
+                        direction = RIGHT;
+                    } else {
+                        direction = LEFT;
+                    }
+                    if (Math.abs(offset) > 3) {
+                        isMove = true;
+                    }
+                    return true;
+
+                case (MotionEvent.ACTION_UP) :
+                    if (isMove) {
+                        TranslateAnimation translateAnimation ;
+                        if (direction == LEFT) {
+                            isOpened = true;
+                            translateAnimation = new TranslateAnimation(
+                                    Animation.ABSOLUTE, maxOffset,
+                                    Animation.RELATIVE_TO_SELF, 0,
+                                    Animation.RELATIVE_TO_SELF, 0,
+                                    Animation.RELATIVE_TO_SELF, 0);
+                            view.setX(view.getX() - maxOffset);
+                            mSwipeView = view;
+                        } else {
+                            isOpened = false;
+                            translateAnimation = new TranslateAnimation(
+                                    Animation.ABSOLUTE, -maxOffset,
+                                    Animation.RELATIVE_TO_SELF, 0,
+                                    Animation.RELATIVE_TO_SELF, 0,
+                                    Animation.RELATIVE_TO_SELF, 0);
+                            view.setX(view.getX() + maxOffset);
+                        }
+
+                        translateAnimation.setDuration(100);
+                        AnimationSet animationSet = new AnimationSet(true);
+                        animationSet.addAnimation(translateAnimation);
+                        animationSet.setFillBefore(false);
+                        animationSet.setFillAfter(true);
+                        view.startAnimation(animationSet);
+
+                        isMove = false;
+                    }
+                    return true;
+                case (MotionEvent.ACTION_CANCEL) :
+                    isMove = false;
+                    return true;
+                case (MotionEvent.ACTION_OUTSIDE) :
+                    isMove = false;
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.delete:
+                    PositionAndIdViewTag positionAndIdViewTag = (PositionAndIdViewTag) view.getTag();
+                    Long audioId = positionAndIdViewTag.audioId;
+                    int numberOfDelete = MusicLib.deleteSongFromPlaylist(getContext(), playlistMemberUri, audioId);
+                    Log.d(TAG, "number of delete" + numberOfDelete);
+                    if (numberOfDelete > 0 && isOpened) {
+                        mSwipeView.setX(mSwipeView.getX() + maxOffset);
+                        isOpened = false;
+                    }
+                    updatePlaylist();
+                    break;
+            }
         }
 
         public class SongViewTag {
@@ -371,14 +495,26 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             TextView artist;
             ImageView albumPhoto;
             ImageView songTempo;
-            public SongViewTag(TextView songIndexNumber, TextView title, TextView artist, ImageView albumPhoto, ImageView songTempo) {
+            RelativeLayout songContainer;
+            Button deleteButton;
+            public SongViewTag(TextView songIndexNumber, TextView title, TextView artist, ImageView albumPhoto, ImageView songTempo, RelativeLayout songContainer, Button deleteButton) {
                 this.songIndexNumber = songIndexNumber;
                 this.title = title;
                 this.artist = artist;
                 this.albumPhoto = albumPhoto;
                 this.songTempo = songTempo;
+                this.songContainer = songContainer;
+                this.deleteButton = deleteButton;
             }
+        }
 
+        public class PositionAndIdViewTag {
+            Integer position;
+            Long audioId;
+            public PositionAndIdViewTag (Integer position, Long audioId) {
+                this.position = position;
+                this.audioId = audioId;
+            }
         }
     }
 }

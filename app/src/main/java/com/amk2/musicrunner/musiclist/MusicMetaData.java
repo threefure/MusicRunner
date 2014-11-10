@@ -14,6 +14,7 @@ public class MusicMetaData {
     public String mTitle, mArtist, mType;
     Integer typeContainerBackgroundId, mDuration;
     public Double mBpm;
+    public Long mAudioId;
     public Bitmap mAlbumPhoto;
     public MusicMetaData (String title, String artist, Integer duration, Double bpm, Bitmap albumPhoto) {
         mTitle = title;
@@ -31,5 +32,25 @@ public class MusicMetaData {
             typeContainerBackgroundId = R.drawable.music_runner_red_round_border;
         }*/
         mAlbumPhoto = albumPhoto;
+        mAudioId = Long.valueOf(1);
+    }
+
+    public MusicMetaData (String title, String artist, Integer duration, Double bpm, Bitmap albumPhoto, Long audioId) {
+        mTitle = title;
+        mArtist = artist;
+        mDuration = duration;
+        mBpm = bpm;
+        /*if (bpm < 110.0) {
+            mType = "Slow";
+            typeContainerBackgroundId = R.drawable.music_runner_grass_round_border;
+        } else if (bpm >= 110.0 && bpm < 130) {
+            mType = "Medium";
+            typeContainerBackgroundId = R.drawable.music_runner_blue_round_border;
+        } else{
+            mType = "Fast";
+            typeContainerBackgroundId = R.drawable.music_runner_red_round_border;
+        }*/
+        mAlbumPhoto = albumPhoto;
+        mAudioId = audioId;
     }
 }

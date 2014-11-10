@@ -281,9 +281,9 @@ public class MusicListFragment extends Fragment implements
         private View mSelectedPlaylist = null;
         private View mSwipeView;
         private Context mContext;
+        private boolean isMove = false, isOpened = false;
         private float originX, offset;
-        private int maxOffset = -1;
-        private boolean isMove = false;
+        private int maxOffset = -1, direction;
 
         public PlaylistPinnedSectionListAdapter(Context context, int resource, ArrayList<Object> list) {
             super(context, resource, list);
@@ -501,9 +501,6 @@ public class MusicListFragment extends Fragment implements
             }
         }
 
-
-        private int direction;
-        private boolean isOpened = false;
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             int action = MotionEventCompat.getActionMasked(motionEvent);

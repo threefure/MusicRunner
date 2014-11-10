@@ -356,6 +356,15 @@ public class MusicLib {
         return uri;
     }
 
+    public static int deleteSongFromPlaylist (Context context, Uri playlistMemberUri, Long songRealId) {
+        String selection = MediaStore.Audio.Playlists.Members.AUDIO_ID + " = ? ";
+        String[] selectionArgs = {
+                songRealId.toString()
+        };
+        Integer numberOfRows = context.getContentResolver().delete(playlistMemberUri, selection, selectionArgs);
+        return numberOfRows;
+    }
+
     public static String getPlaylistName (Context context, Uri playlistUri) {
         String playlistName = "";
         ContentResolver contentResolver = context.getContentResolver();
