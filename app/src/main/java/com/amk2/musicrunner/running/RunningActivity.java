@@ -507,11 +507,13 @@ public class RunningActivity extends Activity implements
             case R.id.running_pause:
                 pauseContainerRelativeLayout.setVisibility(View.GONE);
                 doneResumeContainerRelativeLayout.setVisibility(View.VISIBLE);
+                mMapFragment.stopUpdates();
                 isRunning = false;
                 break;
             case R.id.running_resume:
                 pauseContainerRelativeLayout.setVisibility(View.VISIBLE);
                 doneResumeContainerRelativeLayout.setVisibility(View.GONE);
+                mMapFragment.startUpdates();
                 isRunning = true;
                 break;
             case R.id.running_camera:

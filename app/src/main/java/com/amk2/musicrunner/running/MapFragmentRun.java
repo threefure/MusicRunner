@@ -163,7 +163,7 @@ public class MapFragmentRun extends Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopUpdates(this.getView());
+        stopUpdates();
         // After disconnect() is called, the client is considered "dead".
         mLocationClient.disconnect();
     }
@@ -314,7 +314,7 @@ public class MapFragmentRun extends Fragment implements
         }
     }
 
-    public void stopUpdates(View v) {
+    public void stopUpdates() {
         mUpdatesRequested = false;
 
         if (servicesConnected()) {
