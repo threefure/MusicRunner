@@ -69,6 +69,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 Intent redirectIntent = new Intent(this, MusicRunnerActivity.class);
                 redirectIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(redirectIntent);
+                finish();
             } else {
                 initViews();
                 setActionBar();
@@ -78,6 +79,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
 
         /*PackageInfo info = null;

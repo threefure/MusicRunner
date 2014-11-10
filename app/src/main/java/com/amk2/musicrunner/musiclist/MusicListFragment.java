@@ -151,7 +151,7 @@ public class MusicListFragment extends Fragment implements
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             Long playlistId = (Long) extras.get(PLAYLIST_URI);
-            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(getActivity(), playlistId);
+            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(self.getActivity(), playlistId);
             mUserGeneratedPlaylistMetaDatas.add(0, playlistMetaData);
 
             mPlaylistMetaData.clear();
