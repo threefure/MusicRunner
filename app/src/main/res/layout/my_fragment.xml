@@ -171,8 +171,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginBottom="50dp"
-                android:gravity="center"
-                android:visibility="gone">
+                android:gravity="center">
                 <Button
                     android:id="@+id/past_activities_button"
                     android:text="@string/my_running_past_activities"

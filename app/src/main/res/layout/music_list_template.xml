@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/playlist">
+    android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/delete"
+        android:text="@string/delete"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="100dp"
+        android:layout_height="90dp"
+        android:background="@drawable/delete_button"/>
     <LinearLayout
+        android:id="@+id/playlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -56,4 +65,4 @@
                 style="@style/Music.RangGeneralBoxText"/>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

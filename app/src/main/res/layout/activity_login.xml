@@ -23,9 +23,14 @@
             android:layout_marginTop="20dp"
             style="@style/Login.EditTextContainer">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:src="@drawable/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"/>
+            <ImageView
+                android:src="@drawable/line"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"/>
             <EditText
                 android:id="@+id/account"
@@ -37,9 +42,9 @@
             android:layout_marginTop="10dp"
             style="@style/Login.EditTextContainer">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:src="@drawable/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"/>
             <EditText
                 android:id="@+id/password"
@@ -79,10 +84,10 @@
             android:layout_marginRight="30dp"
             android:gravity="center_vertical">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"/>
+                android:src="@drawable/email_green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"/>
             <TextView
                 android:text="@string/sign_up_with_email"
                 android:textColor="@color/tiffany"
@@ -101,10 +106,10 @@
             android:layout_marginRight="30dp"
             android:layout_marginTop="10dp">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"/>
+                android:src="@drawable/facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"/>
             <TextView
                 android:text="@string/sign_up_with_fb"
                 android:textColor="@color/white"

@@ -33,7 +33,8 @@ import android.widget.TabHost;
  * @author DannyLin
  */
 public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, View.OnClickListener,
-            StartFragment.OnGoToPlaylistTabListener{
+            StartFragment.OnGoToPlaylistTabListener,
+            MusicListFragment.OnDisableViewPagerSwipeListener{
 
     public static final int REQUEST_SETTING = 1;
 
@@ -146,6 +147,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
             mMusicListFragment = new MusicListFragment();
             transaction.add(R.id.tab_pager, mMusicListFragment, FragmentTag.MUSIC_LIST_FRAGMENT_TAG);
         }
+        mMusicListFragment.setOnDisableViewPagerSwipeListener(this);
 
         // Init MusicRankFragment
         mMusicRankFragment = (MusicRankFragment) mFragmentManager
@@ -402,5 +404,10 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     @Override
     public void OnGoToPlaylistTab() {
         mViewPager.setCurrentItem(TabState.MUSIC_LIST);
+    }
+
+    @Override
+    public void setDisableViewPagerSwipe(boolean disableViewPagerSwipe) {
+        mViewPager.setSwipeable(disableViewPagerSwipe);
     }
 }

@@ -23,6 +23,7 @@
     <color name="tiffany_press">#50E3C2</color>
     <color name="court_red">#F6CEBC</color>
     <color name="court_green">#CDF5A4</color>
+    <color name="delete_red">#F07882</color>
 
     <!-- Action bar -->
     <color name="action_bar_title_text_color">#FFFFFF</color>

@@ -356,6 +356,15 @@ public class MusicLib {
         return uri;
     }
 
+    public static int deleteSongFromPlaylist (Context context, Uri playlistMemberUri, Long songRealId) {
+        String selection = MediaStore.Audio.Playlists.Members.AUDIO_ID + " = ? ";
+        String[] selectionArgs = {
+                songRealId.toString()
+        };
+        Integer numberOfRows = context.getContentResolver().delete(playlistMemberUri, selection, selectionArgs);
+        return numberOfRows;
+    }
+
     public static String getPlaylistName (Context context, Uri playlistUri) {
         String playlistName = "";
         ContentResolver contentResolver = context.getContentResolver();
@@ -397,5 +406,12 @@ public class MusicLib {
         }
         PlaylistMetaData playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks);
         return playlistMetaData;
+    }
+
+    public static int deletePlaylistFromId (Context context, Long playlistId) {
+        Uri playlistUri = getPlaylistUriFromId(playlistId);
+        ContentResolver contentResolver = context.getContentResolver();
+        int rowsOfDelete = contentResolver.delete(playlistUri, null, null);
+        return rowsOfDelete;
     }
 }

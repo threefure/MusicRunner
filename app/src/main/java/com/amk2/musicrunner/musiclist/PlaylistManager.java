@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class PlaylistManager{
     public static final String BPM_UPDATED = "musiclist.playlistmanager.bpm_updated";
+    public static final String PLAYLIST_DELETED = "musiclist.playlistmanager.playlist_delete";
     public static final int MEDIUM_PACE_PLAYLIST = 0;
     public static final int SLOW_PACE_PLAYLIST   = 1;
     public static final int HALF_HOUR_PLAYLIST   = 2;

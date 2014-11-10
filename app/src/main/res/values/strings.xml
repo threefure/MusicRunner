@@ -104,6 +104,7 @@
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="signup">Sign up</string>
+    <string name="terms_policy">Terms of Service and Privacy Policy</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
@@ -171,5 +172,6 @@
     <string name="_1_hour_playlist">1 Hour</string>
     <string name="your_playlist">My Playlists</string>
     <string name="add_to_playlist">Add to my playlist</string>
+    <string name="delete">Delete</string>
 
 </resources>
