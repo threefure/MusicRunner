@@ -442,8 +442,10 @@ public class MapFragmentRun extends Fragment implements
         MapFragmentRun.mTotalDistance = 0;
         MapFragmentRun.mSpeed = 0;
         MapFragmentRun.mColor = 0;
-        MapFragmentRun.mTrackList.clear();
-        MapFragmentRun.mColorList.clear();
+        if(MapFragmentRun.mTrackList != null)
+            MapFragmentRun.mTrackList.clear();
+        if(MapFragmentRun.mColorList != null)
+            MapFragmentRun.mColorList.clear();
     }
 
     @Override
