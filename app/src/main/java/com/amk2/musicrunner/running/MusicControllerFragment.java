@@ -384,7 +384,7 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
      * @return The record of the last playing song
      */
     public MusicRecord getLastMusicRecord() {
-        if(!mMusicSongList.isEmpty()) {
+        if(!mMusicSongList.isEmpty() && mMusicService != null) {
             return new MusicRecord(mPreviousSong, mMusicService.getMusicPositionWhenChangeSong());
         } else {
             // If there is no music in user's device, return null.
