@@ -297,7 +297,7 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     private void mDrawRoute() {
         ArrayList<LatLng> polylines = MapFragmentRun.getmTrackList();
         ArrayList<Integer> mColorList = MapFragmentRun.getmColorList();
-        if(polylines.size() > 0) {
+        if(polylines != null && mColorList != null && polylines.size() > 0) {
             LatLng lastPosition = null;
             Double east = -180.0, west = 180.0, south = 90.0, north = -90.0;
             Integer lastColor = null;
