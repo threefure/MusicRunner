@@ -104,6 +104,7 @@
     <string name="female">女性</string>
     <string name="male">男性</string>
     <string name="signup">註冊</string>
+    <string name="terms_policy">使用者與隱私條款</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
@@ -171,5 +172,6 @@
     <string name="_1_hour_playlist">1小時清單</string>
     <string name="your_playlist">我的清單</string>
     <string name="add_to_playlist">加到我的清單</string>
+    <string name="delete">刪除</string>
 
 </resources>

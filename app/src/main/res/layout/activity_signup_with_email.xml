@@ -32,9 +32,9 @@
                 android:layout_marginLeft="0dp"
                 style="@style/Login.EditTextContainer">
                 <ImageView
-                    android:src="@drawable/clock"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:src="@drawable/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"/>
                 <EditText
                     android:id="@+id/first_name"
@@ -59,23 +59,23 @@
             android:layout_marginTop="10dp"
             style="@style/Login.EditTextContainer">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:src="@drawable/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"/>
             <EditText
                 android:id="@+id/email"
                 android:hint="@string/email"
-                android:inputType="textPassword"
+                android:inputType="textEmailAddress"
                 style="@style/Login.EditText"/>
         </LinearLayout>
         <LinearLayout
             android:layout_marginTop="20dp"
             style="@style/Login.EditTextContainer">
             <ImageView
-                android:src="@drawable/clock"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:src="@drawable/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"/>
             <EditText
                 android:id="@+id/password"
@@ -87,7 +87,7 @@
             android:layout_marginTop="10dp"
             style="@style/Login.EditTextContainer">
             <ImageView
-                android:layout_width="40dp"
+                android:layout_width="23dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="10dp"/>
             <EditText
@@ -102,7 +102,8 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
             <RadioGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +111,7 @@
                 <RadioButton
                     android:text="@string/male"
                     android:textColor="@color/white"
-                    android:drawableLeft="@drawable/clock"
+                    android:drawableLeft="@drawable/male_gary"
                     android:layout_marginRight="5dp"
                     android:layout_marginLeft="0dp"
                     style="@style/Login.GenderRadioButton">
@@ -118,7 +119,7 @@
                 <RadioButton
                     android:text="@string/female"
                     android:textColor="@color/white"
-                    android:drawableLeft="@drawable/clock"
+                    android:drawableLeft="@drawable/female_gary"
                     android:layout_marginRight="0dp"
                     android:layout_marginLeft="5dp"
                     style="@style/Login.GenderRadioButton">
@@ -132,5 +133,18 @@
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"/>
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+            <TextView
+                android:id="@+id/terms_policy"
+                android:text="@string/terms_policy"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
