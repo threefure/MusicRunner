@@ -19,7 +19,8 @@
         android:orientation="horizontal"
         android:padding="10dp">
         <ImageView
-            android:src="@drawable/playlist_gray"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/small_playlist_my"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
