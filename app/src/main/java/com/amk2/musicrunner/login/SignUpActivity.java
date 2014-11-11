@@ -76,6 +76,8 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                     List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                     pairs.add(new BasicNameValuePair("userAccount", email));
                     pairs.add(new BasicNameValuePair("password",password));
+                    pairs.add(new BasicNameValuePair("firstName",firstName));
+                    pairs.add(new BasicNameValuePair("lastName",lastName));
                     HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
                     String statusString = LoginUtils.getStatusString(response);
                     nextStep(statusString);
