@@ -22,6 +22,8 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by daz on 11/9/14.
@@ -29,6 +31,10 @@ import java.util.List;
 public class SignUpActivity extends Activity implements View.OnClickListener {
     private ActionBar mActionBar;
     private Button signupButton;
+
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -101,8 +107,33 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         } else if(!password.equals(confirmPassword)) {
             valid = false;
             showPasswordNotSameDialog();
+        } else if(!validateEmailPattern(email)){
+            valid = false;
+            showInvalidEmailFormatDialog();
         }
         return valid;
+    }
+
+    public boolean validateEmailPattern(String email){
+        if(email == null)
+            return false;
+
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);;
+        Matcher matcher = pattern.matcher(email);;
+
+        return matcher.matches();
+    }
+
+    private void showInvalidEmailFormatDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setMessage("You need to enter valid email")
+                .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                });
+        dialog.show();
     }
 
     private void showRegisterFailDialog(){
