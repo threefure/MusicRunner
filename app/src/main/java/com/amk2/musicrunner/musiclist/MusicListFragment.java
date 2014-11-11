@@ -395,7 +395,12 @@ public class MusicListFragment extends Fragment implements
                     // set view tag for playlist container
                     PlaylistContainerTag playlistContainerTag = new PlaylistContainerTag(i, playlistMetaData.mId);
                     playlistContainer.setTag(playlistContainerTag);
-                    playlistContainer.setOnTouchListener(this);
+                    if (i < 7) {
+                        playlistContainer.setOnTouchListener(null);
+                    } else {
+                        playlistContainer.setOnTouchListener(this);
+                    }
+
 
                     // setting deleting button on click listener
                     delete.setTag(playlistContainerTag);
@@ -449,7 +454,7 @@ public class MusicListFragment extends Fragment implements
                         // set view tag for playlist container
                         PlaylistContainerTag playlistContainerTag = new PlaylistContainerTag(i, playlistMetaData.mId);
                         playlistContainer.setTag(playlistContainerTag);
-                        playlistContainer.setOnTouchListener(this);
+                        //playlistContainer.setOnTouchListener(this);
 
                         // set on click for delete
                         delete.setTag(playlistContainerTag);
@@ -470,6 +475,12 @@ public class MusicListFragment extends Fragment implements
                     } else {
                         playlistViewTag.mChoosePlaylistTextView.setBackground(mContext.getResources().getDrawable(R.drawable.playlist_selection_radio_button));
                         playlistViewTag.mChoosePlaylistTextView.setTextColor(getResources().getColor(R.color.black));
+                    }
+
+                    if (i < 7) {
+                        playlistViewTag.mPlaylistContainer.setOnTouchListener(null);
+                    } else {
+                        playlistViewTag.mPlaylistContainer.setOnTouchListener(this);
                     }
 
                     view.setLeft(offsetToLeft);
