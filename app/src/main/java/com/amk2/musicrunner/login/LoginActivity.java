@@ -3,6 +3,7 @@ package com.amk2.musicrunner.login;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,6 +56,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     private Button loginButton;
     private LinearLayout signUpWithEmail;
     private LinearLayout signUpWithFacebook;
+    private ProgressDialog progressDialog;
+    private Activity self;
 
     private SharedPreferences loginSharedPreferences;
     private int loginStatus;
@@ -63,6 +66,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mActionBar = getActionBar();
+        self = this;
         loginSharedPreferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         loginStatus = loginSharedPreferences.getInt(STATUS, STATUS_NONE);
 
@@ -278,12 +282,14 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.login_button:
+                progressDialog = ProgressDialog.show(self, "Login...", getString(R.string.please_wait));
                 loginAccount(view);
                 break;
         }
     }
 
     private void popoutWrongLoginInfo(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("Password is not correct or user does not exist. Please re-enter account information")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
