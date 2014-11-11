@@ -63,17 +63,24 @@ public class FBLogin extends Activity {
 
                                 //Intent intent = new Intent(thisActivity, MusicRunnerActivity.class);
                                 //thisActivity.startActivity(intent);
-                                fbLoginCompleted();
+                                String userName = user.getName();
+                                if (userName == null) {
+                                    userName = "";
+                                }
+                                fbLoginCompleted(userName);
                             }
                         }
                     }).executeAsync();
+
                 }
             }
         });
     }
 
-    private void fbLoginCompleted () {
-        setResult(RESULT_OK);
+    private void fbLoginCompleted (String userName) {
+        Intent intent = new Intent();
+        intent.putExtra(LoginActivity.USER_NAME, userName);
+        setResult(RESULT_OK, intent);
         finish();
     }
 

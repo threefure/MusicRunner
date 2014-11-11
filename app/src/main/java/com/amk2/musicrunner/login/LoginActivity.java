@@ -250,7 +250,9 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (FACEBOOK_LOGIN_REQUEST == requestCode && RESULT_OK == resultCode) {
+            String userName = data.getExtras().getString(USER_NAME);
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
+            loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, userName).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

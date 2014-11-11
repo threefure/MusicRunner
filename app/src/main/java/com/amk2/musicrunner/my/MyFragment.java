@@ -53,6 +53,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private TextView durationTextView;
     private TextView distanceTextView;
     private TextView distanceUnitTextView;
+    private TextView userNameTextView;
     private Button pastActivitiesButton;
     private Button loginButton;
     private RelativeLayout introduction;
@@ -79,6 +80,8 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private Integer unitSpeedPace;
     private Integer loginStatus;
     private boolean hasIntroduced;
+
+    private String userName;
 
     private Handler handler = new Handler();
 
@@ -126,6 +129,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         durationTextView           = (TextView) thisView.findViewById(R.id.duration);
         distanceTextView           = (TextView) thisView.findViewById(R.id.distance);
         distanceUnitTextView       = (TextView) thisView.findViewById(R.id.distance_unit);
+        userNameTextView           = (TextView) thisView.findViewById(R.id.user_name);
 
         pastActivitiesButton       = (Button) thisView.findViewById(R.id.past_activities_button);
         loginButton                = (Button) thisView.findViewById(R.id.login_button);
@@ -171,6 +175,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
             hasIntroduced = true;
             mUserInstructionSharedPreferences.edit().remove(Constant.MY_PAGE).putBoolean(Constant.MY_PAGE, true).commit();
         }
+
+        userName = mLoginSharedPreferences.getString(LoginActivity.USER_NAME, "");
+        userNameTextView.setText(userName);
+
     }
 
     private void getSharedPreferences () {
