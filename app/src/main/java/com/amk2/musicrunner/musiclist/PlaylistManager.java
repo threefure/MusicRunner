@@ -40,10 +40,10 @@ public class PlaylistManager{
     public static final int SLOW_PACE_PLAYLIST   = 1;
     public static final int HALF_HOUR_PLAYLIST   = 2;
     public static final int ONE_HOUR_PLAYLIST    = 4;
-    public static final String HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "Half Hour Medium Pace Playlist";
-    public static final String HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE = "Half Hour Slow Pace Playlist";
-    public static final String ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "A Hour Medium Pace Playlist";
-    public static final String ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE = "A Hour Slow Pace Playlist";
+    public static final String HALF_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "30 Minutes Medium Pace";
+    public static final String HALF_HOUR_SLOW_PACE_PLAYLIST_TITLE = "30 Minutes Slow Pace";
+    public static final String ONE_HOUR_MEDIUM_PACE_PLAYLIST_TITLE = "1 Hour Medium Pace";
+    public static final String ONE_HOUR_SLOW_PACE_PLAYLIST_TITLE = "1 Hour Slow Pace";
     private static final String TAG = "PlaylistManager";
     private static final String TRACK_LIST = "trackList";
     private static final int HALF_HOUR_IN_MILLI = 1800000;

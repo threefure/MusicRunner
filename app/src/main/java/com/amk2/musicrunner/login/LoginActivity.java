@@ -44,10 +44,14 @@ import java.util.List;
 public class LoginActivity extends Activity implements View.OnClickListener{
     public static final String LOGIN = "login";
     public static final String STATUS = "status";
-    public static final String USER_NAME = "user_name";
-    public static final int STATUS_NONE = 0;
-    public static final int STATUS_LOGIN = 1;
+    public static final String USER_NAME  = "user_name";
+    public static final String USER_ID    = "user_id";
+    public static final String USER_FROM  = "user_from";
+    public static final int STATUS_NONE   = 0;
+    public static final int STATUS_LOGIN  = 1;
     public static final int STATUS_LOGOUT = 2;
+    public static final int FROM_FB = 0;
+    public static final int FROM_EMAIL = 1;
     public static final int MUSIC_RUNNER_MAIN_REQUEST = 100;
     public static final int FACEBOOK_LOGIN_REQUEST = 101;
 
@@ -255,8 +259,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
         if (FACEBOOK_LOGIN_REQUEST == requestCode && RESULT_OK == resultCode) {
             String userName = data.getExtras().getString(USER_NAME);
+            String userId   = data.getExtras().getString(USER_ID);
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, userName).commit();
+            loginSharedPreferences.edit().remove(USER_ID).putString(USER_ID, userId).commit();
+            loginSharedPreferences.edit().remove(USER_FROM).putInt(USER_FROM, FROM_FB).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

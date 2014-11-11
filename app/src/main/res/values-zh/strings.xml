@@ -120,6 +120,7 @@
     <string name="display">Display</string>
     <string name="unit">單位</string>
     <string name="disconnected">已斷線</string>
+    <string name="connected">已連線</string>
     <string name="kg">Kg</string>
     <string name="lb">Lb</string>
     <string name="setting_km">Km</string>

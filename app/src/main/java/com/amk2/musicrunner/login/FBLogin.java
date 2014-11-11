@@ -67,7 +67,7 @@ public class FBLogin extends Activity {
                                 if (userName == null) {
                                     userName = "";
                                 }
-                                fbLoginCompleted(userName);
+                                fbLoginCompleted(user.getId(), userName);
                             }
                         }
                     }).executeAsync();
@@ -77,9 +77,10 @@ public class FBLogin extends Activity {
         });
     }
 
-    private void fbLoginCompleted (String userName) {
+    private void fbLoginCompleted (String userId, String userName) {
         Intent intent = new Intent();
         intent.putExtra(LoginActivity.USER_NAME, userName);
+        intent.putExtra(LoginActivity.USER_ID, userId);
         setResult(RESULT_OK, intent);
         finish();
     }

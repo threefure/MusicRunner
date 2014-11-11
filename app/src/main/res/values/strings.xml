@@ -120,6 +120,7 @@
     <string name="display">Display</string>
     <string name="unit">Unit</string>
     <string name="disconnected">Disconnected</string>
+    <string name="connected">Connected</string>
     <string name="kg">Kg</string>
     <string name="lb">Lb</string>
     <string name="setting_km">Km</string>

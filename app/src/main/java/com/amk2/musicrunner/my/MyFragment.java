@@ -29,6 +29,7 @@ import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEve
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.utilities.UnitConverter;
+import com.facebook.widget.ProfilePictureView;
 
 import java.util.Calendar;
 
@@ -57,6 +58,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private Button pastActivitiesButton;
     private Button loginButton;
     private RelativeLayout introduction;
+    private ProfilePictureView fbUserIconView;
 
     private LinearLayout userInfoContainer;
     private LinearLayout loginContainer;
@@ -82,6 +84,9 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private boolean hasIntroduced;
 
     private String userName;
+    private String userId;
+    private Integer userFrom;
+
 
     private Handler handler = new Handler();
 
@@ -130,6 +135,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         distanceTextView           = (TextView) thisView.findViewById(R.id.distance);
         distanceUnitTextView       = (TextView) thisView.findViewById(R.id.distance_unit);
         userNameTextView           = (TextView) thisView.findViewById(R.id.user_name);
+        fbUserIconView             = (ProfilePictureView) thisView.findViewById(R.id.fb_user_icon);
 
         pastActivitiesButton       = (Button) thisView.findViewById(R.id.past_activities_button);
         loginButton                = (Button) thisView.findViewById(R.id.login_button);
@@ -140,6 +146,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         loginContainer             = (LinearLayout) thisView.findViewById(R.id.login_container);
 
         userIconImageView.setOnClickListener(this);
+        fbUserIconView.setOnClickListener(this);
         thisWeekTotalRadioGroup.setOnCheckedChangeListener(this);
         pastActivitiesButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
@@ -176,8 +183,22 @@ public class MyFragment extends Fragment implements View.OnClickListener,
             mUserInstructionSharedPreferences.edit().remove(Constant.MY_PAGE).putBoolean(Constant.MY_PAGE, true).commit();
         }
 
+        // set up user name
         userName = mLoginSharedPreferences.getString(LoginActivity.USER_NAME, "");
         userNameTextView.setText(userName);
+
+        // use up user icon
+        userFrom = mLoginSharedPreferences.getInt(LoginActivity.USER_FROM, -1);
+        /*if (userFrom == LoginActivity.FROM_FB) {
+            userId = mLoginSharedPreferences.getString(LoginActivity.USER_ID, "");
+            fbUserIconView.setProfileId(userId);
+            fbUserIconView.setCropped(true);
+            fbUserIconView.setVisibility(View.VISIBLE);
+            userIconImageView.setVisibility(View.GONE);
+        } else if (userFrom == LoginActivity.FROM_EMAIL) {
+            fbUserIconView.setVisibility(View.GONE);
+            userIconImageView.setVisibility(View.VISIBLE);
+        }*/
 
     }
 
@@ -295,13 +316,14 @@ public class MyFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
             case R.id.past_activities_button:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
             case R.id.login_button:
                 mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
-                Intent intent = new Intent(mActivity, LoginActivity.class);
+                intent = new Intent(mActivity, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 getActivity().finish();
@@ -311,6 +333,9 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                 break;
             case R.id.introduction:
                 v.setVisibility(View.GONE);
+                break;
+            case R.id.fb_user_icon:
+                startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
         }
     }

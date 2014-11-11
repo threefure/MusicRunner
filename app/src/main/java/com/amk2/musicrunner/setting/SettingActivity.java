@@ -204,7 +204,8 @@ public class SettingActivity extends Activity implements
 
     private void setViews () {
 
-        String account = mSettingSharedPreferences.getString(ACCOUNT, "no account");
+        String account        = mLoginSharedPreferences.getString(LoginActivity.USER_NAME, "no account");//mSettingSharedPreferences.getString(ACCOUNT, "no account");
+        Integer userFrom      = mLoginSharedPreferences.getInt(LoginActivity.USER_FROM, -1);
         Integer unitWeight    = mSettingSharedPreferences.getInt(WEIGHT_UNIT, SETTING_WEIGHT_KG);
         Integer unitDistance  = mSettingSharedPreferences.getInt(DISTANCE_UNIT, SETTING_DISTANCE_KM);
         Integer unitHeight    = mSettingSharedPreferences.getInt(HEIGHT_UNIT, SETTING_HEIGHT_IN);
@@ -220,6 +221,12 @@ public class SettingActivity extends Activity implements
         usedLanguage = language.toString();
 
         accountTextView.setText(account);
+
+        if (userFrom == LoginActivity.FROM_FB) {
+            facebookTextView.setText(R.string.connected);
+        } else {
+            facebookTextView.setText(R.string.disconnected);
+        }
 
         // setting weight radio button
         switch (unitWeight) {
@@ -431,6 +438,7 @@ public class SettingActivity extends Activity implements
                             SharedPreferencesUtility.clearSharedPreference(self);
                             mAccountSharedPreferences.edit().remove(Constant.ACCOUNT_PARAMS).commit();
                             mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
+                            mLoginSharedPreferences.edit().remove(LoginActivity.USER_NAME).remove(LoginActivity.USER_ID).remove(LoginActivity.USER_FROM).commit();
                             restartApp();
                         }
                     }).show();
