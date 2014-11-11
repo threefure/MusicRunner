@@ -174,4 +174,15 @@
     <string name="add_to_playlist">Add to my playlist</string>
     <string name="delete">Delete</string>
 
+    <!-- User instruction -->
+    <string name="got_it">OK</string>
+    <string name="my_info_tab_intro">Find your personal information</string>
+    <string name="playlist_tab_intro">Get your playlist information</string>
+    <string name="ranking_tab_intro">show your music information</string>
+    <string name="running_summary_intro">Choose weekly or total running statistic</string>
+    <string name="past_activities_intro">Show past activities</string>
+    <string name="auto_generated_playlist_intro">Automatically generated playlist for you (based on your music in your phone)</string>
+    <string name="create_playlist_intro">Create your personal playlist</string>
+    <string name="ranking_page_intro">Rank musics by calories burned</string>
+
 </resources>

@@ -102,6 +102,7 @@
 
     <!-- User instruction -->
     <color name="user_instruction_background">#77000000</color>
+    <color name="got_it">#88D8D8D8</color>
 
     <!-- Login Activity -->
     <color name="login_edit_text">#99FFFFFF</color>

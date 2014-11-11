@@ -241,7 +241,7 @@ public class StartFragment extends Fragment implements
 
     private void updatePlaylistTextView() {
         Uri playlistUri = MusicLib.getPlaylistUriFromId(playlistId);
-        String playlistName = MusicLib.getPlaylistName(getActivity(), playlistUri);
+        String playlistName = MusicLib.getPlaylistName(mActivity, playlistUri);
         mPlaylistTitleTextView.setText(playlistName);
     }
 

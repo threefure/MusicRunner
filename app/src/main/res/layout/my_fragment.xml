@@ -16,12 +16,12 @@
             <LinearLayout
                 android:id="@+id/user_info_container"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
                 <ImageView
                     android:id="@+id/user_icon"
                     android:src="@drawable/dog_bird_head"
@@ -38,11 +38,12 @@
             <LinearLayout
                 android:id="@+id/login_container"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <Button
                     android:id="@+id/login_button"
                     android:text="@string/login"
@@ -182,4 +183,42 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+    <RelativeLayout
+        android:id="@+id/introduction"
+        android:background="@color/user_instruction_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/radio_button_arrow"
+            android:src="@drawable/arrow5"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="80dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/running_summary_intro"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:text="@string/running_summary_intro"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"/>
+        <ImageView
+            android:id="@+id/past_activities_arrow"
+            android:src="@drawable/arrow6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 </RelativeLayout>

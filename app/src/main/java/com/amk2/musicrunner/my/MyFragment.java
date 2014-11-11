@@ -18,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.setting.SettingActivity;
@@ -53,6 +55,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     private TextView distanceUnitTextView;
     private Button pastActivitiesButton;
     private Button loginButton;
+    private RelativeLayout introduction;
 
     private LinearLayout userInfoContainer;
     private LinearLayout loginContainer;
@@ -71,9 +74,11 @@ public class MyFragment extends Fragment implements View.OnClickListener,
 
     private SharedPreferences mSettingSharedPreferences;
     private SharedPreferences mLoginSharedPreferences;
+    private SharedPreferences mUserInstructionSharedPreferences;
     private Integer unitDistance;
     private Integer unitSpeedPace;
     private Integer loginStatus;
+    private boolean hasIntroduced;
 
     private Handler handler = new Handler();
 
@@ -93,6 +98,7 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         mContentResolver = getActivity().getContentResolver();
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         mLoginSharedPreferences   = getActivity().getSharedPreferences(LoginActivity.LOGIN, Context.MODE_PRIVATE);
+        mUserInstructionSharedPreferences = getActivity().getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
         LAPS = getString(R.string.laps);
         initViews();
         getSharedPreferences();
@@ -124,9 +130,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         pastActivitiesButton       = (Button) thisView.findViewById(R.id.past_activities_button);
         loginButton                = (Button) thisView.findViewById(R.id.login_button);
 
+        introduction               = (RelativeLayout) thisView.findViewById(R.id.introduction);
+
         userInfoContainer          = (LinearLayout) thisView.findViewById(R.id.user_info_container);
         loginContainer             = (LinearLayout) thisView.findViewById(R.id.login_container);
-
 
         userIconImageView.setOnClickListener(this);
         thisWeekTotalRadioGroup.setOnCheckedChangeListener(this);
@@ -157,12 +164,20 @@ public class MyFragment extends Fragment implements View.OnClickListener,
         }
 
         lapsUnitHintTextView.setText(lapsUnitHintString);
+
+        if (!hasIntroduced) {
+            introduction.setVisibility(View.VISIBLE);
+            introduction.setOnClickListener(this);
+            hasIntroduced = true;
+            mUserInstructionSharedPreferences.edit().remove(Constant.MY_PAGE).putBoolean(Constant.MY_PAGE, true).commit();
+        }
     }
 
     private void getSharedPreferences () {
         unitDistance  = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         unitSpeedPace = mSettingSharedPreferences.getInt(SettingActivity.SPEED_PACE_UNIT, SettingActivity.SETTING_PACE);
         loginStatus   = mLoginSharedPreferences.getInt(LoginActivity.STATUS, LoginActivity.STATUS_LOGOUT);
+        hasIntroduced = mUserInstructionSharedPreferences.getBoolean(Constant.MY_PAGE, false);
 
         Log.d(TAG, "login status " + loginStatus.toString());
     }
@@ -282,6 +297,9 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                 break;
             case R.id.user_icon:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
+                break;
+            case R.id.introduction:
+                v.setVisibility(View.GONE);
                 break;
         }
     }

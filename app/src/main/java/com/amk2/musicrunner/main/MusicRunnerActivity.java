@@ -22,6 +22,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import java.util.Locale;
 
@@ -30,16 +32,20 @@ import java.util.Locale;
  * 
  * @author DannyLin
  */
-public class MusicRunnerActivity extends Activity {
+public class MusicRunnerActivity extends Activity implements View.OnClickListener{
 
     private UIController mUIController;
     private ContentResolver mContentResolver;
     private SharedPreferences mSharedPreferences;
-
+    private RelativeLayout introduction;
+    private SharedPreferences userInstructionSharedPreferences;
+    private boolean hasIntroduced;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_runner);
+        userInstructionSharedPreferences = getSharedPreferences(Constant.USER_INSTRUCTION, MODE_PRIVATE);
+        hasIntroduced = userInstructionSharedPreferences.getBoolean(Constant.START_PAGE, false);
         initialize();
         mUIController.onActivityCreate(savedInstanceState);
         goToRunningPage();
@@ -67,19 +73,28 @@ public class MusicRunnerActivity extends Activity {
     }
 
     private void initialize() {
+        initViews();
+
         Configuration configuration = getResources().getConfiguration();
         mSharedPreferences = getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
         CharSequence language = mSharedPreferences.getString(SettingActivity.LANGUAGE, SettingActivity.SETTING_LANGUAGE_ENGLISH);
-        Log.d("asdfa initial locale", getResources().getConfiguration().locale.toString());
         if (language.equals("中文")) {
             configuration.setLocale(Locale.TAIWAN);
         } else {
             configuration.setLocale(Locale.ENGLISH);
         }
         getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
-        Log.d("asdfa initial locale after set", getResources().getConfiguration().locale.toString());
-        //getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
         mUIController = new UIController(this);
+    }
+
+    private void initViews () {
+        introduction = (RelativeLayout) findViewById(R.id.introduction);
+        if (!hasIntroduced) {
+            introduction.setVisibility(View.VISIBLE);
+            introduction.setOnClickListener(this);
+            hasIntroduced = true;
+            userInstructionSharedPreferences.edit().remove(Constant.START_PAGE).putBoolean(Constant.START_PAGE, true).commit();
+        }
     }
 
     private void initializeSyncJobs() {
@@ -153,6 +168,15 @@ public class MusicRunnerActivity extends Activity {
     public void onActivityResult (int reqCode, int resCode, Intent data) {
         if (reqCode == UIController.REQUEST_SETTING && resCode == RESULT_OK) {
             getResources().updateConfiguration(getResources().getConfiguration(), getResources().getDisplayMetrics());
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.introduction:
+                view.setVisibility(View.GONE);
+                break;
         }
     }
 }

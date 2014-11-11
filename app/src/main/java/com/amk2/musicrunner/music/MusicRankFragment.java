@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
@@ -44,17 +45,23 @@ import java.util.HashMap;
 /**
  * Created by logicmelody on 2014/8/30.
  */
-public class MusicRankFragment extends Fragment implements OnSongRankPreparedListener{
+public class MusicRankFragment extends Fragment implements OnSongRankPreparedListener, View.OnClickListener{
     public static final String UPDATE_MUSIC_RANK = "musiclist.update_music_rank";
     private static final String TAG = MusicRankFragment.class.getSimpleName();
     private double performanceRangeOffset = 0.0001;
 
+    private LayoutInflater inflater;
+
+    private RelativeLayout introduction;
     private LinearLayout musicRankInitialInformation;
     private ListView musicRankListView;
     private MusicRankListAdapter musicRankListAdapter;
-    private LayoutInflater inflater;
+
     private SharedPreferences mSettingSharedPreferences;
+    private SharedPreferences mUserInstructionSharedPreferences;
+
     private Integer unitDistance;
+    private boolean hasIntroduced;
 
     private ArrayList<SongPerformance> mSongPerformanceList;
 
@@ -72,7 +79,9 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
         self = this;
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        mUserInstructionSharedPreferences = getActivity().getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
         unitDistance = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
+        hasIntroduced = mUserInstructionSharedPreferences.getBoolean(Constant.RANK_PAGE, false);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateRankReceiver, new IntentFilter(UPDATE_MUSIC_RANK));
         initViews();
         setViews();
@@ -96,12 +105,21 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
         View thisView = getView();
         musicRankInitialInformation = (LinearLayout) thisView.findViewById(R.id.initial_information);
         musicRankListView = (ListView) thisView.findViewById(R.id.music_rank_list_view);
+        introduction = (RelativeLayout) thisView.findViewById(R.id.introduction);
     }
 
     private void setViews() {
         mSongPerformanceList = new ArrayList<SongPerformance>();
         musicRankListAdapter = new MusicRankListAdapter(getActivity(), R.layout.music_rank_template, mSongPerformanceList);
         musicRankListView.setAdapter(musicRankListAdapter);
+
+        //set up introduction click event
+        if (!hasIntroduced) {
+            introduction.setVisibility(View.VISIBLE);
+            introduction.setOnClickListener(this);
+            hasIntroduced = true;
+            mUserInstructionSharedPreferences.edit().remove(Constant.RANK_PAGE).putBoolean(Constant.RANK_PAGE, true).commit();
+        }
     }
 
     private BroadcastReceiver mUpdateRankReceiver = new BroadcastReceiver() {
@@ -130,6 +148,15 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
         } else {
             musicRankInitialInformation.setVisibility(View.VISIBLE);
             musicRankListView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.introduction:
+                view.setVisibility(View.GONE);
+                break;
         }
     }
 

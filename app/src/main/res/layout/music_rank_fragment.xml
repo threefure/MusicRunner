@@ -26,7 +26,27 @@
         android:paddingRight="20dp"
         android:scrollbars="none"
         android:visibility="gone">
-
     </ListView>
+    <RelativeLayout
+        android:id="@+id/introduction"
+        android:background="@color/user_instruction_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ImageView
+            android:src="@drawable/rocket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/rocket_intro"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/rocket_intro"
+            android:text="@string/ranking_page_intro"
+            android:textSize="16dp"
+            android:textColor="@color/white"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
 </RelativeLayout>

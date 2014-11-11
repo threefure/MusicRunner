@@ -94,4 +94,10 @@ public class Constant {
     public static final String PLAYLIST = "playlist";
     public static final String PLAYLIST_ID = "id";
 
+    public static final String USER_INSTRUCTION = "user_instruction";
+    public static final String START_PAGE    = "start_page";
+    public static final String MY_PAGE       = "my_page";
+    public static final String PLAYLIST_PAGE = "playlist_page";
+    public static final String RANK_PAGE     = "rank_page";
+
 }
