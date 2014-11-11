@@ -43,6 +43,7 @@ import java.util.List;
 public class LoginActivity extends Activity implements View.OnClickListener{
     public static final String LOGIN = "login";
     public static final String STATUS = "status";
+    public static final String USER_NAME = "user_name";
     public static final int STATUS_NONE = 0;
     public static final int STATUS_LOGIN = 1;
     public static final int STATUS_LOGOUT = 2;
@@ -253,6 +254,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
     }
 

@@ -132,6 +132,8 @@
     <string name="pace">Pace</string>
     <string name="logout">Logout</string>
     <string name="logout_statement">Are you sure you want to log out of your account?</string>
+    <string name="apply_setting">Applying your setting</string>
+    <string name="please_wait">Please wait...</string>
 
     <!-- Create Playlist -->
     <string name="create_playlist_name">Playlist Name</string>

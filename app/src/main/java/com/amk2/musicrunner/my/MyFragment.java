@@ -293,7 +293,10 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                 break;
             case R.id.login_button:
                 mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
-                startActivity(new Intent(mActivity, LoginActivity.class));
+                Intent intent = new Intent(mActivity, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                getActivity().finish();
                 break;
             case R.id.user_icon:
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));

@@ -132,6 +132,8 @@
     <string name="pace">步速</string>
     <string name="logout">登出</string>
     <string name="logout_statement">您確定要登出嗎？</string>
+    <string name="apply_setting">系統設置中</string>
+    <string name="please_wait">請稍待...</string>
 
     <!-- Create Playlist -->
     <string name="create_playlist_name">音樂清單名稱</string>

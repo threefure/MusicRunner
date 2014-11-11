@@ -396,7 +396,9 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.setting_button:
-                mMainActivity.startActivityForResult(new Intent(mMainActivity, SettingActivity.class), REQUEST_SETTING);
+                Intent intent = new Intent(mMainActivity, SettingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                mMainActivity.startActivityForResult(intent, REQUEST_SETTING);
                 break;
         }
     }

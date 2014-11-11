@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +33,7 @@ import android.widget.ToggleButton;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
+import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
 import com.amk2.musicrunner.views.DatePickerFragment;
@@ -106,6 +109,9 @@ public class SettingActivity extends Activity implements
     private Calendar calendar;
     private Configuration configuration;
     private String usedLanguage;
+    private ProgressDialog progressDialog;
+
+    private Activity self;
 
     LayoutInflater inflater;
 
@@ -113,6 +119,7 @@ public class SettingActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_activity);
+        self = this;
         initialize();
     }
 
@@ -123,16 +130,31 @@ public class SettingActivity extends Activity implements
 
     @Override
     public void onBackPressed() {
-        //getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
         Intent intent = new Intent();
         intent.putExtra("config", configuration);
         setResult(RESULT_OK, intent);
 
-        CharSequence language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
-        //if (!usedLanguage.equals(language)) {
-            restartApp();
-        //}
-        super.onBackPressed();
+        if (isChanged) {
+
+            progressDialog = ProgressDialog.show(self, getString(R.string.apply_setting), getString(R.string.please_wait));
+            Thread runnable = new Thread() {
+                @Override
+                public void run() {
+                    try {
+
+                        Thread.sleep(1000);
+                        restartApp();
+                        progressDialog.dismiss();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            runnable.start();
+
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void initialize() {
@@ -142,6 +164,7 @@ public class SettingActivity extends Activity implements
         configuration = getResources().getConfiguration();
         mAccountSharedPreferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
         mLoginSharedPreferences   = getSharedPreferences(LoginActivity.LOGIN, MODE_PRIVATE);
+        mSettingSharedPreferences = getSharedPreferences(SETTING_SHARED_PREFERENCE, 0);
         initActionBar();
         initViews();
         setViews();
@@ -180,7 +203,7 @@ public class SettingActivity extends Activity implements
     }
 
     private void setViews () {
-        mSettingSharedPreferences = getSharedPreferences(SETTING_SHARED_PREFERENCE, 0);
+
         String account = mSettingSharedPreferences.getString(ACCOUNT, "no account");
         Integer unitWeight    = mSettingSharedPreferences.getInt(WEIGHT_UNIT, SETTING_WEIGHT_KG);
         Integer unitDistance  = mSettingSharedPreferences.getInt(DISTANCE_UNIT, SETTING_DISTANCE_KM);
@@ -314,6 +337,8 @@ public class SettingActivity extends Activity implements
 
     @Override
     public void onClick(View view) {
+        Log.d(TAG, "change onclick");
+        isChanged = true;
         switch (view.getId()) {
             case R.id.setting_weight:
                 final AlertDialog.Builder setWeightDialog = new AlertDialog.Builder(this);
@@ -403,6 +428,7 @@ public class SettingActivity extends Activity implements
                     .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            SharedPreferencesUtility.clearSharedPreference(self);
                             mAccountSharedPreferences.edit().remove(Constant.ACCOUNT_PARAMS).commit();
                             mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
                             restartApp();
@@ -427,9 +453,12 @@ public class SettingActivity extends Activity implements
                 } else if ((adapterView.getItemAtPosition(pos)).toString().equals("English")) {
                     configuration.setLocale(Locale.ENGLISH);
                 }
+
+                if (!isChanged && !usedLanguage.equals(adapterView.getItemAtPosition(pos).toString())){
+                    isChanged = true;
+                }
                 break;
         }
-
     }
 
     @Override
@@ -439,6 +468,8 @@ public class SettingActivity extends Activity implements
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        Log.d(TAG, "change onCheckedChanged");
+        isChanged = true;
         mSettingSharedPreferences.edit().remove(AUTO_CUE_TOGGLE).putBoolean(AUTO_CUE_TOGGLE, compoundButton.isChecked()).apply();
     }
 
@@ -455,7 +486,8 @@ public class SettingActivity extends Activity implements
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
         int id = radioGroup.getCheckedRadioButtonId();
-
+        Log.d(TAG, "change onCheckedChanged radio");
+        isChanged = true;
         switch (radioGroup.getId()) {
             case R.id.unit_weight:
                 String weightString = mSettingSharedPreferences.getString(WEIGHT, "0");
@@ -540,5 +572,6 @@ public class SettingActivity extends Activity implements
                 getBaseContext().getPackageName());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        finish();
     }
 }
