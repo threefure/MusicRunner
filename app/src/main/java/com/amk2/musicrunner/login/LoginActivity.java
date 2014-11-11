@@ -2,6 +2,8 @@ package com.amk2.musicrunner.login;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -49,6 +51,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private ActionBar mActionBar;
     private Button skipButton;
+    private Button loginButton;
     private LinearLayout signUpWithEmail;
     private LinearLayout signUpWithFacebook;
 
@@ -102,12 +105,14 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private void initViews () {
         skipButton = (Button) findViewById(R.id.login_skip);
+        loginButton = (Button) findViewById(R.id.login_button);
         signUpWithEmail    = (LinearLayout) findViewById(R.id.sign_up_with_email);
         signUpWithFacebook = (LinearLayout) findViewById(R.id.sign_up_with_fb);
     }
 
     private void setViews () {
         skipButton.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
         signUpWithEmail.setOnClickListener(this);
         signUpWithFacebook.setOnClickListener(this);
     }
@@ -146,11 +151,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     }
 
     public void loginAccount(View view) {
-        /*
-        EditText accountEditText = (EditText) findViewById(R.id.account_info);
+
+        EditText accountEditText = (EditText) findViewById(R.id.account_login);
         String account = accountEditText.getText().toString().trim();
 
-        EditText passwordEditText = (EditText) findViewById(R.id.password);
+        EditText passwordEditText = (EditText) findViewById(R.id.password_login);
         String password = passwordEditText.getText().toString();
 
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
@@ -165,7 +170,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             preferences.edit().putString(Constant.ACCOUNT_PARAMS, account).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             startActivityForResult(intent,MUSIC_RUNNER_MAIN_REQUEST);
-        }*/
+        }
 
     }
 
@@ -228,12 +233,14 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     //return true if users successfully login/register.Otherwise return false
     public boolean setStatusToEditText(HttpResponse response){
         boolean isSuccessful = false;
-        TextView editText = (TextView)findViewById(R.id.loginPageStatus);
+        //TextView editText = (TextView)findViewById(R.id.loginPageStatus);
         String status = getStatusCode(response);
         String statusMessage = getStatusMessage(status);
-        editText.setText(statusMessage, TextView.BufferType.EDITABLE);
+        //editText.setText(statusMessage, TextView.BufferType.EDITABLE);
         if(StatusCode.LOGIN_SUCCESSFULLY.equals(status)) {
             isSuccessful = true;
+        } else if(StatusCode.NO_USER.equals(status) || StatusCode.WRONG_PASSWORD.equals(status)){
+            popoutWrongLoginInfo();
         }
         return isSuccessful;
     }
@@ -268,6 +275,21 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 intent = new Intent(this, SignUpActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.login_button:
+                loginAccount(view);
+                break;
         }
+    }
+
+    private void popoutWrongLoginInfo(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setMessage("Password is not correct or user does not exist. Please re-enter account information")
+                .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                });
+        dialog.show();
     }
 }
