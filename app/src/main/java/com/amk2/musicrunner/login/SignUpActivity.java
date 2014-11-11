@@ -3,6 +3,7 @@ package com.amk2.musicrunner.login;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends Activity implements View.OnClickListener {
     private ActionBar mActionBar;
     private Button signupButton;
+    private ProgressDialog progressDialog;
+    private Activity self;
 
     private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -41,6 +44,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_with_email);
         mActionBar = getActionBar();
+        self = this;
         mActionBar.hide();
         initViews();
         setViews();
@@ -60,6 +64,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
             case R.id.email_sign_up:
                 //intent = new Intent(this, SignUpActivity.class);
                 //startActivity(intent);
+                progressDialog = ProgressDialog.show(self, "Register...", getString(R.string.please_wait));
                 EditText emailET = (EditText) findViewById(R.id.email);
                 String email = emailET.getText().toString();
                 EditText passwordET = (EditText) findViewById(R.id.password);
@@ -127,6 +132,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     }
 
     private void showInvalidEmailFormatDialog(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("You need to enter valid email")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
@@ -139,6 +145,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     }
 
     private void showRegisterFailDialog(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("Sorry, register has failed. Please try again later")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
@@ -151,6 +158,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     }
 
     private void showDuplicateUserDialog(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("This email has been registered, please use another email")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
@@ -163,6 +171,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     }
 
     private void showNoEmptyField(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("Please make sure you enter all fields")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
@@ -175,6 +184,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     }
 
     private void showPasswordNotSameDialog(){
+        progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("Please make sure you enter the same password for 'Confirm Password'")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
