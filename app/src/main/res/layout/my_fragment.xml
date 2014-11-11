@@ -221,14 +221,15 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"/>
         <TextView
-            android:text="@string/running_summary_intro"
+            android:text="@string/past_activities_intro"
             android:textSize="16dp"
             android:textColor="@color/white"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"/>
         <ImageView
             android:id="@+id/past_activities_arrow"
             android:src="@drawable/arrow6"

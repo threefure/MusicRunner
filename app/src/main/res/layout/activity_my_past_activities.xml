@@ -15,6 +15,7 @@
         <TextView
             android:text="@string/music_rank_initial_information"
             android:textSize="24dp"
+            android:textColor="@color/darkgray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

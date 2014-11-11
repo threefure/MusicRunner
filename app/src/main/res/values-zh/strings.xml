@@ -67,7 +67,7 @@
     <string name="my_running_km_speed">km/hr</string>
     <string name="my_running_mi_speed">mi/hr</string>
     <string name="my_running_this_week">本週記錄</string>
-    <string name="my_running_past_activities">過去活動</string>
+    <string name="my_running_past_activities">過去跑步記錄</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="laps">圈</string>
 
@@ -97,7 +97,7 @@
     <string name="confirm_password">請再輸入一次密碼</string>
     <string name="forget_password">忘了密碼？</string>
     <string name="sign_up_with_email">E-mail註冊</string>
-    <string name="sign_up_with_fb">Facebook註冊</string>
+    <string name="sign_up_with_fb">Facebook登入</string>
     <string name="first_name">名</string>
     <string name="last_name">姓</string>
     <string name="email">Email</string>
@@ -176,5 +176,17 @@
     <string name="your_playlist">我的清單</string>
     <string name="add_to_playlist">加到我的清單</string>
     <string name="delete">刪除</string>
+
+    <!-- User instruction -->
+    <string name="got_it">好</string>
+    <string name="my_info_tab_intro">個人資訊頁面</string>
+    <string name="playlist_tab_intro">音樂清單資訊頁面</string>
+    <string name="ranking_tab_intro">音樂排行榜頁面</string>
+    <string name="running_summary_intro">一周或全部歷史跑步統計資料</string>
+    <string name="past_activities_intro">過去跑步記錄</string>
+    <string name="auto_generated_playlist_intro">根據您手機已存放音樂，自動產生的音樂清單</string>
+    <string name="create_playlist_intro">開新個人音樂清單</string>
+    <string name="ranking_page_intro">根據消耗卡路里多寡的音樂排行榜</string>
+    <string name="delete_playlist_intro">左滑刪除個人音樂清單</string>
 
 </resources>

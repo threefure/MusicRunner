@@ -97,7 +97,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="forget_password">Forget your password?</string>
     <string name="sign_up_with_email">Sign Up with E-mail</string>
-    <string name="sign_up_with_fb">Sign Up with Facebook</string>
+    <string name="sign_up_with_fb">Login with Facebook</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
@@ -187,5 +187,6 @@
     <string name="auto_generated_playlist_intro">Automatically generated playlist for you (based on your music in your phone)</string>
     <string name="create_playlist_intro">Create your personal playlist</string>
     <string name="ranking_page_intro">Rank musics by calories burned</string>
+    <string name="delete_playlist_intro">Swipe left to delete personal playlist</string>
 
 </resources>

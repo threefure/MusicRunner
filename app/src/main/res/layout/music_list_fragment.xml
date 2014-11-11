@@ -59,6 +59,28 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_centerHorizontal="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:gravity="right">
+            <TextView
+                android:text="@string/delete_playlist_intro"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:src="@drawable/left_arrow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:src="@drawable/oval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"/>
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>

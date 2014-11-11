@@ -13,6 +13,7 @@
         <TextView
             android:text="@string/music_rank_initial_information"
             android:textSize="24dp"
+            android:textColor="@color/darkgray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -33,20 +34,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-        <ImageView
-            android:src="@drawable/rocket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/rocket_intro"
-            android:layout_centerInParent="true"/>
-        <TextView
-            android:id="@+id/rocket_intro"
-            android:text="@string/ranking_page_intro"
-            android:textSize="16dp"
-            android:textColor="@color/white"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:gravity="center_horizontal"
+            android:layout_centerInParent="true">
+            <TextView
+                android:id="@+id/rocket_intro"
+                android:text="@string/ranking_page_intro"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:src="@drawable/rocket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </RelativeLayout>
-
 </RelativeLayout>
