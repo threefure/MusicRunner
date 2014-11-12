@@ -162,7 +162,6 @@
         </activity>
         <activity
             android:name=".login.TermsPolicyActivity"
-            android:label="@string/title_activity_terms_policy"
             android:screenOrientation="portrait">
         </activity>
     </application>

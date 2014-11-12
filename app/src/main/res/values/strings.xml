@@ -190,7 +190,5 @@
     <string name="create_playlist_intro">Create your personal playlist</string>
     <string name="ranking_page_intro">Rank musics by calories burned</string>
     <string name="delete_playlist_intro">Swipe left to delete personal playlist</string>
-    <string name="title_activity_terms_policy">TermsPolicyActivity</string>
-    <string name="hello_world">Hello world!</string>
 
 </resources>

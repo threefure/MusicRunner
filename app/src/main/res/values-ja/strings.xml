@@ -3,6 +3,7 @@
 
     <string name="app_name">MusicRunner</string>
     <string name="action_settings">設定</string>
+    <string name="terms_policy_content_uri">http://bananaplan.com/policy</string>
 
     <!-- Tab -->
     <string name="start_tab">開始</string>
@@ -180,9 +181,9 @@
 
     <!-- User instruction -->
     <string name="got_it">好</string>
-    <string name="my_info_tab_intro">個人資訊ペース</string>
-    <string name="playlist_tab_intro">プレイリストのペース</string>
-    <string name="ranking_tab_intro">音楽ランキングのペース</string>
+    <string name="my_info_tab_intro">自分の記録</string>
+    <string name="playlist_tab_intro">プレイリストを選ぶ</string>
+    <string name="ranking_tab_intro">音楽ランキング</string>
     <string name="running_summary_intro">ランニング資訊</string>
     <string name="past_activities_intro">過去記錄</string>
     <string name="auto_generated_playlist_intro">あなたの為の自動プレイリスト(あなたのスマートフォンの中にある音楽から)</string>

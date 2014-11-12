@@ -3,6 +3,7 @@
 
     <string name="app_name">MusicRunner</string>
     <string name="action_settings">設定</string>
+    <string name="terms_policy_content_uri">http://bananaplan.com/policy</string>
 
     <!-- Tab -->
     <string name="start_tab">開始</string>
