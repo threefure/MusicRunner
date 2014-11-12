@@ -15,8 +15,8 @@
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
     <string name="go_running_button_text">Go Running</string>
-    <string name="you_are_now_listening_to">現正聽的音樂清單</string>
-    <string name="no_playlist_selected">無選取音樂清單，按我選取！</string>
+    <string name="you_are_now_listening_to">プレイ中の(プレイ)リスト</string>
+    <string name="no_playlist_selected">選択した音楽がない（ありません）</string>
 
     <!-- Running Activity -->
     <string name="initial_duration">00 : 00 : 00</string>
@@ -184,10 +184,10 @@
     <string name="playlist_tab_intro">プレイリストのペース</string>
     <string name="ranking_tab_intro">音楽ランキングのペース</string>
     <string name="running_summary_intro">ランニング資訊</string>
-    <string name="past_activities_intro">過去跑步記錄</string>
-    <string name="auto_generated_playlist_intro">根據您手機已存放音樂，自動產生的音樂清單</string>
-    <string name="create_playlist_intro">開新個人音樂清單</string>
-    <string name="ranking_page_intro">根據消耗卡路里多寡的音樂排行榜</string>
-    <string name="delete_playlist_intro">左滑刪除個人音樂清單</string>
+    <string name="past_activities_intro">過去記錄</string>
+    <string name="auto_generated_playlist_intro">あなたの為の自動プレイリスト(あなたのスマートフォンの中にある音楽から)</string>
+    <string name="create_playlist_intro">新しい個人プレイリスト</string>
+    <string name="ranking_page_intro">音楽ランキングページ</string>
+    <string name="delete_playlist_intro">スワイプでプレイリストを削除する</string>
 
 </resources>
