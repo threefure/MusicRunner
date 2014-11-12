@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.music;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -66,6 +67,7 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
     private ArrayList<SongPerformance> mSongPerformanceList;
 
     private Fragment self;
+    private Activity mActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,12 +79,13 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         self = this;
-        inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mSettingSharedPreferences = getActivity().getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
-        mUserInstructionSharedPreferences = getActivity().getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
+        mActivity = getActivity();
+        inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSettingSharedPreferences = mActivity.getSharedPreferences(SettingActivity.SETTING_SHARED_PREFERENCE, 0);
+        mUserInstructionSharedPreferences = mActivity.getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
         unitDistance = mSettingSharedPreferences.getInt(SettingActivity.DISTANCE_UNIT, SettingActivity.SETTING_DISTANCE_KM);
         hasIntroduced = mUserInstructionSharedPreferences.getBoolean(Constant.RANK_PAGE, false);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateRankReceiver, new IntentFilter(UPDATE_MUSIC_RANK));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdateRankReceiver, new IntentFilter(UPDATE_MUSIC_RANK));
         initViews();
         setViews();
     }
@@ -110,7 +113,7 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
 
     private void setViews() {
         mSongPerformanceList = new ArrayList<SongPerformance>();
-        musicRankListAdapter = new MusicRankListAdapter(getActivity(), R.layout.music_rank_template, mSongPerformanceList);
+        musicRankListAdapter = new MusicRankListAdapter(mActivity, R.layout.music_rank_template, mSongPerformanceList);
         musicRankListView.setAdapter(musicRankListAdapter);
 
         //set up introduction click event
@@ -167,9 +170,9 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
         OnSongRankPreparedListener listener;
         public SongRankLoaderRunnable (Fragment fragment) {
             mFragment = fragment;
-            mContext = fragment.getActivity();
+            //mContext = fragment.getActivity();
             listener = (OnSongRankPreparedListener) fragment;
-            mContentResolver = mContext.getContentResolver();
+            mContentResolver = mActivity.getContentResolver();
         }
         @Override
         public void run() {
@@ -208,8 +211,8 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
              */
                 try {
                     if (lastSongId != songId) {
-                        songInfo = MusicLib.getSongInfo(mContext, songId);
-                        artist = MusicLib.getArtist(mContext, Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
+                        songInfo = MusicLib.getSongInfo(mActivity, songId);
+                        artist = MusicLib.getArtist(mActivity, Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
                         SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distanceString), caloriesTemp, Double.parseDouble(speedString), songInfo.get(MusicLib.SONG_NAME), artist);
                         sp.setSongId(songId);
                         sp.setRealSongId(Long.parseLong(songInfo.get(MusicLib.SONG_REAL_ID)));
