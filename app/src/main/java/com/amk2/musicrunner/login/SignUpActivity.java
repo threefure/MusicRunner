@@ -115,6 +115,8 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+        } else {
+            showConnectionErrorDialog();
         }
     }
 
@@ -156,6 +158,18 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         dialog.show();
     }
 
+    private void showConnectionErrorDialog(){
+        progressDialog.dismiss();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setMessage("Opps...Server does not respond. Please check your internet connection and try again later.")
+                .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                });
+        dialog.show();
+    }
     private void showRegisterFailDialog(){
         progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)

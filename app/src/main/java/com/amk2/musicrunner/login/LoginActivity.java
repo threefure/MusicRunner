@@ -261,6 +261,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             isSuccessful = true;
         } else if(StatusCode.NO_USER.equals(status) || StatusCode.WRONG_PASSWORD.equals(status)){
             popoutWrongLoginInfo();
+        } else {
+            showConnectionErrorDialog();
         }
         return isSuccessful;
     }
@@ -308,6 +310,18 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    private void showConnectionErrorDialog(){
+        progressDialog.dismiss();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setMessage("Opps...Server does not respond. Please check your internet connection and try again later.")
+                .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                });
+        dialog.show();
+    }
     private void popoutWrongLoginInfo(){
         progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
