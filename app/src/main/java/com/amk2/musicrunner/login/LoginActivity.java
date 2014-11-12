@@ -175,6 +175,10 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         boolean isSuccessful = setStatusToEditText(response);
 
         if(isSuccessful){
+            //get user full name
+            String fullName = getUserFullName(account);
+            loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, fullName).commit();
+            loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             SharedPreferences preferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
             preferences.edit().putString(Constant.ACCOUNT_PARAMS, account).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
@@ -183,6 +187,13 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     }
 
+    private String getUserFullName(String account){
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        pairs.add(new BasicNameValuePair("userAccount", account));
+        HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.GET_FULL_NAME, pairs);
+        String fullName = getStatusCode(response);
+        return fullName;
+    }
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //

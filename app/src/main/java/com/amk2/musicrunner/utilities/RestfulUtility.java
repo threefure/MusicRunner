@@ -41,6 +41,7 @@ public class RestfulUtility {
     public static final String GET_SETTING_INFO = "/getSettingInfo";
     public static final String UPDATE_SETTINGS = "/updateSettings";
     public static final String FACEBOOK_LOGIN = "/facebookLogin";
+    public static final String GET_FULL_NAME = "/getFullName";
 
     public static class GetRequest extends AsyncTask<String, Integer, String> {
 
