@@ -73,7 +73,9 @@ public class SettingActivity extends Activity implements
     public static final int SETTING_DEGREE_C = 0;
     public static final int SETTING_DEGREE_F = 1;
     public static final String SETTING_AUTO_CUE_5_MINUTES = "5 Minutes";
-    public static final String SETTING_LANGUAGE_ENGLISH = "English";
+    public static final String SETTING_LANGUAGE_ENGLISH  = "English";
+    public static final String SETTING_LANGUAGE_CHINESE  = "中文";
+    public static final String SETTING_LANGUAGE_JAPANESE = "日本語";
 
     private final String TAG = "SettingActivity";
 
@@ -460,6 +462,8 @@ public class SettingActivity extends Activity implements
                     getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
                 } else if ((adapterView.getItemAtPosition(pos)).toString().equals("English")) {
                     configuration.setLocale(Locale.ENGLISH);
+                } else if ((adapterView.getItemAtPosition(pos)).toString().equals("日本語")) {
+                    configuration.setLocale(Locale.JAPANESE);
                 }
 
                 if (!isChanged && !usedLanguage.equals(adapterView.getItemAtPosition(pos).toString())){

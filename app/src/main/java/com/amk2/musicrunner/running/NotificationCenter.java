@@ -80,6 +80,15 @@ public class NotificationCenter {
             soundMap.put("70", mSoundPool.load(context, R.raw.seventy, 1));
             soundMap.put("80", mSoundPool.load(context, R.raw.eighty, 1));
             soundMap.put("90", mSoundPool.load(context, R.raw.ninety, 1));
+        } else if (language.equals(SettingActivity.SETTING_LANGUAGE_JAPANESE)) {
+            soundMap.put("20", mSoundPool.load(context, R.raw.twenty, 1));
+            soundMap.put("30", mSoundPool.load(context, R.raw.thirty, 1));
+            soundMap.put("40", mSoundPool.load(context, R.raw.forty, 1));
+            soundMap.put("50", mSoundPool.load(context, R.raw.fifty, 1));
+            soundMap.put("60", mSoundPool.load(context, R.raw.sixty, 1));
+            soundMap.put("70", mSoundPool.load(context, R.raw.seventy, 1));
+            soundMap.put("80", mSoundPool.load(context, R.raw.eighty, 1));
+            soundMap.put("90", mSoundPool.load(context, R.raw.ninety, 1));
         }
     }
 
@@ -153,6 +162,8 @@ public class NotificationCenter {
             //play distance number
             if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
                 playNumberInEng(distance);
+            } else if (language.equals(SettingActivity.SETTING_LANGUAGE_JAPANESE)) {
+                playNumberInJP(distance);
             } else {
                 playNumber(distance);
             }
@@ -169,6 +180,8 @@ public class NotificationCenter {
             //play calorie number
             if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
                 playNumberInEng(calories);
+            } else if (language.equals(SettingActivity.SETTING_LANGUAGE_JAPANESE)) {
+                playNumberInJP(calories);
             } else {
                 playNumber(calories);
             }
@@ -191,6 +204,8 @@ public class NotificationCenter {
 
                 if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
                     playNumberInEng(speed);
+                } else if (language.equals(SettingActivity.SETTING_LANGUAGE_JAPANESE)) {
+                    playNumberInJP(speed);
                 } else {
                     playNumber(speed);
                 }
@@ -201,6 +216,8 @@ public class NotificationCenter {
                 // play speed
                 if (language.equals(SettingActivity.SETTING_LANGUAGE_ENGLISH)) {
                     playNumberInEng(speed);
+                } else if (language.equals(SettingActivity.SETTING_LANGUAGE_JAPANESE)) {
+                    playNumberInJP(speed);
                 } else {
                     playNumber(speed);
                 }
@@ -244,6 +261,72 @@ public class NotificationCenter {
                 // ten
                 //this.play(soundMap.get("10"), 700);
                 number -= toPlay.doubleValue();
+                isLTTen = true;
+            }
+            if (number > 0) {
+                // first digit
+                toPlay = number.intValue() % 10;
+                if (toPlay > 0) {
+                    this.play(soundMap.get(toPlay.toString()), 700);
+                } else {
+                    if (!isLTTen) {
+                        this.play(soundMap.get(toPlay.toString()), 700);
+                    }
+                }
+
+                reportString = number.toString();
+                indexOfDot = reportString.indexOf(".");
+                if (indexOfDot > 0) {
+                    reportString = StringLib.truncateDoubleString(reportString, 2);
+
+                    // dot
+                    this.play(soundMap.get("dot"), 700);
+
+                    // 小數點後第一位
+                    this.play(soundMap.get(reportString.charAt(indexOfDot + 1) + ""), 700);
+
+                    // 小數點後第二位
+                    if (reportString.length() > indexOfDot + 2) {
+                        this.play(soundMap.get(reportString.charAt(indexOfDot + 2) + ""), 700);
+                    }
+                }
+            }
+
+            if (number == 0) {
+                this.play(soundMap.get("0"), 700);
+            }
+        }
+
+        private void playNumberInJP (Double number) {
+            boolean isLTTen = false; //is larger than 10
+            if (number >= 1000) {
+                toPlay = number.intValue() / 1000;
+                this.play(soundMap.get(toPlay.toString()), 700);
+                this.play(soundMap.get("thousand"), 700);
+                number -= (toPlay.doubleValue() * 1000);
+                isLTTen = true;
+            }
+            if (number >= 100) {
+                toPlay = number.intValue() / 100;
+                this.play(soundMap.get(toPlay.toString()), 700);
+                this.play(soundMap.get("hundred"), 700);
+                number -= (toPlay.doubleValue() * 100);
+                isLTTen = true;
+            }
+            if (number >= 20) {
+                toPlay = number.intValue() / 10;
+                toPlay *= 10;
+                this.play(soundMap.get(toPlay.toString()), 700);
+                number -= (toPlay.doubleValue());
+                isLTTen = true;
+            }
+            if (number >= 10) {
+                // second digit
+                toPlay = number.intValue() / 10;
+                this.play(soundMap.get(toPlay.toString()), 700);
+
+                // ten
+                this.play(soundMap.get("10"), 700);
                 isLTTen = true;
             }
             if (number > 0) {

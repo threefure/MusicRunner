@@ -78,6 +78,7 @@ public class RunningActivity extends Activity implements
     private static final int RUNNING_PAGE_SIZE = 3;
 
     private FragmentManager mFragmentManager;
+    private Activity mActivity;
 
     private ViewPager mRunningViewPager;
     private RunningTabViewPagerAdapter mRunningTabViewPagerAdapter;
@@ -164,6 +165,7 @@ public class RunningActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.running_activity);
+        mActivity = this;
         initialize();
     }
 
@@ -383,7 +385,7 @@ public class RunningActivity extends Activity implements
     }
 
     private void galleryAddPic() {
-        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+        mActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.parse("file://" + photoPath)));
     }
 

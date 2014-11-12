@@ -14,7 +14,7 @@
     <string name="chance_of_rain">Chance of Rain</string>
     <string name="uv_index">UV Index</string>
     <string name="humidity">Humidity</string>
-    <string name="go_running_button_text">跑吧</string>
+    <string name="go_running_button_text">Go Running</string>
     <string name="you_are_now_listening_to">現正聽的音樂清單</string>
     <string name="no_playlist_selected">無選取音樂清單，按我選取！</string>
 
@@ -22,14 +22,14 @@
     <string name="initial_duration">00 : 00 : 00</string>
     <string name="distance">距離</string>
     <string name="km">km</string>
-    <string name="calorie">卡路里</string>
+    <string name="calorie">カロリー</string>
     <string name="kcal">kcal</string>
     <string name="zero">0</string>
-    <string name="speed">速度</string>
-    <string name="speed_ratio">min/km</string>
-    <string name="pause">暫停</string>
-    <string name="done">結束</string>
-    <string name="resume">回復</string>
+    <string name="speed">スピード</string>
+    <string name="speed_ratio">分/km</string>
+    <string name="pause">一時停止</string>
+    <string name="done">停止</string>
+    <string name="resume">再起動</string>
     <string name="map_tab_text">地圖</string>
     <string name="music_tab_text">音樂</string>
 
@@ -49,25 +49,25 @@
     <string name="discover_fragment_tag">Discover Fragment</string>
 
     <!-- Finish running activity -->
-    <string name="save">儲存</string>
-    <string name="discard">不儲存</string>
+    <string name="save">保存</string>
+    <string name="discard">破棄</string>
     <string name="authority"></string>
     <string name="google_map_api_key">AIzaSyCG22OmmJ0Brv9fhnFXWfNIwYwQcFQ9nQU</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 
     <!-- My Running -->
-    <string name="my_running_times">次</string>
-    <string name="my_running_speed">時速</string>
-    <string name="my_running_pace">步速</string>
-    <string name="my_running_calories">卡路里</string>
+    <string name="my_running_times">タイム</string>
+    <string name="my_running_speed">スピード</string>
+    <string name="my_running_pace">ペース</string>
+    <string name="my_running_calories">カロリー</string>
     <string name="my_running_distances">距離</string>
-    <string name="my_running_km_pace">min/km</string>
-    <string name="my_running_mi_pace">min/mi</string>
-    <string name="my_running_km_speed">km/hr</string>
-    <string name="my_running_mi_speed">mi/hr</string>
-    <string name="my_running_this_week">本週記錄</string>
-    <string name="my_running_past_activities">過去跑步記錄</string>
+    <string name="my_running_km_pace">分/km</string>
+    <string name="my_running_mi_pace">分/mi</string>
+    <string name="my_running_km_speed">km/時</string>
+    <string name="my_running_mi_speed">mi/時</string>
+    <string name="my_running_this_week">今週の記錄</string>
+    <string name="my_running_past_activities">過去の記録</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="laps">圈</string>
 
@@ -91,34 +91,34 @@
     <string name="title_activity_fblogin">FBLogin</string>
     <string name="facebook_app_id">708954652520589</string>
     <string name="title_activity_setting">SettingActivity</string>
-    <string name="skip">試試看</string>
-    <string name="login">登入</string>
-    <string name="password">密碼</string>
-    <string name="confirm_password">請再輸入一次密碼</string>
-    <string name="forget_password">忘了密碼？</string>
-    <string name="sign_up_with_email">E-mail註冊</string>
-    <string name="sign_up_with_fb">Facebook登入</string>
+    <string name="skip">試す</string>
+    <string name="login">登録</string>
+    <string name="password">パスワード</string>
+    <string name="confirm_password">認のためもう一度、コピーせずに直接入力してください</string>
+    <string name="forget_password">パスワードを忘れた場合はこちらへ？</string>
+    <string name="sign_up_with_email">新規取得（メールアドレス）</string>
+    <string name="sign_up_with_fb">Facebookアカウントでログイン</string>
     <string name="first_name">名</string>
     <string name="last_name">姓</string>
-    <string name="email">Email</string>
+    <string name="email">メールアドレス</string>
     <string name="female">女性</string>
     <string name="male">男性</string>
-    <string name="signup">註冊</string>
-    <string name="terms_policy">使用者與隱私條款</string>
+    <string name="signup">登録</string>
+    <string name="terms_policy">ご利用規約</string>
 
     <!-- Setting -->
     <string name="setting_text">Setting</string>
     <string name="title_activity_running_dotted_line">RunningDottedLine</string>
-    <string name="account">帳號</string>
-    <string name="facebook">Facebook</string>
-    <string name="height">身高</string>
-    <string name="weight">體重</string>
-    <string name="birth_date">生日</string>
+    <string name="account">アカウント</string>
+    <string name="facebook">フェイスブック</string>
+    <string name="height">身長</string>
+    <string name="weight">体重</string>
+    <string name="birth_date">誕生日</string>
     <string name="audio_cue">語音提醒</string>
-    <string name="language">語言</string>
-    <string name="location">地點</string>
-    <string name="display">Display</string>
-    <string name="unit">單位</string>
+    <string name="language">言語</string>
+    <string name="location">位置</string>
+    <string name="display">ディスプレイ表示</string>
+    <string name="unit">ユニット</string>
     <string name="disconnected">已斷線</string>
     <string name="connected">已連線</string>
     <string name="kg">Kg</string>
@@ -130,8 +130,8 @@
     <string name="celsius">℃</string>
     <string name="fahrenheit">℉</string>
     <string name="auto_cue">自動提醒</string>
-    <string name="pace">步速</string>
-    <string name="logout">登出</string>
+    <string name="pace">ペース</string>
+    <string name="logout">ログアウト</string>
     <string name="logout_statement">您確定要登出嗎？</string>
     <string name="apply_setting">系統設置中</string>
     <string name="please_wait">請稍待...</string>
@@ -162,14 +162,14 @@
 
     <!-- Music Rank Fragment -->
     <string name="music_rank_initial_information">回首頁跑吧!</string>
-    <string name="total">全部</string>
+    <string name="total">総合</string>
     <string name="best">最佳紀錄</string>
     <string name="average">平均記錄</string>
-    <string name="kcal_per_min">大卡/分</string>
+    <string name="kcal_per_min">カロリー/分</string>
 
     <!-- Music List Fragment -->
-    <string name="tracks">首</string>
-    <string name="listen">選取</string>
+    <string name="tracks">トラック</string>
+    <string name="listen">選択した</string>
     <string name="cancel">取消</string>
     <string name="ok">確定</string>
     <string name="_30_mins_playlist">30分鐘清單</string>

@@ -83,8 +83,11 @@ public class MusicRunnerActivity extends Activity implements View.OnClickListene
             language = configuration.locale.getDisplayLanguage();
             mSharedPreferences.edit().remove(SettingActivity.LANGUAGE).putString(SettingActivity.LANGUAGE, language).commit();
         }
+
         if (language.equals("中文")) {
             configuration.setLocale(Locale.TAIWAN);
+        } else if (language.equals("日本語")) {
+            configuration.setLocale(Locale.JAPANESE);
         } else {
             configuration.setLocale(Locale.ENGLISH);
         }
