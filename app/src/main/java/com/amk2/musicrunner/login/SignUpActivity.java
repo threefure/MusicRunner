@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
@@ -42,6 +43,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     private ProgressDialog progressDialog;
     private Activity self;
     private SharedPreferences loginSharedPreferences;
+    private TextView mTermsPolicyTextView;
 
     private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -61,11 +63,14 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 
     private void initViews () {
         signupButton = (Button) findViewById(R.id.email_sign_up);
+        mTermsPolicyTextView = (TextView)findViewById(R.id.terms_policy);
     }
 
     private void setViews () {
+        mTermsPolicyTextView.setOnClickListener(this);
         signupButton.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View view) {
         Intent intent;
@@ -97,6 +102,10 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                     String statusString = LoginUtils.getStatusString(response);
                     nextStep(statusString,fullName);
                 }
+                break;
+
+            case  R.id.terms_policy:
+                startActivity(new Intent(this, TermsPolicyActivity.class));
                 break;
         }
     }

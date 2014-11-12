@@ -3,6 +3,7 @@
 
     <string name="app_name">MusicRunner</string>
     <string name="action_settings">Settings</string>
+    <string name="terms_policy_content_uri">http://bananaplan.com/policy</string>
 
     <!-- Tab -->
     <string name="start_tab">Start</string>
@@ -139,13 +140,13 @@
     <!-- Create Playlist -->
     <string name="create_playlist_name">Playlist Name</string>
     <string name="select_songs">Select Songs</string>
-
     <string name="_5minutes">5 Minutes</string>
     <string name="_10minutes">10 Minutes</string>
     <string name="_15minutes">15 Minutes</string>
     <string name="_20minutes">20 Minutes</string>
     <string name="_25minutes">25 Minutes</string>
     <string name="_30minutes">30 Minutes</string>
+
     <string-array name="auto_cue">
         <item>@string/_5minutes</item>
         <item>@string/_10minutes</item>
@@ -189,5 +190,7 @@
     <string name="create_playlist_intro">Create your personal playlist</string>
     <string name="ranking_page_intro">Rank musics by calories burned</string>
     <string name="delete_playlist_intro">Swipe left to delete personal playlist</string>
+    <string name="title_activity_terms_policy">TermsPolicyActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
