@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,8 +33,15 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends Activity implements View.OnClickListener {
     private ActionBar mActionBar;
     private Button signupButton;
+    public static final String LOGIN = "login";
+    public static final String STATUS = "status";
+    public static final String USER_NAME  = "user_name";
+    public static final int STATUS_NONE   = 0;
+    public static final int STATUS_LOGIN  = 1;
+    public static final int STATUS_LOGOUT = 2;
     private ProgressDialog progressDialog;
     private Activity self;
+    private SharedPreferences loginSharedPreferences;
 
     private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -45,6 +53,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_signup_with_email);
         mActionBar = getActionBar();
         self = this;
+        loginSharedPreferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
         mActionBar.hide();
         initViews();
         setViews();
@@ -83,15 +92,16 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                     pairs.add(new BasicNameValuePair("password",password));
                     pairs.add(new BasicNameValuePair("firstName",firstName));
                     pairs.add(new BasicNameValuePair("lastName",lastName));
+                    String fullName = firstName + " " + lastName;
                     HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
                     String statusString = LoginUtils.getStatusString(response);
-                    nextStep(statusString);
+                    nextStep(statusString,fullName);
                 }
                 break;
         }
     }
 
-    private void nextStep(String status){
+    private void nextStep(String status, String fullName){
         if(status == null){
             //do nothing
         } else if (status.equals(LoginUtils.DUPLICATE_ACCOUNT))
@@ -100,6 +110,8 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
             showRegisterFailDialog();
         else if (status.equals(LoginUtils.REGISTER_SUCCESSFULLY)){
             //redirect to run page
+            loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, fullName).commit();
+            loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
