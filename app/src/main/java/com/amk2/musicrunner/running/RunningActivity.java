@@ -56,7 +56,8 @@ public class RunningActivity extends Activity implements
         MusicControllerFragment.OnChangeSongListener,
         DistanceFragment.OnBackToDistanceListener,
         MusicControllerFragment.OnChangeToMusicControllerListener,
-        MapFragmentRun.OnChangeToMapListener{
+        MapFragmentRun.OnChangeToMapListener,
+        NotificationCenter.OnSetMusicVolumeListener{
 
     public final String TAG = "RunningActivity";
 
@@ -184,6 +185,7 @@ public class RunningActivity extends Activity implements
         Timer timer = new Timer();
         timer.schedule(runningTask, 0, 1000);
         notificationCenter = new NotificationCenter(this);
+        notificationCenter.setOnSetMusicVolumeListener(this);
     }
 
     private void getSharedPreferences () {
@@ -358,8 +360,8 @@ public class RunningActivity extends Activity implements
 
                     actualSec = totalSec % 60;
                     actualMin = totalSec / 60;
-                    //if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
                     if (isAutoCue && totalSec % (Constant.ONE_MINUTE * autoCuePeriod) == 0) {
+                    //if (isAutoCue && totalSec % (Constant.ONE_MINUTE) == 0) {
                         notificationCenter.notifyStatus(actualMin, actualSec, distance, speed, calorie);
                     }
                     break;
@@ -493,6 +495,7 @@ public class RunningActivity extends Activity implements
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.running_done:
+                notificationCenter.stopNotification();
                 onChangeMusicSong(mMusicControllerFragment.getLastMusicRecord());  // Handle the last song
                 stopService(new Intent(this,MusicService.class));
                 finish();
@@ -521,13 +524,6 @@ public class RunningActivity extends Activity implements
             case R.id.running_camera:
                 dispatchTakePictureIntent();
                 break;
-            /*case R.id.pic_preview:
-                if (photoPath != null) {
-                    Intent intent = new Intent(this, ShowImageActivity.class);
-                    intent.putExtra(ShowImageActivity.PHOTO_PATH, photoPath);
-                    startActivity(intent);
-                }
-                break;*/
         }
     }
 
@@ -578,6 +574,11 @@ public class RunningActivity extends Activity implements
     @Override
     public void onChangeToMusicController() {
         mRunningViewPager.setCurrentItem(RunningPageState.MUSIC);
+    }
+
+    @Override
+    public void onMusicVolumeChange(float leftVolume, float rightVolume) {
+        mMusicControllerFragment.setPlayerVolume(leftVolume, rightVolume);
     }
 
     @Override

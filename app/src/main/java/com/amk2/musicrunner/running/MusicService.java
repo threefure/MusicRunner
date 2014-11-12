@@ -172,6 +172,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+    public void setPlayerVolume (float leftPlayerVolume, float rightPlayerVolume) {
+        mMusicPlayer.setVolume(leftPlayerVolume, rightPlayerVolume);
+    }
+
     public MusicSong getPlayingSong() {
         return mMusicSongList.get(mCurrentSongIndex);
     }

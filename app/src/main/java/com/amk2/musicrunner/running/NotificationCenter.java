@@ -20,10 +20,19 @@ public class NotificationCenter {
     private SoundPool mSoundPool;
     HashMap<String, Integer> soundMap;
 
+    public interface OnSetMusicVolumeListener {
+        public void onMusicVolumeChange(float leftVolume, float rightVolume);
+    }
+
     private SharedPreferences mSettingSharedPreferences;
     private Integer unitDistance;
     private Integer unitSpeedPace;
     private String language;
+    private OnSetMusicVolumeListener onSetMusicVolumeListener;
+
+    private NotificationRoutine notificationRoutine = null;
+    private Thread routine = null;
+
 
     public NotificationCenter(Context _context) {
         context = _context;
@@ -92,12 +101,25 @@ public class NotificationCenter {
         }
     }
 
+    public void setOnSetMusicVolumeListener (OnSetMusicVolumeListener listener) {
+        onSetMusicVolumeListener = listener;
+    }
+
     public void notifyStatus (int min, int sec, Double distance, Double speed, Double calories) {
-        Thread routine = new Thread(new NotificationRoutine(min, sec, distance, speed, calories));
+        notificationRoutine = new NotificationRoutine(min, sec, distance, speed, calories);
+        routine = new Thread(notificationRoutine);
         routine.start();
     }
 
+    public void stopNotification () {
+        if (notificationRoutine != null) {
+            routine.interrupt();
+            notificationRoutine.isRunningStop(true);
+        }
+    }
+
     private class NotificationRoutine implements Runnable{
+        private boolean isStop = false;
         private int min;
         private int sec;
         private int indexOfDot;
@@ -115,12 +137,29 @@ public class NotificationCenter {
             this.speed = _speed;
             this.calories = _calories;
         }
+        public void isRunningStop (boolean isStop) {
+            this.isStop = isStop;
+        }
         @Override
         public void run () {
-            reportTime();
-            reportDistance();
-            reportCalories();
-            reportSpeed();
+            if (!isStop) {
+                onSetMusicVolumeListener.onMusicVolumeChange(0.3f, 0.3f);
+            }
+            if (!isStop) {
+                reportTime();
+            }
+            if (!isStop) {
+                reportDistance();
+            }
+            if (!isStop) {
+                reportCalories();
+            }
+            if (!isStop) {
+                reportSpeed();
+            }
+            if (!isStop) {
+                onSetMusicVolumeListener.onMusicVolumeChange(1f, 1f);
+            }
         }
         /*
          * reportTime(): report current time

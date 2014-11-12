@@ -38,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class MusicControllerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class MusicControllerFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        View.OnClickListener{
 
     private static final int MUSIC_LOADER_ID = 1;
 
@@ -390,5 +392,9 @@ public class MusicControllerFragment extends Fragment implements LoaderManager.L
             // If there is no music in user's device, return null.
             return null;
         }
+    }
+
+    public void setPlayerVolume (float leftVolume, float rightVolume) {
+        mMusicService.setPlayerVolume(leftVolume, rightVolume);
     }
 }
