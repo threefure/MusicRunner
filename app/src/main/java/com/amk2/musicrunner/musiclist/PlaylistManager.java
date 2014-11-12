@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Handler;
@@ -259,6 +260,7 @@ public class PlaylistManager{
 
     public ArrayList<MusicSong> convertCursorToMusicSongList(Cursor cursor) {
         ArrayList<MusicSong> songList = new ArrayList<MusicSong>();
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         if (cursor != null) {
             cursor.moveToPosition(-1);
             while (cursor.moveToNext()) {
@@ -267,9 +269,16 @@ public class PlaylistManager{
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
+
+                retriever.setDataSource(mContext, musicUri);
+                String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
+                if (genre == null) {
+                    genre = "";
+                }
+
                 String musicFilePath = MusicLib.getMusicFilePath(mContext, musicUri);
                 if(isMusicFile(musicFilePath)) {
-                    songList.add(new MusicSong(id, title, artist, trackDuration));
+                    songList.add(new MusicSong(id, title, artist, genre, trackDuration));
                 }
             }
         }
@@ -291,6 +300,7 @@ public class PlaylistManager{
                     JSONObject trackInfo = new JSONObject();
                     trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
                     trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
+                    trackInfo.put(MusicLib.GENRE, URLEncoder.encode(mMusicSong.mGenre, "UTF-8"));
                     trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
                     trackListWithoutBPM.put(trackInfo);
                 } else if (songInfo.get(MusicLib.BPM) == null || Double.parseDouble(songInfo.get(MusicLib.BPM)) == -2) {
@@ -298,6 +308,7 @@ public class PlaylistManager{
                     trackInfo.put(MusicLib.ARTIST, URLEncoder.encode(mMusicSong.mArtist, "UTF-8"));
                     trackInfo.put(MusicLib.ARTIST_ID, URLEncoder.encode(songInfo.get(MusicLib.ARTIST_ID), "UTF-8"));
                     trackInfo.put(MusicLib.TITLE, URLEncoder.encode(mMusicSong.mTitle, "UTF-8"));
+                    trackInfo.put(MusicLib.GENRE, URLEncoder.encode(mMusicSong.mGenre, "UTF-8"));
                     trackInfo.put(MusicLib.SONG_REAL_ID, mMusicSong.mId);
                     trackInfo.put(MusicLib.ID, songInfo.get(MusicLib.ID));
                     trackListWithoutBPM.put(trackInfo);

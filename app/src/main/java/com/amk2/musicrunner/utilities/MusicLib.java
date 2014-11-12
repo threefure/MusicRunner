@@ -37,6 +37,7 @@ public class MusicLib {
     public static final String ARTIST_ID    = "artistId";
     public static final String SONG_REAL_ID = "songRealId";
     public static final String BPM          = "bpm";
+    public static final String GENRE        = "genre";
     public static final String TEMPO        = "tempo";
     public static final String FAST_PLAYLIST   = "fast";
     public static final String MEDIUM_PLAYLIST = "medium";

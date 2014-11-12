@@ -1,5 +1,6 @@
 package com.amk2.musicrunner.musiclist;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
@@ -82,6 +83,7 @@ public class MusicListFragment extends Fragment implements
 
     private LayoutInflater inflater;
     private Fragment self;
+    private Activity mActivity;
     private OnDisableViewPagerSwipeListener mOnDisableViewPagerSwipeListener;
 
     private SharedPreferences mUserInstructionSharedPreferences;
@@ -96,13 +98,16 @@ public class MusicListFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mCreatePlaylistReceiver, new IntentFilter(CREATE_PLAYLIST));
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdatePlaylistReceiver, new IntentFilter(UPDATE_PLAYLIST));
-        mUserInstructionSharedPreferences = getActivity().getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
-        hasIntroduced = mUserInstructionSharedPreferences.getBoolean(Constant.PLAYLIST_PAGE, false);
-        inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mPlaylistMetaData = new ArrayList<Object>();
         self = this;
+        mActivity = getActivity();
+
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mCreatePlaylistReceiver, new IntentFilter(CREATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdatePlaylistReceiver, new IntentFilter(UPDATE_PLAYLIST));
+        mUserInstructionSharedPreferences = mActivity.getSharedPreferences(Constant.USER_INSTRUCTION, Context.MODE_PRIVATE);
+        hasIntroduced = mUserInstructionSharedPreferences.getBoolean(Constant.PLAYLIST_PAGE, false);
+        inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mPlaylistMetaData = new ArrayList<Object>();
+
 
         initViews();
         setViews();
@@ -138,7 +143,7 @@ public class MusicListFragment extends Fragment implements
     }
     private void setViews() {
         playlistContainer.setShadowVisible(false);
-        playlistContainer.setAdapter(new PlaylistPinnedSectionListAdapter(getActivity(), R.layout.music_list_item_template, mPlaylistMetaData));
+        playlistContainer.setAdapter(new PlaylistPinnedSectionListAdapter(mActivity, R.layout.music_list_item_template, mPlaylistMetaData));
         playlistPinnedSectionListAdapter = (PlaylistPinnedSectionListAdapter) playlistContainer.getAdapter();
         createPlaylistButtonImageView.setOnClickListener(this);
 
@@ -155,7 +160,7 @@ public class MusicListFragment extends Fragment implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.create_playlist_button:
-                Intent intent = new Intent(getActivity(), MusicCreatePlaylistActivity.class);
+                Intent intent = new Intent(mActivity, MusicCreatePlaylistActivity.class);
                 startActivity(intent);
                 break;
             case R.id.introduction:
@@ -169,7 +174,7 @@ public class MusicListFragment extends Fragment implements
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             Long playlistId = (Long) extras.get(PLAYLIST_URI);
-            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(self.getActivity(), playlistId);
+            PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(mActivity, playlistId);
             mUserGeneratedPlaylistMetaDatas.add(0, playlistMetaData);
 
             mPlaylistMetaData.clear();
@@ -177,7 +182,7 @@ public class MusicListFragment extends Fragment implements
             mPlaylistMetaData.addAll(mUserGeneratedPlaylistMetaDatas);
             playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
 
-            Intent addMusicToPlaylistIntent = new Intent(getActivity(), MusicListDetailActivity.class);
+            Intent addMusicToPlaylistIntent = new Intent(mActivity, MusicListDetailActivity.class);
             addMusicToPlaylistIntent.putExtra(MusicListFragment.PLAYLIST_POSITION, 7);
             addMusicToPlaylistIntent.putExtra(MusicListDetailActivity.PLAYLIST_ID, playlistId);
             startActivity(addMusicToPlaylistIntent);
@@ -254,7 +259,7 @@ public class MusicListFragment extends Fragment implements
             } else {
                 Long playlistId       = extras.getLong(MusicListDetailActivity.PLAYLIST_ID);
                 int playlistPosition  = extras.getInt(MusicListFragment.PLAYLIST_POSITION);
-                PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(getActivity(), playlistId);
+                PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(mActivity, playlistId);
                 mPlaylistMetaData.set(playlistPosition, playlistMetaData);
                 playlistPinnedSectionListAdapter.notifyDataSetChanged();
             }
@@ -281,7 +286,7 @@ public class MusicListFragment extends Fragment implements
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (playlistPinnedSectionListAdapter.getItemViewType(position) == PlaylistPinnedSectionListAdapter.TYPE_PLAYLIST) {
-            Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
+            Intent intent = new Intent(mActivity, MusicListDetailActivity.class);
             intent.putExtra(MusicListFragment.PLAYLIST_POSITION, position);
             intent.putExtra(MusicListDetailActivity.PLAYLIST_ID, id);
             startActivity(intent);
@@ -395,11 +400,7 @@ public class MusicListFragment extends Fragment implements
                     // set view tag for playlist container
                     PlaylistContainerTag playlistContainerTag = new PlaylistContainerTag(i, playlistMetaData.mId);
                     playlistContainer.setTag(playlistContainerTag);
-                    if (i < 7) {
-                        playlistContainer.setOnTouchListener(null);
-                    } else {
-                        playlistContainer.setOnTouchListener(this);
-                    }
+                    playlistContainer.setOnTouchListener(this);
 
 
                     // setting deleting button on click listener
@@ -477,11 +478,7 @@ public class MusicListFragment extends Fragment implements
                         playlistViewTag.mChoosePlaylistTextView.setTextColor(getResources().getColor(R.color.black));
                     }
 
-                    if (i < 7) {
-                        playlistViewTag.mPlaylistContainer.setOnTouchListener(null);
-                    } else {
-                        playlistViewTag.mPlaylistContainer.setOnTouchListener(this);
-                    }
+                    playlistViewTag.mPlaylistContainer.setOnTouchListener(this);
 
                     view.setLeft(offsetToLeft);
                 } else {
@@ -558,7 +555,8 @@ public class MusicListFragment extends Fragment implements
                     return true;
 
                 case (MotionEvent.ACTION_UP) :
-                    if (isMove) {
+                    PlaylistContainerTag viewTag = (PlaylistContainerTag) view.getTag();
+                    if (isMove && viewTag.position > 6) {
                         TranslateAnimation translateAnimation ;
                         if (direction == LEFT) {
                             isOpened = true;
@@ -586,15 +584,14 @@ public class MusicListFragment extends Fragment implements
                         animationSet.setFillBefore(false);
                         animationSet.setFillAfter(true);
                         view.startAnimation(animationSet);
-
-                        isMove = false;
                     } else {
-                        PlaylistContainerTag viewTag = (PlaylistContainerTag) view.getTag();
-                        Intent intent = new Intent(getActivity(), MusicListDetailActivity.class);
+                        viewTag = (PlaylistContainerTag) view.getTag();
+                        Intent intent = new Intent(mActivity, MusicListDetailActivity.class);
                         intent.putExtra(MusicListFragment.PLAYLIST_POSITION, viewTag.position);
                         intent.putExtra(MusicListDetailActivity.PLAYLIST_ID, viewTag.id);
                         startActivity(intent);
                     }
+                    isMove = false;
                     return true;
                 case (MotionEvent.ACTION_CANCEL) :
                     Log.d(TAG, "action cancel");
@@ -647,7 +644,7 @@ public class MusicListFragment extends Fragment implements
     private void notifyPlaylistChanged (Long playlistId) {
         Intent intent = new Intent(CHANGE_PLAYLIST);
         intent.putExtra(PLAYLIST_ID, playlistId);
-        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(mActivity).sendBroadcast(intent);
     }
 
     public class SongLoaderRunnable implements Runnable, LoaderManager.LoaderCallbacks<Cursor> {
