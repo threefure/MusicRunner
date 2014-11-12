@@ -107,6 +107,7 @@ public class UIController implements TabHost.OnTabChangeListener, ViewPager.OnPa
 
     private void initActionBar() {
         View actionBarView = View.inflate(mActionBar.getThemedContext(), R.layout.customized_action_bar, null);
+        actionBarView.findViewById(R.id.setting_button).setVisibility(View.VISIBLE);
         mSettingButton = (ImageView)actionBarView.findViewById(R.id.setting_button);
         mSettingButton.setOnClickListener(this);
 
