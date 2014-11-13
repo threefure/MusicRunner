@@ -24,10 +24,13 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.constants.StatusCode;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.utilities.RegisterValidator;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.amk2.musicrunner.utilities.StringLib;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -65,9 +68,12 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     private SharedPreferences loginSharedPreferences;
     private int loginStatus;
+    Tracker appTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appTracker = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+
         setContentView(R.layout.activity_login);
         mActionBar = getActionBar();
         self = this;
@@ -289,6 +295,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         Intent intent;
         switch (view.getId()) {
             case R.id.login_skip:
+                //tracking user click on skip
+                Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+                t.setScreenName("skipLogin");
+                t.send(new HitBuilders.AppViewBuilder().build());
+
                 loginSharedPreferences.edit().putInt(STATUS, STATUS_LOGOUT).commit();
                 intent = new Intent(this, MusicRunnerActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
