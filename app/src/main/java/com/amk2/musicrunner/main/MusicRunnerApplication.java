@@ -14,8 +14,6 @@ import java.util.HashMap;
  */
 public class MusicRunnerApplication extends Application {
     // The following line should be changed to include the correct property id.
-    private static final String PROPERTY_ID = "BP-APP-T";
-
     public static int GENERAL_TRACKER = 0;
 
     public enum TrackerName {
