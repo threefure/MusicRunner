@@ -155,6 +155,8 @@ public class PlaylistManager{
                 e.printStackTrace();
             } catch (NullPointerException e) {
                 e.printStackTrace();
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -193,14 +195,19 @@ public class PlaylistManager{
         Uri playlistMemberUri = getPlaylistMemberUri(playlistUri);
         MusicSong ms;
         PlaylistMetaData playlistMetaData;
-        for (int i = 0; i < length; i ++ ){
-            ms = musicSongList.get(i);
-            addToPlaylist(playlistMemberUri, ms.mId, i);
-            duration += ms.mDuration;
-            tracks ++;
-            if (duration > targetDuration) {
-                break;
+        try {
+            for (int i = 0; i < length; i++) {
+                ms = musicSongList.get(i);
+                addToPlaylist(playlistMemberUri, ms.mId, i);
+                duration += ms.mDuration;
+                tracks++;
+                if (duration > targetDuration) {
+                    break;
+                }
             }
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            Log.d(TAG, "index out of bound");
         }
         playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks);
         return playlistMetaData;
