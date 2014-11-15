@@ -73,8 +73,7 @@ public final class LocationUtils {
     public static final double EARTH_RADIOUS_MILES = 3958.75;
 
     // Update interval in milliseconds
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS =
-            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
 
     // A fast ceiling of update intervals, used when the app is visible
     public static final long FAST_INTERVAL_CEILING_IN_MILLISECONDS =
