@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -87,16 +90,24 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                 String confirmPassword = confirmPasswordET.getText().toString();
                 EditText firstNameET = (EditText) findViewById(R.id.first_name);
                 String firstName = firstNameET.getText().toString();
+                String firstNameEncoded = "";
                 EditText lastNAmeET = (EditText) findViewById(R.id.last_name);
                 String lastName = lastNAmeET.getText().toString();
+                String lastNameEncoded = "";
+                try {
+                    firstNameEncoded = URLEncoder.encode(firstName, "UTF-8");
+                    lastNameEncoded = URLEncoder.encode(lastName, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 if(validateRegister(email, password, confirmPassword, firstName, lastName)){
                     //registration form is valid, process register
                     List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                     pairs.add(new BasicNameValuePair("userAccount", email));
                     pairs.add(new BasicNameValuePair("password",password));
-                    pairs.add(new BasicNameValuePair("firstName",firstName));
-                    pairs.add(new BasicNameValuePair("lastName",lastName));
+                    pairs.add(new BasicNameValuePair("firstName",firstNameEncoded));
+                    pairs.add(new BasicNameValuePair("lastName",lastNameEncoded));
                     String fullName = firstName + " " + lastName;
                     HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
                     String statusString = LoginUtils.getStatusString(response);

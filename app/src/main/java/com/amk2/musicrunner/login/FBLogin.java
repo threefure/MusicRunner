@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -55,7 +56,6 @@ public class FBLogin extends Activity {
                                 TextView welcome = (TextView) findViewById(R.id.facebook_login_status);
                                 facebookUserId = Constant.FACEBOOK_ACCOUNT_PREFIX + user.getId();
                                 SharedPreferencesUtility.storeAccount(preferences, facebookUserId);
-
                                 List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                                 pairs.add(new BasicNameValuePair("userAccount", facebookUserId));
 

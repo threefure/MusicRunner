@@ -39,6 +39,9 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -73,6 +76,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         appTracker = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        appTracker.enableAdvertisingIdCollection(true);
 
         setContentView(R.layout.activity_login);
         mActionBar = getActionBar();
@@ -183,6 +187,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         if(isSuccessful){
             //get user full name
             String fullName = getUserFullName(account);
+            try {
+                fullName = URLDecoder.decode(fullName, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, fullName).commit();
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             SharedPreferences preferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);

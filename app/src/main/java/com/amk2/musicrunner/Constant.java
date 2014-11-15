@@ -36,11 +36,13 @@ public class Constant {
 
     // Server API
     public static final String HOST = "http://ec2-54-187-100-217.us-west-2.compute.amazonaws.com";
+    public static final String HOST_DEBUG = "http://runningarea.bitnamiapp.com";
     public static final String PORT = ":8080";
     public static final String WEATHER_CONDITION_API_URL = HOST + PORT + "/getWeatherConditions";
     public static final String WEATHER_HOURLY_API_URL    = HOST + PORT + "/getWeatherHourly";
     public static final String WEATHER_5DAYS_API_URL     = HOST + PORT + "/getWeatherForecast5Day";
     public static final String TRACK_INFO_API_URL        = HOST + PORT + "/getTrackInfo";
+    public static final String TRACK_INFO_DEBUG_API_URL  = HOST_DEBUG + PORT + "/getTrackInfo";
 
     //----------DEPRECATED-------------
     public static final String baseWeatherUrlString = HOST + PORT + "/weatherDailyJSON";//TODO need to append city query behind
@@ -54,6 +56,7 @@ public class Constant {
     //AWS Setting
     //public static final String AWS_HOST = "http://ec2-54-187-71-254.us-west-2.compute.amazonaws.com:8080";
     public static final String AWS_HOST = "http://ec2-54-187-100-217.us-west-2.compute.amazonaws.com:8080";
+    public static final String AWS_HOST_DEBUG = "http://runningarea.bitnamiapp.com:8080";
 
     //SharedPreference Parameters
     public static final String PREFERENCE_NAME = "musicrun";

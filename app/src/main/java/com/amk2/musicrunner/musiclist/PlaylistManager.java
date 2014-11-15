@@ -14,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.amk2.musicrunner.BuildConfig;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.running.MusicSong;
 import com.amk2.musicrunner.utilities.MusicLib;
@@ -139,7 +140,13 @@ public class PlaylistManager{
         public void run() {
             try {
                 RestfulUtility.PostRequest postRequest = new RestfulUtility.PostRequest(postString);
-                String trackListArrayString = postRequest.execute(Constant.TRACK_INFO_API_URL).get();
+                String trackInfoApiUrl;
+                if (BuildConfig.DEBUG) {
+                    trackInfoApiUrl = Constant.TRACK_INFO_DEBUG_API_URL;
+                } else {
+                    trackInfoApiUrl = Constant.TRACK_INFO_API_URL;
+                }
+                String trackListArrayString = postRequest.execute(trackInfoApiUrl).get();
                 JSONArray trackListArray = new JSONArray(trackListArrayString);
                 saveBpmForEachSong(trackListArray);
                 categorizePlaylists();

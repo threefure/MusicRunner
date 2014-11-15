@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.amk2.musicrunner.BuildConfig;
 import com.amk2.musicrunner.Constant;
 
 import org.apache.http.HttpResponse;
@@ -147,7 +148,13 @@ public class RestfulUtility {
         HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
         HttpConnectionParams.setSoTimeout(httpParams, 3000);
         HttpClient client = new DefaultHttpClient(httpParams);
-        HttpPost post = new HttpPost(Constant.AWS_HOST + endpoint);
+        HttpPost post;
+        if (BuildConfig.DEBUG) {
+            post = new HttpPost(Constant.AWS_HOST_DEBUG + endpoint);
+        } else {
+            post = new HttpPost(Constant.AWS_HOST + endpoint);
+        }
+
 
         HttpResponse response = null;
         try {
