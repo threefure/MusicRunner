@@ -120,7 +120,8 @@ public class MusicListFragment extends Fragment implements
         // and http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
         // but....not work!
         super.onResume();
-        if (mPlaylistMetaData.size() == 0) {
+        if (mPlaylistMetaData.size() == 0 && isAdded()) {
+            mActivity = getActivity();
             SongLoaderRunnable loader = new SongLoaderRunnable(this);
             Thread loaderThread = new Thread(loader);
             loaderThread.start();
