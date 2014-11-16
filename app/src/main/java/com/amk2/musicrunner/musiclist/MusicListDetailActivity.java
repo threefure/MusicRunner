@@ -330,9 +330,19 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             ImageView songTempo;
             RelativeLayout songContainer;
             Button deleteButton;
+            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), musicMetaData.mAudioId);
+            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
             if (view == null) {
                 // inflate the view
                 view = inflater.inflate(R.layout.music_list_item_template, null);
+
+                PhotoLoadTask photoLoadTask = new PhotoLoadTask(
+                        filePath,
+                        view.findViewById(R.id.album_photo),
+                        view.findViewById(R.id.album_photo).getLayoutParams().width,
+                        view.findViewById(R.id.album_photo).getLayoutParams().height,
+                        PhotoLoadTask.TYPE_ALBUM_PHOTO);
+
                 songIndexNumber = (TextView) view.findViewById(R.id.song_index_number);
                 title           = (TextView) view.findViewById(R.id.title);
                 artist          = (TextView) view.findViewById(R.id.artist);
@@ -342,8 +352,10 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 deleteButton   = (Button) view.findViewById(R.id.delete);
 
                 // setting tag for song view
-                SongViewTag songViewTag = new SongViewTag(songIndexNumber, title, artist, albumPhoto, songTempo, songContainer, deleteButton);
+                SongViewTag songViewTag = new SongViewTag(songIndexNumber, title, artist, albumPhoto, songTempo, songContainer, deleteButton, photoLoadTask);
                 view.setTag(songViewTag);
+                // start loading album photo
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
 
                 PositionAndIdViewTag positionAndIdViewTag = new PositionAndIdViewTag(i, musicMetaData.mAudioId);
                 deleteButton.setTag(positionAndIdViewTag);
@@ -363,7 +375,18 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 positionAndIdViewTag.audioId = musicMetaData.mAudioId;
                 positionAndIdViewTag.position = i;
                 deleteButton.setTag(positionAndIdViewTag);
+
+                // reload album photo for the same view item
+                PhotoLoadTask photoLoadTask = songViewTag.photoLoadTask;
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_LOAD_TERMINATE);
+                photoLoadTask.reset(filePath,
+                        songViewTag.albumPhoto,
+                        songViewTag.albumPhoto.getLayoutParams().width,
+                        songViewTag.albumPhoto.getLayoutParams().height);
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
             }
+            // initialize album photo
+            albumPhoto.setImageResource(R.drawable.initial_photo);
 
             // setting song index
             songIndexNumber.setText(String.valueOf(i + 1));
@@ -373,10 +396,6 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
             // setting artist
             artist.setText(StringLib.truncate(musicMetaData.mArtist, 18));
-
-            // setting album photo
-            if (musicMetaData.mAlbumPhoto != null)
-                albumPhoto.setImageBitmap(musicMetaData.mAlbumPhoto);
 
             // setting tempo icon
             if (musicMetaData.mBpm != null) {
@@ -497,7 +516,8 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
             ImageView songTempo;
             RelativeLayout songContainer;
             Button deleteButton;
-            public SongViewTag(TextView songIndexNumber, TextView title, TextView artist, ImageView albumPhoto, ImageView songTempo, RelativeLayout songContainer, Button deleteButton) {
+            PhotoLoadTask photoLoadTask;
+            public SongViewTag(TextView songIndexNumber, TextView title, TextView artist, ImageView albumPhoto, ImageView songTempo, RelativeLayout songContainer, Button deleteButton, PhotoLoadTask photoLoadTask) {
                 this.songIndexNumber = songIndexNumber;
                 this.title = title;
                 this.artist = artist;
@@ -505,6 +525,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                 this.songTempo = songTempo;
                 this.songContainer = songContainer;
                 this.deleteButton = deleteButton;
+                this.photoLoadTask = photoLoadTask;
             }
         }
 

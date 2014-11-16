@@ -291,21 +291,6 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             }
             // initialize album photo
             viewTag.albumCoverPhoto.setImageResource(R.drawable.initial_photo);
-/*
-            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), ms.mId);
-            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
-            PhotoLoadTask photoLoadTask = new PhotoLoadTask(
-                    filePath,
-                    viewTag.albumCoverPhoto,
-                    viewTag.albumCoverPhoto.getLayoutParams().width,
-                    viewTag.albumCoverPhoto.getLayoutParams().height,
-                    PhotoLoadTask.TYPE_ALBUM_PHOTO);
-            photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);*/
-            //photoManager.handleState(photoLoadTask, PhotoManager.STATE_LOAD_IMAGE);
-            //Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
-            //if (albumPhoto != null) {
-            //    viewTag.albumCoverPhoto.setImageBitmap(albumPhoto);
-            //}
 
             viewTag.title.setText(ms.mTitle);
             viewTag.artist.setText(ms.mArtist);
