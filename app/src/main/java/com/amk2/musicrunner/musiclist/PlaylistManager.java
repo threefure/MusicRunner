@@ -283,8 +283,9 @@ public class PlaylistManager{
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
-                if(musicUri.isAbsolute())
+                if(musicUri.getPort() == -1) {
                     continue;
+                }
 
                 retriever.setDataSource(mContext, musicUri);
                 String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
