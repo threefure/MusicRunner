@@ -17,6 +17,7 @@ public class PhotoLoadTask {
     public static final int TYPE_ALBUM_PHOTO = 0;
     public static final int RUNNABLE_LOAD_COMPLETE = 0;
     public static final int RUNNABLE_LOAD_NULL     = 2;
+    public static final int RUNNABLE_LOAD_TERMINATE = 3;
     public static final int RUNNABLE_READY_TO_LOAD = 1;
     PhotoManager photoManager;
     PhotoLoadRunnable photoLoadRunnable;
@@ -34,6 +35,13 @@ public class PhotoLoadTask {
         this.targetWidth = targetWidth;
         this.targetHeight = targetHeight;
         this.type = type;
+    }
+
+    public void reset (String filePath, View targetView, float targetWidth, float targetHeight) {
+        this.filePath = filePath;
+        this.targetView = targetView;
+        this.targetWidth = targetWidth;
+        this.targetHeight = targetHeight;
     }
 
     public PhotoLoadRunnable getPhotoLoadRunnable () {
@@ -58,6 +66,9 @@ public class PhotoLoadTask {
                 break;
             case RUNNABLE_LOAD_NULL:
                 // do nothing
+                break;
+            case RUNNABLE_LOAD_TERMINATE:
+                photoManager.handleState(this, PhotoManager.STATE_LOAD_CANCEL);
                 break;
         }
     }

@@ -257,20 +257,41 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             MusicSong ms = mSongArrayList.get(i);
             ViewTag viewTag;
             String durationString = TimeConverter.getDurationString(TimeConverter.getReadableTimeFormatFromSeconds(ms.mDuration / 1000));
+            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), ms.mId);
+            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
             if (view == null ){
                 view = inflater.inflate(mResourceId, null);
+                PhotoLoadTask photoLoadTask = new PhotoLoadTask(
+                        filePath,
+                        view.findViewById(R.id.album_cover_photo),
+                        view.findViewById(R.id.album_cover_photo).getLayoutParams().width,
+                        view.findViewById(R.id.album_cover_photo).getLayoutParams().height,
+                        PhotoLoadTask.TYPE_ALBUM_PHOTO);
+
                 viewTag = new ViewTag(
                         (ImageView)view.findViewById(R.id.album_cover_photo),
                         (ImageView)view.findViewById(R.id.song_tempo),
                         (TextView)view.findViewById(R.id.title),
                         (TextView)view.findViewById(R.id.artist),
                         (TextView)view.findViewById(R.id.duration),
-                        (TextView)view.findViewById(R.id.selected));
+                        (TextView)view.findViewById(R.id.selected),
+                        photoLoadTask);
+
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
                 view.setTag(viewTag);
             } else {
                 viewTag = (ViewTag) view.getTag();
+                PhotoLoadTask photoLoadTask = viewTag.photoLoadTask;
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_LOAD_TERMINATE);
+                photoLoadTask.reset(filePath,
+                        viewTag.albumCoverPhoto,
+                        viewTag.albumCoverPhoto.getLayoutParams().width,
+                        viewTag.albumCoverPhoto.getLayoutParams().height);
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
             }
-
+            // initialize album photo
+            viewTag.albumCoverPhoto.setImageResource(R.drawable.initial_photo);
+/*
             Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), ms.mId);
             String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
             PhotoLoadTask photoLoadTask = new PhotoLoadTask(
@@ -279,7 +300,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                     viewTag.albumCoverPhoto.getLayoutParams().width,
                     viewTag.albumCoverPhoto.getLayoutParams().height,
                     PhotoLoadTask.TYPE_ALBUM_PHOTO);
-            photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
+            photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);*/
             //photoManager.handleState(photoLoadTask, PhotoManager.STATE_LOAD_IMAGE);
             //Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
             //if (albumPhoto != null) {
@@ -318,13 +339,15 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
             TextView artist;
             TextView duration;
             TextView selected;
-            public ViewTag (ImageView albumCoverPhoto, ImageView songTempo, TextView title, TextView artist, TextView duration, TextView selected) {
+            PhotoLoadTask photoLoadTask;
+            public ViewTag (ImageView albumCoverPhoto, ImageView songTempo, TextView title, TextView artist, TextView duration, TextView selected, PhotoLoadTask photoLoadTask) {
                 this.albumCoverPhoto = albumCoverPhoto;
                 this.songTempo = songTempo;
                 this.title = title;
                 this.artist = artist;
                 this.duration = duration;
                 this.selected = selected;
+                this.photoLoadTask = photoLoadTask;
             }
         }
     }

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class PhotoManager {
     public static final int STATE_LOAD_IMAGE = 0;
     public static final int STATE_LOAD_COMPLETE = 1;
+    public static final int STATE_LOAD_CANCEL = 2;
     static PhotoManager instance;
     static {
         instance = new PhotoManager();
@@ -79,6 +80,9 @@ public class PhotoManager {
             case STATE_LOAD_COMPLETE:
                 Message completeMessage = handler.obtainMessage(STATE_LOAD_COMPLETE, task);
                 completeMessage.sendToTarget();
+                break;
+            case STATE_LOAD_CANCEL:
+                mPhotoLoaderPool.remove(task.getPhotoLoadRunnable());
                 break;
         }
     }
