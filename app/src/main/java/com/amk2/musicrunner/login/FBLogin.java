@@ -24,6 +24,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +58,14 @@ public class FBLogin extends Activity {
                                 TextView welcome = (TextView) findViewById(R.id.facebook_login_status);
                                 facebookUserId = Constant.FACEBOOK_ACCOUNT_PREFIX + user.getId();
                                 SharedPreferencesUtility.storeAccount(preferences, facebookUserId);
-                                String firstName = user.getFirstName();
-                                String lastName = user.getLastName();
+                                String firstName = "";
+                                String lastName = "";
+                                try {
+                                    firstName = URLEncoder.encode(user.getFirstName(), "utf8");
+                                    lastName = URLEncoder.encode(user.getLastName(), "utf8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                                 String gender = user.getProperty("gender").toString();
                                 List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                                 pairs.add(new BasicNameValuePair("userAccount", facebookUserId));
