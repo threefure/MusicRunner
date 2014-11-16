@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,8 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
     private AlertDialog.Builder dialog;
     private ActionBar mActionBar;
 
+    private PhotoManager photoManager;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +83,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
 
     @Override
     protected void onStart () {
+        //photoManager = PhotoManager.getInstance();
         super.onStart();
     }
 
@@ -269,10 +273,18 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
 
             Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), ms.mId);
             String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
-            Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
-            if (albumPhoto != null) {
-                viewTag.albumCoverPhoto.setImageBitmap(albumPhoto);
-            }
+            PhotoLoadTask photoLoadTask = new PhotoLoadTask(
+                    filePath,
+                    viewTag.albumCoverPhoto,
+                    viewTag.albumCoverPhoto.getLayoutParams().width,
+                    viewTag.albumCoverPhoto.getLayoutParams().height,
+                    PhotoLoadTask.TYPE_ALBUM_PHOTO);
+            photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
+            //photoManager.handleState(photoLoadTask, PhotoManager.STATE_LOAD_IMAGE);
+            //Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
+            //if (albumPhoto != null) {
+            //    viewTag.albumCoverPhoto.setImageBitmap(albumPhoto);
+            //}
 
             viewTag.title.setText(ms.mTitle);
             viewTag.artist.setText(ms.mArtist);
