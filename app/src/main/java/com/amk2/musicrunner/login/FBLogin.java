@@ -56,8 +56,14 @@ public class FBLogin extends Activity {
                                 TextView welcome = (TextView) findViewById(R.id.facebook_login_status);
                                 facebookUserId = Constant.FACEBOOK_ACCOUNT_PREFIX + user.getId();
                                 SharedPreferencesUtility.storeAccount(preferences, facebookUserId);
+                                String firstName = user.getFirstName();
+                                String lastName = user.getLastName();
+                                String gender = user.getProperty("gender").toString();
                                 List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                                 pairs.add(new BasicNameValuePair("userAccount", facebookUserId));
+                                pairs.add(new BasicNameValuePair("firstName", firstName));
+                                pairs.add(new BasicNameValuePair("lastName", lastName));
+                                pairs.add(new BasicNameValuePair("gender", gender));
 
                                 HttpResponse httpResponse = RestfulUtility.restfulPostRequest(RestfulUtility.FACEBOOK_LOGIN, pairs);
 
