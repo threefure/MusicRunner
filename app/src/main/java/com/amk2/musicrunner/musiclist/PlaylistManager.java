@@ -283,19 +283,19 @@ public class PlaylistManager{
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 Integer trackDuration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), id);
-                if(musicUri.getPort() == -1) {
-                    continue;
-                }
+                Cursor musicCursor = mContext.getContentResolver().query(musicUri, null, null, null, null);
+                // check if it's a valid uri
+                if (musicCursor != null && musicCursor.getCount() > 0) {
+                    retriever.setDataSource(mContext, musicUri);
+                    String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
+                    if (genre == null) {
+                        genre = "";
+                    }
 
-                retriever.setDataSource(mContext, musicUri);
-                String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-                if (genre == null) {
-                    genre = "";
-                }
-
-                String musicFilePath = MusicLib.getMusicFilePath(mContext, musicUri);
-                if(isMusicFile(musicFilePath)) {
-                    songList.add(new MusicSong(id, title, artist, genre, trackDuration));
+                    String musicFilePath = MusicLib.getMusicFilePath(mContext, musicUri);
+                    if (isMusicFile(musicFilePath)) {
+                        songList.add(new MusicSong(id, title, artist, genre, trackDuration));
+                    }
                 }
             }
         }
