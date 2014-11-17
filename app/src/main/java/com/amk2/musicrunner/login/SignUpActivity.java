@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.main.MusicRunnerApplication;
+import com.amk2.musicrunner.utilities.ConnectionUtilities;
 import com.amk2.musicrunner.utilities.LoginUtils;
 import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.google.android.gms.analytics.HitBuilders;
@@ -65,6 +66,11 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         mActionBar.hide();
         initViews();
         setViews();
+        ConnectionUtilities internetChecker = new ConnectionUtilities(getApplicationContext());
+        if(!internetChecker.hasInternetConnecting()){
+            showNoInternetDialog();
+        }
+
     }
 
     private void initViews () {
@@ -255,6 +261,18 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         progressDialog.dismiss();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setMessage("Please make sure you enter the same password for 'Confirm Password'")
+                .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                });
+        dialog.show();
+    }
+
+    private void showNoInternetDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setMessage("You do not have internet connection")
                 .setPositiveButton("Got it!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
