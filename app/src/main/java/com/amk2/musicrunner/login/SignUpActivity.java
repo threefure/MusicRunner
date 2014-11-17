@@ -162,6 +162,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            progressDialog.dismiss();
             startActivity(intent);
         } else {
             showConnectionErrorDialog();
