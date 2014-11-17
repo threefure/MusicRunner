@@ -1,9 +1,12 @@
 package com.amk2.musicrunner.start;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
@@ -79,6 +82,8 @@ public class StartFragment extends Fragment implements
     private MarkerOptions markerOptions;
     private LocationClient mLocationClient;
     private Location mCurrentLocation;
+    private boolean isGpsOn = false;
+    private AlertDialog.Builder dialog;
 
     public interface OnGoToPlaylistTabListener {
         public void OnGoToPlaylistTab();
@@ -99,6 +104,7 @@ public class StartFragment extends Fragment implements
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mPlaylistChangedReceiver, new IntentFilter(MusicListFragment.CHANGE_PLAYLIST));
         playlistId = mPlaylistSharedPreferences.getLong(Constant.PLAYLIST_ID, -1);
         initialize();
+
     }
 
     @Override
@@ -132,6 +138,22 @@ public class StartFragment extends Fragment implements
         findViews();
         setViews();
         initButtons();
+
+        // set up alert dialog for gps didn't open
+        dialog = new AlertDialog.Builder(mActivity)
+                .setMessage(R.string.gps_checking)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(mActivity, RunningActivity.class));
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // do nothing
+                    }
+                });
     }
 
     private void initButtons() {
@@ -178,7 +200,11 @@ public class StartFragment extends Fragment implements
                         .setCategory("Start")
                         .setAction("GoRunning")
                         .build());
-                startActivity(new Intent(mActivity, RunningActivity.class));
+                if (isGpsOn) {
+                    startActivity(new Intent(mActivity, RunningActivity.class));
+                } else {
+                    dialog.show();
+                }
                 break;
             case R.id.chosen_playlist_container:
                 t.send(new HitBuilders.EventBuilder()
@@ -204,6 +230,7 @@ public class StartFragment extends Fragment implements
     public void onConnected(Bundle bundle) {
         mCurrentLocation = mLocationClient.getLastLocation();
         if (mCurrentLocation != null) {
+            isGpsOn = true;
             googleMap.getUiSettings().setZoomControlsEnabled(false);
 
             BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dog_front);
@@ -217,6 +244,20 @@ public class StartFragment extends Fragment implements
     public void onDisconnected() {
         Toast.makeText(getActivity(), "Disconnected. Please re-connect.",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        // Decide what to do based on the original request code
+        switch (requestCode) {
+            case CONNECTION_FAILURE_RESOLUTION_REQUEST :
+                switch (resultCode) {
+                    case Activity.RESULT_OK :
+                        mLocationClient.connect();
+                        break;
+                }
+        }
     }
 
     @Override

@@ -191,4 +191,6 @@
     <string name="ranking_page_intro">Rank musics by calories burned</string>
     <string name="delete_playlist_intro">Swipe left to delete personal playlist</string>
 
+    <string name="gps_checking">GPS does not work, are you sure to run?</string>
+
 </resources>

@@ -191,4 +191,6 @@
     <string name="ranking_page_intro">音楽ランキングページ</string>
     <string name="delete_playlist_intro">スワイプでプレイリストを削除する</string>
 
+    <string name="gps_checking">GPS does not work, are you sure to run?</string>
+
 </resources>

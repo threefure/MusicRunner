@@ -191,4 +191,6 @@
     <string name="ranking_page_intro">根據消耗卡路里多寡的音樂排行榜</string>
     <string name="delete_playlist_intro">左滑刪除個人音樂清單</string>
 
+    <string name="gps_checking">GPS沒開啟，您確定要開始跑？</string>
+
 </resources>
