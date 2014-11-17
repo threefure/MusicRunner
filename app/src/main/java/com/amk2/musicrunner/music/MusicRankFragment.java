@@ -30,6 +30,7 @@ import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.musiclist.MusicAddToPlaylistActivity;
 import com.amk2.musicrunner.musiclist.MusicListDetailActivity;
 import com.amk2.musicrunner.musiclist.MusicMetaData;
+import com.amk2.musicrunner.musiclist.PhotoLoadTask;
 import com.amk2.musicrunner.musiclist.PlaylistMetaData;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerSongPerformanceDB;
@@ -269,21 +270,34 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
             TextView artistTextView;
             TextView caloriesTextView;
             ImageView albumPhotoImageView;
+            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), sp.realSongId);
+            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
             if (view == null) {
                 // inflate the view
                 view = inflater.inflate(R.layout.music_rank_template, null);
+
+
+
                 songRankTextView = (TextView) view.findViewById(R.id.song_rank);
                 titleTextView    = (TextView) view.findViewById(R.id.title);
                 artistTextView   = (TextView) view.findViewById(R.id.artist);
                 caloriesTextView = (TextView) view.findViewById(R.id.calories);
                 albumPhotoImageView = (ImageView) view.findViewById(R.id.album_photo);
 
+                PhotoLoadTask photoLoadTask = new PhotoLoadTask(
+                        filePath,
+                        albumPhotoImageView,
+                        albumPhotoImageView.getLayoutParams().width,
+                        albumPhotoImageView.getLayoutParams().height,
+                        PhotoLoadTask.TYPE_ALBUM_PHOTO);
+
                 // setting ViewTag
                 SongPerformanceViewTag songPerformanceViewTag = new SongPerformanceViewTag(
-                        sp.songId, songRankTextView, titleTextView, artistTextView, caloriesTextView, albumPhotoImageView
+                        sp.songId, songRankTextView, titleTextView, artistTextView, caloriesTextView, albumPhotoImageView, photoLoadTask
                 );
                 view.setTag(songPerformanceViewTag);
 
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
                 // setting click listener
                 view.setOnClickListener(this);
             } else {
@@ -298,6 +312,14 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
                 artistTextView   = songPerformanceViewTag.artist;
                 caloriesTextView = songPerformanceViewTag.calories;
                 albumPhotoImageView = songPerformanceViewTag.albumPhoto;
+
+                PhotoLoadTask photoLoadTask = songPerformanceViewTag.photoLoadTask;
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_LOAD_TERMINATE);
+                photoLoadTask.reset(filePath,
+                        albumPhotoImageView,
+                        albumPhotoImageView.getLayoutParams().width,
+                        albumPhotoImageView.getLayoutParams().height);
+                photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_READY_TO_LOAD);
             }
 
             // setting rank number
@@ -311,14 +333,6 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
 
             //setting calories
             caloriesTextView.setText(StringLib.truncateDoubleString(sp.calories.toString(), 2));
-
-            // setting album photo
-            Uri musicUri = ContentUris.withAppendedId(MusicLib.getMusicUri(), sp.realSongId);
-            String filePath = MusicLib.getMusicFilePath(getContext(), musicUri);
-            Bitmap albumPhoto = MusicLib.getMusicAlbumArt(filePath);
-            if (albumPhoto != null) {
-                albumPhotoImageView.setImageBitmap(albumPhoto);
-            }
 
             return view;
         }
@@ -343,14 +357,15 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
             TextView artist;
             TextView calories;
             ImageView albumPhoto;
-
-            public SongPerformanceViewTag(Integer songId, TextView songRank, TextView title, TextView artist, TextView calories, ImageView albumPhoto) {
+            PhotoLoadTask photoLoadTask;
+            public SongPerformanceViewTag(Integer songId, TextView songRank, TextView title, TextView artist, TextView calories, ImageView albumPhoto, PhotoLoadTask photoLoadTask) {
                 this.songId = songId.intValue();
                 this.songRank = songRank;
                 this.title = title;
                 this.artist = artist;
                 this.calories = calories;
                 this.albumPhoto = albumPhoto;
+                this.photoLoadTask = photoLoadTask;
             }
         }
     }

@@ -297,6 +297,7 @@ public class PlaylistManager{
                         songList.add(new MusicSong(id, title, artist, genre, trackDuration));
                     }
                 }
+                musicCursor.close();
             }
         }
         return songList;

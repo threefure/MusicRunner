@@ -30,6 +30,15 @@ public class PhotoLib {
         return BitmapFactory.decodeFile(photoPath, bmOptions);
     }
 
+    public static Bitmap resizeToFitTarget (Bitmap sourceImage, float targetWidth, float targetHeight) {
+        float photoWidth  = sourceImage.getWidth();
+        float photoHeight = sourceImage.getHeight();
+        float scaleFactor = Math.min(targetWidth/photoWidth, targetHeight/photoHeight);
+        float scaledWidth  = scaleFactor*photoWidth;
+        float scaledHeight = scaleFactor*photoHeight;
+        return Bitmap.createScaledBitmap(sourceImage, (int)scaledWidth, (int)scaledHeight, false);
+    }
+
     public static Bitmap resizeToFitTarget (Resources res, int id, int targetWidth, int targetHeight) {
         Log.d("target", targetWidth + " " + targetHeight + "");
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();

@@ -261,6 +261,7 @@ public class MusicListFragment extends Fragment implements
                 Long playlistId       = extras.getLong(MusicListDetailActivity.PLAYLIST_ID);
                 int playlistPosition  = extras.getInt(MusicListFragment.PLAYLIST_POSITION);
                 PlaylistMetaData playlistMetaData = MusicLib.getPlaylistMetadata(mActivity, playlistId);
+                mUserGeneratedPlaylistMetaDatas.set(playlistPosition - 7, playlistMetaData);
                 mPlaylistMetaData.set(playlistPosition, playlistMetaData);
                 playlistPinnedSectionListAdapter.notifyDataSetChanged();
             }
