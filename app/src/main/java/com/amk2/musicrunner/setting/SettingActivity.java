@@ -33,10 +33,13 @@ import android.widget.ToggleButton;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
 import com.amk2.musicrunner.views.DatePickerFragment;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -348,6 +351,8 @@ public class SettingActivity extends Activity implements
     public void onClick(View view) {
         Log.d(TAG, "change onclick");
         isChanged = true;
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("SettingPage");
         switch (view.getId()) {
             case R.id.setting_weight:
                 final AlertDialog.Builder setWeightDialog = new AlertDialog.Builder(this);
@@ -444,6 +449,11 @@ public class SettingActivity extends Activity implements
                             restartApp();
                         }
                     }).show();
+
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Logout")
+                        .setAction("LogoutButton")
+                        .build());
                 break;
         }
     }

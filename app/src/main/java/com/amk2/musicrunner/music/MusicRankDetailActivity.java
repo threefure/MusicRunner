@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.musiclist.MusicAddToPlaylistActivity;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData;
@@ -25,6 +26,8 @@ import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.utilities.UnitConverter;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -312,8 +315,16 @@ public class MusicRankDetailActivity extends Activity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("RankDetailPage");
         switch (view.getId()) {
             case R.id.add_to_playlist:
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("RankDetail")
+                        .setAction("addToPlaylistButton")
+                        .build());
+
                 Long songRealId = (Long) view.getTag();
                 Intent intent = new Intent(this, MusicAddToPlaylistActivity.class);
                 intent.putExtra(MusicAddToPlaylistActivity.SONG_REAL_ID, songRealId);

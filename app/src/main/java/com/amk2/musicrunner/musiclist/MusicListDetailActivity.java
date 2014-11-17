@@ -35,12 +35,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.utilities.HealthLib;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnSongPreparedListener;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -162,7 +165,12 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
         }
         cursor.close();
         playlistTitleTextView.setText(StringLib.truncate(playlistTitle, 20));
-        addMusicImageView.setOnClickListener(this);
+
+        if (playlistPosition < 7) {
+            addMusicImageView.setVisibility(View.GONE);
+        } else {
+            addMusicImageView.setOnClickListener(this);
+        }
 
         // initialize list view
         musicMetaDataArrayList = new ArrayList<MusicMetaData>();
@@ -206,8 +214,16 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("PlaylistDetailPage");
         switch (view.getId()) {
             case R.id.add_music:
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("PlaylistDetail")
+                        .setAction("addMusicButton")
+                        .build());
+
                 Intent intent = new Intent(this, MusicRunnerSongSelectorActivity.class);
                 intent.putExtra(MusicRunnerSongSelectorActivity.PLAYLIST_ID, playlistId);
                 startActivityForResult(intent, REQUEST_ADD_MUSIC_TO_PLAYLIST);
@@ -450,7 +466,7 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                     return true;
 
                 case (MotionEvent.ACTION_UP) :
-                    if (isMove) {
+                    if (isMove && playlistPosition >= 7) {
                         TranslateAnimation translateAnimation ;
                         if (direction == LEFT) {
                             isOpened = true;
@@ -477,9 +493,8 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                         animationSet.setFillBefore(false);
                         animationSet.setFillAfter(true);
                         view.startAnimation(animationSet);
-
-                        isMove = false;
                     }
+                    isMove = false;
                     return true;
                 case (MotionEvent.ACTION_CANCEL) :
                     isMove = false;
@@ -493,6 +508,8 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
 
         @Override
         public void onClick(View view) {
+            Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+            t.setScreenName("PlaylistDetailPage");
             switch (view.getId()) {
                 case R.id.delete:
                     PositionAndIdViewTag positionAndIdViewTag = (PositionAndIdViewTag) view.getTag();
@@ -504,6 +521,12 @@ public class MusicListDetailActivity extends Activity implements OnSongPreparedL
                         isOpened = false;
                     }
                     updatePlaylist();
+
+                    //tracking user action
+                    t.send(new HitBuilders.EventBuilder()
+                            .setCategory("PlaylistDetail")
+                            .setAction("deleteSongFromPlaylist")
+                            .build());
                     break;
             }
         }

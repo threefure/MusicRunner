@@ -17,8 +17,11 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.utilities.LoginUtils;
 import com.amk2.musicrunner.utilities.RestfulUtility;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -77,8 +80,16 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Intent intent;
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("SignUp");
         switch (view.getId()) {
             case R.id.email_sign_up:
+                //tracking user click on fb login
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("SignUp")
+                        .setAction("SignUp")
+                        .build());
+
                 //intent = new Intent(this, SignUpActivity.class);
                 //startActivity(intent);
                 progressDialog = ProgressDialog.show(self, "Register...", getString(R.string.please_wait));
@@ -119,6 +130,17 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                 startActivity(new Intent(this, TermsPolicyActivity.class));
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed () {
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("SignUp");
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("SignUp")
+                .setAction("PressedOnBack")
+                .build());
+        super.onBackPressed();
     }
 
     private void nextStep(String status, String fullName){

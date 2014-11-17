@@ -247,6 +247,7 @@ public class PlaylistManager{
                     playlistMetaDatas.add(playlistMetaData);
                 }
             }
+            cursor.close();
         }
         return playlistMetaDatas;
     }

@@ -25,9 +25,12 @@ import android.widget.Toast;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.musiclist.MusicListFragment;
 import com.amk2.musicrunner.running.RunningActivity;
 import com.amk2.musicrunner.utilities.MusicLib;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -167,11 +170,21 @@ public class StartFragment extends Fragment implements
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getActivity().getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("StartPage");
         switch(view.getId()) {
             case R.id.start_go_running:
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Start")
+                        .setAction("GoRunning")
+                        .build());
                 startActivity(new Intent(mActivity, RunningActivity.class));
                 break;
             case R.id.chosen_playlist_container:
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Start")
+                        .setAction("ChoosePlaylist")
+                        .build());
                 mOnGoToPlaylistTabListener.OnGoToPlaylistTab();
                 break;
         }

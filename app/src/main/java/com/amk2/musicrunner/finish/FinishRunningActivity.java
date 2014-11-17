@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.music.MusicRankFragment;
 import com.amk2.musicrunner.running.LocationUtils;
 import com.amk2.musicrunner.running.MapFragmentRun;
@@ -36,6 +37,8 @@ import com.amk2.musicrunner.utilities.ShowImageActivity;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.views.MusicRunnerLineMapView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -238,6 +241,9 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Intent intent;
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("FinishPage");
+
         switch(view.getId()) {
             case R.id.finish_save:
                 saveToSQLiteDB();
@@ -247,8 +253,22 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 if (mMap != null) {
                     MapFragmentRun.resetAllParam();
                 }
+
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Finish")
+                        .setAction("SaveButtonWithDurationInSec")
+                        .setValue(Long.valueOf(totalSec))
+                        .build());
                 break;
             case R.id.finish_discard:
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Finish")
+                        .setAction("DiscardButtonWithDurationInSec")
+                        .setValue(Long.valueOf(totalSec))
+                        .build());
+
                 finish();
                 if (mMap != null) {
                     MapFragmentRun.resetAllParam();
@@ -265,7 +285,19 @@ public class FinishRunningActivity extends Activity implements View.OnClickListe
                 dispatchTakePictureIntent();
                 break;
         }
+    }
 
+    @Override
+    public void onBackPressed () {
+        //tracking user action
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("FinishPage");
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("Finish")
+                .setAction("BackButtonWithDurationInSec")
+                .setValue(Long.valueOf(totalSec))
+                .build());
+        super.onBackPressed();
     }
 
     private void dispatchTakePictureIntent() {

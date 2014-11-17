@@ -34,9 +34,12 @@ import android.widget.TextView;
 
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.utilities.MusicLib;
 import com.amk2.musicrunner.utilities.OnPlaylistPreparedListener;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.hb.views.PinnedSectionListView;
 import com.hb.views.PinnedSectionListView.PinnedSectionListAdapter;
 
@@ -159,8 +162,16 @@ public class MusicListFragment extends Fragment implements
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getActivity().getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("PlaylistPage");
         switch (view.getId()) {
             case R.id.create_playlist_button:
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Playlist")
+                        .setAction("CreatePlaylistButton")
+                        .build());
+
                 Intent intent = new Intent(mActivity, MusicCreatePlaylistActivity.class);
                 startActivity(intent);
                 break;
@@ -183,10 +194,13 @@ public class MusicListFragment extends Fragment implements
             mPlaylistMetaData.addAll(mUserGeneratedPlaylistMetaDatas);
             playlistPinnedSectionListAdapter.updatePlaylistArrayList(mPlaylistMetaData);
 
-            Intent addMusicToPlaylistIntent = new Intent(mActivity, MusicListDetailActivity.class);
-            addMusicToPlaylistIntent.putExtra(MusicListFragment.PLAYLIST_POSITION, 7);
-            addMusicToPlaylistIntent.putExtra(MusicListDetailActivity.PLAYLIST_ID, playlistId);
-            startActivity(addMusicToPlaylistIntent);
+            if (isAdded()) {
+                mActivity = getActivity();
+                Intent addMusicToPlaylistIntent = new Intent(mActivity, MusicListDetailActivity.class);
+                addMusicToPlaylistIntent.putExtra(MusicListFragment.PLAYLIST_POSITION, 7);
+                addMusicToPlaylistIntent.putExtra(MusicListDetailActivity.PLAYLIST_ID, playlistId);
+                startActivity(addMusicToPlaylistIntent);
+            }
         }
     };
 
@@ -502,6 +516,8 @@ public class MusicListFragment extends Fragment implements
 
         @Override
         public void onClick(View view) {
+            Tracker t = ((MusicRunnerApplication) getActivity().getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+            t.setScreenName("PlaylistPage");
             switch (view.getId()) {
                 case R.id.choose_playlist:
                     Long newPlaylistId = (Long) view.getTag();
@@ -517,6 +533,12 @@ public class MusicListFragment extends Fragment implements
                         mSelectedPlaylist = view;
                         notifyPlaylistChanged(newPlaylistId);
                     }
+
+                    // tracking user action
+                    t.send(new HitBuilders.EventBuilder()
+                            .setCategory("Playlist")
+                            .setAction("CheckingPlaylistContent")
+                            .build());
                     break;
                 case R.id.delete:
                     PlaylistContainerTag positionAndId = (PlaylistContainerTag) view.getTag();
@@ -525,6 +547,12 @@ public class MusicListFragment extends Fragment implements
                     intent.putExtra(PlaylistManager.PLAYLIST_DELETED, true);
                     intent.putExtra(PLAYLIST_POSITION, positionAndId.position);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                    //tracking user action
+                    t.send(new HitBuilders.EventBuilder()
+                            .setCategory("Playlist")
+                            .setAction("DeletePlaylist")
+                            .build());
                     break;
             }
         }

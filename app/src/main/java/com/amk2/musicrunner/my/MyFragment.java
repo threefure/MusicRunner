@@ -24,12 +24,15 @@ import android.widget.TextView;
 import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.setting.SettingActivity;
 import com.amk2.musicrunner.sqliteDB.MusicRunnerDBMetaData.MusicRunnerRunningEventDB;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.TimeConverter;
 import com.amk2.musicrunner.utilities.UnitConverter;
 import com.facebook.widget.ProfilePictureView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.Calendar;
 
@@ -317,11 +320,24 @@ public class MyFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         Intent intent;
+        Tracker t = ((MusicRunnerApplication) getActivity().getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("MyPage");
         switch (v.getId()) {
             case R.id.past_activities_button:
+                // tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("My")
+                        .setAction("PastActivityButton")
+                        .build());
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
             case R.id.login_button:
+                // tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("My")
+                        .setAction("LoginButton")
+                        .build());
+
                 mLoginSharedPreferences.edit().remove(LoginActivity.STATUS).putInt(LoginActivity.STATUS, LoginActivity.STATUS_NONE).commit();
                 intent = new Intent(mActivity, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -329,6 +345,12 @@ public class MyFragment extends Fragment implements View.OnClickListener,
                 getActivity().finish();
                 break;
             case R.id.user_icon:
+                // tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("My")
+                        .setAction("UserIcon")
+                        .build());
+
                 startActivity(new Intent(mActivity, MyPastActivitiesActivity.class));
                 break;
             case R.id.introduction:

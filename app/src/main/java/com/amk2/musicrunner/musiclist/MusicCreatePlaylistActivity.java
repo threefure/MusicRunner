@@ -16,7 +16,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amk2.musicrunner.R;
+import com.amk2.musicrunner.main.MusicRunnerApplication;
 import com.amk2.musicrunner.utilities.MusicLib;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Created by daz on 10/10/14.
@@ -57,8 +60,16 @@ public class MusicCreatePlaylistActivity extends Activity implements View.OnClic
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("CreatePlaylistPage");
         switch (view.getId()) {
             case R.id.create_playlist:
+                //tracking user action
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("CreatePlaylist")
+                        .setAction("AddNewPlaylist")
+                        .build());
+
                 String playlistName = mPlaylistNameEditText.getText().toString();
                 boolean isPlaylistExisted = MusicLib.isPlaylistExisted(this, playlistName);
                 if (isPlaylistExisted) {
@@ -72,5 +83,18 @@ public class MusicCreatePlaylistActivity extends Activity implements View.OnClic
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed () {
+        //tracking user action
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("CreatePlaylistPage");
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("CreatePlaylist")
+                .setAction("CancelCreatePlaylist")
+                .build());
+
+        super.onBackPressed();
     }
 }

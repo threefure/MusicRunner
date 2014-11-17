@@ -103,23 +103,6 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             startActivity(intent);
             finish();
         }
-
-        /*PackageInfo info = null;
-        try {
-            info = getPackageManager().getPackageInfo(
-                    "com.amk2.musicrunner",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }*/
-
     }
 
     private void initViews () {
@@ -301,13 +284,16 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
+        Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
+        t.setScreenName("Home");
         Intent intent;
         switch (view.getId()) {
             case R.id.login_skip:
                 //tracking user click on skip
-                Tracker t = ((MusicRunnerApplication) getApplication()).getTracker(MusicRunnerApplication.TrackerName.APP_TRACKER);
-                t.setScreenName("skipLogin");
-                t.send(new HitBuilders.AppViewBuilder().build());
+                t.send(new HitBuilders.EventBuilder()
+                            .setCategory("Login")
+                            .setAction("Skip")
+                            .build());
 
                 loginSharedPreferences.edit().putInt(STATUS, STATUS_LOGOUT).commit();
                 intent = new Intent(this, MusicRunnerActivity.class);
@@ -316,14 +302,29 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 finish();
                 break;
             case R.id.sign_up_with_fb:
+                //tracking user click on fb login
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Login")
+                        .setAction("LoginWithFB")
+                        .build());
                 intent = new Intent(this, FBLogin.class);
                 startActivityForResult(intent, FACEBOOK_LOGIN_REQUEST);
                 break;
             case R.id.sign_up_with_email:
+                //tracking user click on sign up with email
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Login")
+                        .setAction("SignUpWithEmail")
+                        .build());
                 intent = new Intent(this, SignUpActivity.class);
                 startActivity(intent);
                 break;
             case R.id.login_button:
+                //tracking user click on login button
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("Login")
+                        .setAction("LoginWithEmail")
+                        .build());
                 progressDialog = ProgressDialog.show(self, "Login...", getString(R.string.please_wait));
                 loginAccount(view);
                 break;

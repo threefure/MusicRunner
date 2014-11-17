@@ -187,6 +187,7 @@ public class MusicRunnerSongSelectorActivity extends ListActivity implements Loa
                     songList.add(new MusicSong(id, title, artist, trackDuration, bpm));
                 }
             }
+            cursor.close();
         }
         return songList;
     }

@@ -302,6 +302,7 @@ public class MusicLib {
             cursor.moveToFirst();
             playlistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
             playlistUri = ContentUris.withAppendedId(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, playlistId);
+            cursor.close();
         }
         return playlistUri;
     }
@@ -314,6 +315,7 @@ public class MusicLib {
         String[] selectionArgs = {playlistTitle};
         Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
         if (cursor != null && cursor.getCount() > 0) {
+            cursor.close();
             return true;
         }
         return false;
@@ -376,6 +378,7 @@ public class MusicLib {
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             playlistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
+            cursor.close();
         }
         return playlistName;
     }
@@ -404,6 +407,7 @@ public class MusicLib {
                 duration += cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.DURATION));
                 tracks ++;
             }
+            cursor.close();
         }
         PlaylistMetaData playlistMetaData = new PlaylistMetaData(playlistUri, playlistName, duration, tracks);
         return playlistMetaData;
