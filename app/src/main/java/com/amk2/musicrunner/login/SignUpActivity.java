@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.main.MusicRunnerActivity;
 import com.amk2.musicrunner.main.MusicRunnerApplication;
@@ -50,6 +51,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
     private ProgressDialog progressDialog;
     private Activity self;
     private SharedPreferences loginSharedPreferences;
+    private SharedPreferences mAccountSharedPreferences;
     private TextView mTermsPolicyTextView;
 
     private static final String EMAIL_PATTERN =
@@ -63,6 +65,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         mActionBar = getActionBar();
         self = this;
         loginSharedPreferences = getSharedPreferences(LOGIN, MODE_PRIVATE);
+        mAccountSharedPreferences = getSharedPreferences(Constant.PREFERENCE_NAME, MODE_PRIVATE);
         mActionBar.hide();
         initViews();
         setViews();
@@ -128,7 +131,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
                     String fullName = firstName + " " + lastName;
                     HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.REGISTER_ENDPOINT, pairs);
                     String statusString = LoginUtils.getStatusString(response);
-                    nextStep(statusString,fullName);
+                    nextStep(statusString,fullName,email);
                 }
                 break;
 
@@ -149,7 +152,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
         super.onBackPressed();
     }
 
-    private void nextStep(String status, String fullName){
+    private void nextStep(String status, String fullName, String email){
         if(status == null){
             //do nothing
         } else if (status.equals(LoginUtils.DUPLICATE_ACCOUNT))
@@ -160,6 +163,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
             //redirect to run page
             loginSharedPreferences.edit().remove(USER_NAME).putString(USER_NAME, fullName).commit();
             loginSharedPreferences.edit().remove(STATUS).putInt(STATUS, STATUS_LOGIN).commit();
+            mAccountSharedPreferences.edit().putString(Constant.ACCOUNT_PARAMS, email).commit();
             Intent intent = new Intent(this, MusicRunnerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             progressDialog.dismiss();

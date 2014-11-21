@@ -34,6 +34,7 @@ import com.amk2.musicrunner.Constant;
 import com.amk2.musicrunner.R;
 import com.amk2.musicrunner.login.LoginActivity;
 import com.amk2.musicrunner.main.MusicRunnerApplication;
+import com.amk2.musicrunner.utilities.RestfulUtility;
 import com.amk2.musicrunner.utilities.SharedPreferencesUtility;
 import com.amk2.musicrunner.utilities.StringLib;
 import com.amk2.musicrunner.utilities.UnitConverter;
@@ -41,7 +42,13 @@ import com.amk2.musicrunner.views.DatePickerFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class SettingActivity extends Activity implements
@@ -118,6 +125,21 @@ public class SettingActivity extends Activity implements
 
     private Activity self;
 
+    //Settings Parameters
+    String account        = null;
+    Integer userFrom      = null;
+    Integer unitWeight    = null;
+    Integer unitDistance  = null;
+    Integer unitHeight    = null;
+    Integer unitSpeedPace = null;
+    Integer unitDegree    = null;
+    Long birthDateEpoch   = null;
+    String weight         = null;
+    String height         = null;
+    CharSequence autoCue  =null;
+    CharSequence language = null;
+    Boolean autoCueToggle = null;
+
     LayoutInflater inflater;
 
     @Override
@@ -140,7 +162,7 @@ public class SettingActivity extends Activity implements
         setResult(RESULT_OK, intent);
 
         if (isChanged) {
-
+            storeSettings();
             progressDialog = ProgressDialog.show(self, getString(R.string.apply_setting), getString(R.string.please_wait));
             Thread runnable = new Thread() {
                 @Override
@@ -209,22 +231,21 @@ public class SettingActivity extends Activity implements
 
     private void setViews () {
 
-        String account        = mLoginSharedPreferences.getString(LoginActivity.USER_NAME, "no account");//mSettingSharedPreferences.getString(ACCOUNT, "no account");
-        Integer userFrom      = mLoginSharedPreferences.getInt(LoginActivity.USER_FROM, -1);
-        Integer unitWeight    = mSettingSharedPreferences.getInt(WEIGHT_UNIT, SETTING_WEIGHT_KG);
-        Integer unitDistance  = mSettingSharedPreferences.getInt(DISTANCE_UNIT, SETTING_DISTANCE_KM);
-        Integer unitHeight    = mSettingSharedPreferences.getInt(HEIGHT_UNIT, SETTING_HEIGHT_IN);
-        Integer unitSpeedPace = mSettingSharedPreferences.getInt(SPEED_PACE_UNIT, SETTING_PACE);
-        Integer unitDegree    = mSettingSharedPreferences.getInt(DEGREE_UNIT, SETTING_DEGREE_C);
-        Long birthDateEpoch   = mSettingSharedPreferences.getLong(BIRTH_DATE, 0);
-        String weight         = mSettingSharedPreferences.getString(WEIGHT, "--");
-        String height         = mSettingSharedPreferences.getString(HEIGHT, "--");
-        CharSequence autoCue  = mSettingSharedPreferences.getString(AUTO_CUE, SETTING_AUTO_CUE_5_MINUTES);
-        CharSequence language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
-        Boolean autoCueToggle = mSettingSharedPreferences.getBoolean(AUTO_CUE_TOGGLE, true);
 
+        account        = mLoginSharedPreferences.getString(LoginActivity.USER_NAME, "no account");//mSettingSharedPreferences.getString(ACCOUNT, "no account");
+        userFrom      = mLoginSharedPreferences.getInt(LoginActivity.USER_FROM, -1);
+        unitWeight    = mSettingSharedPreferences.getInt(WEIGHT_UNIT, SETTING_WEIGHT_KG);
+        unitDistance  = mSettingSharedPreferences.getInt(DISTANCE_UNIT, SETTING_DISTANCE_KM);
+        unitHeight    = mSettingSharedPreferences.getInt(HEIGHT_UNIT, SETTING_HEIGHT_IN);
+        unitSpeedPace = mSettingSharedPreferences.getInt(SPEED_PACE_UNIT, SETTING_PACE);
+        unitDegree    = mSettingSharedPreferences.getInt(DEGREE_UNIT, SETTING_DEGREE_C);
+        birthDateEpoch   = mSettingSharedPreferences.getLong(BIRTH_DATE, 0);
+        weight         = mSettingSharedPreferences.getString(WEIGHT, "--");
+        height         = mSettingSharedPreferences.getString(HEIGHT, "--");
+        autoCue  = mSettingSharedPreferences.getString(AUTO_CUE, SETTING_AUTO_CUE_5_MINUTES);
+        language = mSettingSharedPreferences.getString(LANGUAGE, SETTING_LANGUAGE_ENGLISH);
+        autoCueToggle = mSettingSharedPreferences.getBoolean(AUTO_CUE_TOGGLE, true);
         usedLanguage = language.toString();
-
         accountTextView.setText(account);
 
         if (userFrom == LoginActivity.FROM_FB) {
@@ -595,5 +616,24 @@ public class SettingActivity extends Activity implements
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    private void storeSettings(){
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        String userAccount = mAccountSharedPreferences.getString(Constant.ACCOUNT_PARAMS,"no account");
+        pairs.add(new BasicNameValuePair("userAccount",userAccount));
+        pairs.add(new BasicNameValuePair("userFrom",userFrom.toString()));
+        pairs.add(new BasicNameValuePair("unitWeight",unitWeight.toString()));
+        pairs.add(new BasicNameValuePair("unitDistance",unitDistance.toString()));
+        pairs.add(new BasicNameValuePair("unitHeight",unitHeight.toString()));
+        pairs.add(new BasicNameValuePair("unitSpeedPace",unitSpeedPace.toString()));
+        pairs.add(new BasicNameValuePair("unitDegree",unitDegree.toString()));
+        pairs.add(new BasicNameValuePair("birthDateEpoch",birthDateEpoch.toString()));
+        pairs.add(new BasicNameValuePair("weight",weight.equals("--") ? "0":weight));
+        pairs.add(new BasicNameValuePair("height",height.equals("--") ? "0" : height));
+        pairs.add(new BasicNameValuePair("autoCue",autoCue.toString()));
+        pairs.add(new BasicNameValuePair("language",language.toString()));
+        pairs.add(new BasicNameValuePair("autoCueToggle",autoCueToggle == true ? "1":"0"));
+        HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.UPDATE_SETTINGS, pairs);
     }
 }
