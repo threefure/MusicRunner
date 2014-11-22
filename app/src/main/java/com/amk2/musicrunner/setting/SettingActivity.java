@@ -622,15 +622,14 @@ public class SettingActivity extends Activity implements
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         String userAccount = mAccountSharedPreferences.getString(Constant.ACCOUNT_PARAMS,"no account");
         pairs.add(new BasicNameValuePair("userAccount",userAccount));
-        pairs.add(new BasicNameValuePair("userFrom",userFrom.toString()));
         pairs.add(new BasicNameValuePair("unitWeight",unitWeight.toString()));
         pairs.add(new BasicNameValuePair("unitDistance",unitDistance.toString()));
         pairs.add(new BasicNameValuePair("unitHeight",unitHeight.toString()));
         pairs.add(new BasicNameValuePair("unitSpeedPace",unitSpeedPace.toString()));
         pairs.add(new BasicNameValuePair("unitDegree",unitDegree.toString()));
-        pairs.add(new BasicNameValuePair("birthDateEpoch",birthDateEpoch.toString()));
-        pairs.add(new BasicNameValuePair("weight",weight.equals("--") ? "0":weight));
-        pairs.add(new BasicNameValuePair("height",height.equals("--") ? "0" : height));
+        pairs.add(new BasicNameValuePair("birthday",birthDateEpoch.toString()));
+        pairs.add(new BasicNameValuePair("weightValue",weight.equals("--") ? "0":weight));
+        pairs.add(new BasicNameValuePair("heightValue",height.equals("--") ? "0" : height));
         pairs.add(new BasicNameValuePair("autoCue",autoCue.toString()));
         pairs.add(new BasicNameValuePair("language",language.toString()));
         pairs.add(new BasicNameValuePair("autoCueToggle",autoCueToggle == true ? "1":"0"));
