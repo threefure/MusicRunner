@@ -246,7 +246,7 @@ public class MapFragmentRun extends Fragment implements
         } else {
             // draw the line, and save it.
             if (mSpeed > 0) {
-                distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude);
+                distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude) * 10 / 16;
                 mTotalDistance += distance;
                 mTrackList.add(curr);
                 mColorList.add(mColor);
