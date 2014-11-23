@@ -46,6 +46,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -631,8 +633,12 @@ public class SettingActivity extends Activity implements
         pairs.add(new BasicNameValuePair("weightValue",weight.equals("--") ? "0":weight));
         pairs.add(new BasicNameValuePair("heightValue",height.equals("--") ? "0" : height));
         pairs.add(new BasicNameValuePair("autoCue",autoCue.toString()));
-        pairs.add(new BasicNameValuePair("language",language.toString()));
         pairs.add(new BasicNameValuePair("autoCueToggle",autoCueToggle == true ? "1":"0"));
+        try {
+            pairs.add(new BasicNameValuePair("language", URLEncoder.encode(language.toString(), "utf8")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         HttpResponse response = RestfulUtility.restfulPostRequest(RestfulUtility.UPDATE_SETTINGS, pairs);
     }
 }

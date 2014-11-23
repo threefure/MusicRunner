@@ -108,7 +108,7 @@ public class MapService extends Service implements LocationListener, GooglePlayS
         LocationRequest locationRequest = LocationRequest.create();
 
         // Use high accuracy
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         // Set the update interval to 5 seconds
         locationRequest.setInterval(UPDATE_INTERVAL);

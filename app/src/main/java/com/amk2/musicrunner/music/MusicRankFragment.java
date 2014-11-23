@@ -211,7 +211,7 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
                 this exception should be removed since the divided by zero should be handled in FinishRunning page
              */
                 try {
-                    if (lastSongId != songId) {
+                    if (!lastSongId.equals(songId)) {
                         songInfo = MusicLib.getSongInfo(mActivity, songId);
                         artist = MusicLib.getArtist(mActivity, Long.parseLong(songInfo.get(MusicLib.ARTIST_ID)));
                         SongPerformance sp = new SongPerformance(duration, Double.parseDouble(distanceString), caloriesTemp, Double.parseDouble(speedString), songInfo.get(MusicLib.SONG_NAME), artist);
@@ -312,6 +312,7 @@ public class MusicRankFragment extends Fragment implements OnSongRankPreparedLis
                 artistTextView   = songPerformanceViewTag.artist;
                 caloriesTextView = songPerformanceViewTag.calories;
                 albumPhotoImageView = songPerformanceViewTag.albumPhoto;
+                albumPhotoImageView.setImageResource(R.drawable.initial_photo);
 
                 PhotoLoadTask photoLoadTask = songPerformanceViewTag.photoLoadTask;
                 photoLoadTask.handleState(PhotoLoadTask.RUNNABLE_LOAD_TERMINATE);
