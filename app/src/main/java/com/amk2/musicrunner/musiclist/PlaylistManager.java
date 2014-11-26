@@ -287,15 +287,19 @@ public class PlaylistManager{
                 Cursor musicCursor = mContext.getContentResolver().query(musicUri, null, null, null, null);
                 // check if it's a valid uri
                 if (musicCursor != null && musicCursor.getCount() > 0) {
-                    retriever.setDataSource(mContext, musicUri);
-                    String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-                    if (genre == null) {
-                        genre = "";
-                    }
+                    try {
+                        retriever.setDataSource(mContext, musicUri);
+                        String genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
+                        if (genre == null) {
+                            genre = "";
+                        }
 
-                    String musicFilePath = MusicLib.getMusicFilePath(mContext, musicUri);
-                    if (isMusicFile(musicFilePath)) {
-                        songList.add(new MusicSong(id, title, artist, genre, trackDuration));
+                        String musicFilePath = MusicLib.getMusicFilePath(mContext, musicUri);
+                        if (isMusicFile(musicFilePath)) {
+                            songList.add(new MusicSong(id, title, artist, genre, trackDuration));
+                        }
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
                     }
                 }
                 musicCursor.close();
