@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,8 +52,8 @@ public class MapFragmentRun extends Fragment implements
 
     private LatLng mlastLoc = null;
 
-    private static double mSpeed;
-    private static double mTotalDistance;
+    private static double mSpeed = 0;
+    private static double mTotalDistance = 0;
 
     private static ArrayList<LatLng> mTrackList;
     private static ArrayList<Integer> mColorList;
@@ -245,7 +246,7 @@ public class MapFragmentRun extends Fragment implements
             mColorList.add(mColor);
         } else {
             // draw the line, and save it.
-            if (mSpeed > 0) {
+            if(mSpeed > 0 || Build.VERSION.SDK_INT < 21) {
                 distance = CalculationByDistance(mlastLoc.latitude, mlastLoc.longitude, curr.latitude, curr.longitude) * 10 / 16;
                 mTotalDistance += distance;
                 mTrackList.add(curr);
