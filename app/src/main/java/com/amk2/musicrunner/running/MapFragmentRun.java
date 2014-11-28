@@ -27,9 +27,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +49,8 @@ public class MapFragmentRun extends Fragment implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
         View.OnClickListener {
+
+    private static String TAG = "MapFragmentRun";
 
     private GoogleMap mMap = null; // Might be null if Google Play services APK is not available.
     private Marker mMarker = null;
@@ -200,6 +205,7 @@ public class MapFragmentRun extends Fragment implements
         makeText(this.getView().getContext(), "Connected", Toast.LENGTH_SHORT).show();
 
         mMap.setMyLocationEnabled(true);
+
         startUpdates();
     }
 
@@ -415,6 +421,22 @@ public class MapFragmentRun extends Fragment implements
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager()
                     .findFragmentById(R.id.running_map)).getMap();
+        }
+
+        if (mMap != null) {
+            mMap.setMyLocationEnabled(true);//Makes the users current location visible by displaying a blue dot.
+
+            LocationManager lm=(LocationManager)this.getActivity().getSystemService(this.getActivity().getBaseContext().LOCATION_SERVICE);//use of location services by firstly defining location manager.
+            String provider=lm.getBestProvider(new Criteria(), true);
+            if(provider != null) {
+                Location loc=lm.getLastKnownLocation(provider);
+
+                if (loc!=null){
+                    onLocationChanged(loc);
+                }
+            } else {
+                Log.e(TAG, "provider is null, failed to initialize map location");
+            }
         }
     }
 
